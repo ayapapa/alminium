@@ -10,10 +10,10 @@
 redmine_xls_export,0.2.1.t4,https://github.com/two-pack/redmine_xls_export.git
 redmine_plugin_views_revisions,redmine_plugin_views_revisions,http://www.redmine.org/attachments/download/7705/redmine_plugin_views_revisions_v001.zip
 redmine_importer,master,https://github.com/zh/redmine_importer.git
-redmine_code_review,default,https://bitbucket.org/haru_iida/redmine_code_review
+redmine_code_review,0.6.5,https://bitbucket.org/haru_iida/redmine_code_review
 redmine_hudson,redmine2.x,https://bitbucket.org/okamototk/redmine_hudson
 ##redmine_ms_projects,master,https://github.com/suer/redmine_ms_projects.git
-redmine_backlogs,master,https://github.com/backlogs/redmine_backlogs.git
+redmine_backlogs,ubuntu1404-support,https://github.com/ayapapa/redmine_backlogs.git
 redmine_spent_time_column,backlogs-support,https://github.com/mikoto20000/redmine_spent_time_column.git
 #redmine_scm,HEAD,http://svn.s-andy.com/scm-creator/
 redmine_scm,master,https://github.com/alminium/redmine_scm.git
