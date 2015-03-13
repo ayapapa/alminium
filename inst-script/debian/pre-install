@@ -7,6 +7,8 @@ if [ "$SSL" = "y" ]
 then
     apt-get -y install libapache2-mod-gnutls ssl-cert
     a2enmod ssl rewrite
+    a2dismod gnutls
+    # sslとgnutlsが両方有効化されてしまいappache2がエラーになるため後者を無効化しておく（要調査）
 fi
 
 service mysql start
