@@ -26,7 +26,7 @@ clipboard_image_paste,master,https://github.com/peclik/clipboard_image_paste.git
 #redmine_lightbox,master,https://github.com/zipme/redmine_lightbox.git
 redmine_banner,master,https://github.com/akiko-pusu/redmine_banner.git
 open_flash_chart,master,https://github.com/pullmonkey/open_flash_chart.git
-redmine_charts,develop,https://github.com/drakontia/redmine_charts.git
+redmine_charts,master,https://github.com/drakontia/redmine_charts.git
 redmine_local_avatars,master,https://github.com/luckval/redmine_local_avatars.git
 redmine_git_branch_hook,master,https://github.com/mikoto20000/redmine_git_branch_hook.git
 # advanced_roadmapはbacklogsと競合するためどちらかを選択
