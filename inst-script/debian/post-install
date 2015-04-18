@@ -32,6 +32,8 @@ a2enmod passenger
 a2enmod perl
 a2enmod wsgi
 a2enmod cgi
+a2dismod mpm_event
+a2enmod mpm_prefork
 a2ensite alminium.conf
 
 service apache2 stop
