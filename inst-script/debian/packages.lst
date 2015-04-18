@@ -37,3 +37,4 @@ libapache-dbi-perl
 libical[01]
 python-docutils
 ruby-dev
+apache2-mpm-prefork
