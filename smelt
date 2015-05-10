@@ -239,7 +239,7 @@ do
 done
 
 # create directory for vcs
-mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven}
+mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
 chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
 
 # install chiliproject

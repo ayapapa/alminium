@@ -16,3 +16,9 @@ production:
      path: /var/opt/alminium/hg
      hg: /usr/bin/hg
      url: hg
+   github:
+     path: /var/opt/alminium/github
+     api:
+       token: 36857b12efbccc64ce725ea8674fab6ecbd05c03
+       register_hook: true
+
