@@ -6,13 +6,13 @@ production:
    svn:
      path: /var/opt/alminium/svn
      svnadmin: /usr/bin/svnadmin
-     url: ", http(s)://ホスト名/svn"
+     url: svn
    git:
      path: /var/opt/alminium/git
      git: /usr/bin/git
      options: --bare 
-     url: ", http(s)://ホスト名/git"
+     url: git
    mercurial:
      path: /var/opt/alminium/hg
      hg: /usr/bin/hg
-     url: ", http(s)://ホスト名/hg"
+     url: hg
