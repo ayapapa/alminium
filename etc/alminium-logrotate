@@ -1,0 +1,9 @@
+/opt/alminium/log/*.log {
+  weekly        # 週一回rotateを実行する
+  missingok     # ファイルが存在しなくてもエラーにならない
+  notifempty    # logファイルが空の時はrotateしない
+  copytruncate  # ログを別名でコピーした後、元のファイルの内容を空にする
+  compress      # 古いログを圧縮して保存する
+  delaycompress # 次のrotateの時にログ圧縮する
+}
+
