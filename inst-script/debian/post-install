@@ -37,6 +37,9 @@ done
 ln -sf "$ALM_ETC_DIR/passenger.conf" "/etc/apache2/mods-available/passenger.load"
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "/etc/apache2/sites-available/alminium.conf"
 
+#log rotate
+cp $ALM_SRC_DIR/etc/alminium-logrotate /etc/logrotate.d/alminium
+
 a2enmod expires
 a2enmod dav_fs
 a2enmod auth_mysql
