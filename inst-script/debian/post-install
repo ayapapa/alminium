@@ -14,6 +14,8 @@ then
   mv /etc/perl/Apache/Authn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm-`date +"%Y-%m-%d-%H-%M-%S"`
 fi
 mkdir -p /etc/perl/Apache/Authn
+#remove error(unsubstantial) symbolic link
+rm -f /etc/perl/Apache/Authn/Redmine.pm
 cat $INSTALL_DIR/extra/svn/Redmine.pm | \
 sed s/'  \$r->set_handlers(PerlAuthenHandler => \[\\&OK\])'/'  #modified for anonymous access(see https\:\/\/github.com\/ayapapa\/alminium\/issues\/16)\n  #\$r->set_handlers(PerlAuthenHandler => \[\\\&OK])'/  |
 sed s/'    if is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r);'/'#    if is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r);\n  if (is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r)) {\n      \$r->set_handlers(PerlAuthenHandler => \[\\\&OK]);\n      \$r->user(\"\");\n  }'/ |
