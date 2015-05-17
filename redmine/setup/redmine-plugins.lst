@@ -33,3 +33,6 @@ redmine_local_avatars,master,https://github.com/luckval/redmine_local_avatars.gi
 redmine_git_branch_hook,master,https://github.com/mikoto20000/redmine_git_branch_hook.git
 # advanced_roadmapはbacklogsと競合するためどちらかを選択
 #advanced_roadmap,advanced_roadmap,https://ociotec.com/redmine/attachments/download/155/advanced_roadmap.0.5.1.tar.gz
+#ファイル管理(DMSF)
+redmine_dmsf,ALMinium-support,https://github.com/ayapapa/redmine_dmsf.git
+
