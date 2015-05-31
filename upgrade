@@ -1,0 +1,113 @@
+#!/bin/bash
+############################################################
+# upgrader for ALMinium.
+############################################################
+
+if [ "$1" = "" ]
+then
+  echo "バックアップディレクトリを指定してください"
+  exit 1
+fi
+
+export CURRENT_DIR=`pwd`
+export FIRST_CHAR_BACKUP_DIR=`echo $1 | cut -c 1`
+if [ "$FIRST_CHAR_BACKUP_DIR" = '/' ]
+then
+  export BACKUP_DIR=$1
+else
+  export BACKUP_DIR=$CURRENT_DIR/$1
+fi
+
+echo $CURRENT_DIR, $FIRST_CHAR_BACKUP_DIR, $BACKUP_DIR
+
+# 実行ユーザーチェック
+if [ "$USER" != 'root' ]
+then
+  echo -n "ALMiniumのupgradeはルートユーザで行う必要があります。"
+  echo "rootユーザもしくはsudoで実行してください。"
+  exit 1
+fi
+
+#バックアップディレクトリのチェック
+if [ -d $BACKUP_DIR ]
+then
+  echo "バックアップディレクトリの確認ができました。処理を継続します。"
+else
+  echo "バックアップディレクトリが見つかりませんでした。"
+  exit 1
+fi
+
+#データベースをバックアップ
+echo "MySQLデータベースをバックアップします。"
+mysqldump -uroot alminium > $BACKUP_DIR/alminium.dump
+if [ -f $BACKUP_DIR/alminium.dump ]
+then
+  echo "MySQLデータベースのバックアップが成功しました。"
+else
+  echo "MySQLデータベースのバックアップが失敗しました。"
+  exit 1
+fi
+
+#redmineの添付ファイルをバックアップ
+##大きすぎて非効率な場合は、files以下を退避（移動）しておけば良い
+echo "Redmineの添付ファイルをバックアップします。"
+cd /opt/alminium/files/
+sudo tar czf $BACKUP_DIR/opt_alminium_files.tar.gz .
+if [ -f $BACKUP_DIR/opt_alminium_files.tar.gz ]
+then
+  echo "Redmineの添付ファイルのバックアップが成功しました。"
+else
+  echo "Redmineの添付ファイルのバックアップが失敗しました。"
+  exit 1
+fi
+
+#ソースコードリポジトリ
+##大きすぎて非効率な場合は、/var/opt/alminium/以下を退避（移動）しておけば良い
+echo "ソースコードリポジトリをバックアップします。"
+cd /var/opt/alminium/
+sudo tar czf $BACKUP_DIR/var_opt_alminium.tar.gz .
+if [ -f $BACKUP_DIR/var_opt_alminium.tar.gz ]
+then
+  echo "ソースコードリポジトリのバックアップが成功しました。"
+else
+  echo "ソースコードリポジトリのバックアップが失敗しました。"
+  exit 1
+fi
+
+echo "指定したディレクトリにバックアップデータ(alminium.dump, opt_alminium_files.tar.gz, var_opt_alminium.tar.gz)が作成されていることを確認してください。問題がなければEnterキーを押下してください。中止する場合はCtrl+C。"
+echo "#### 何らかのエラーがコンソールに出力されている場合はバックアップに失敗している可能性がありますので、中止(Ctrl+C)してください。"
+read DO_CONTINUE
+
+#alminiumを再インストールする。
+echo ""
+echo ""
+echo "ALMiniumのアンインストールを開始します。問い合わせに対してはすべて'y'を選んでください"
+echo "処理を継続する場合は何らかのキーを押下してください。"
+read DO_CONTINUE
+
+cd $CURRENT_DIR
+./uninstall
+
+#install
+echo "ALMiniumのインストールを開始します。"
+cd $CURRENT_DIR
+./smelt
+service apache2 stop
+
+echo "バックアップデータを復元します。"
+#バックアップの復元
+cd $CURRENT_DIR
+cd /var/opt/alminium/ && sudo tar xzf $BACKUP_DIR/var_opt_alminium.tar.gz
+cd /opt/alminium/files/ && sudo tar xzf $BACKUP_DIR/opt_alminium_files.tar.gz
+mysql -uroot alminium < $BACKUP_DIR/alminium.dump
+
+
+#データベースのマイグレーション
+cd /opt/alminium
+rake db:migrate RAILS_ENV="production"
+rake redmine:plugins:migrate RAILS_ENV=production
+rake tmp:cache:clear
+rake tmp:sessions:clear
+
+service apache2 start
+
