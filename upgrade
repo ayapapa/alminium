@@ -18,8 +18,6 @@ else
   export BACKUP_DIR=$CURRENT_DIR/$1
 fi
 
-echo $CURRENT_DIR, $FIRST_CHAR_BACKUP_DIR, $BACKUP_DIR
-
 # 実行ユーザーチェック
 if [ "$USER" != 'root' ]
 then
@@ -27,6 +25,10 @@ then
   echo "rootユーザもしくはsudoで実行してください。"
   exit 1
 fi
+
+#
+echo "途中にエラーが発生した場合、復活できなくなる可能性があります。スナップショットをとるなど、後戻りできるようにしておくことをお勧めします。自己責任で処理を実行する場合は何らかのキーを押下してください。中止する場合はCtrl+C。"
+read DO_CONTINUE
 
 #バックアップディレクトリのチェック
 if [ -d $BACKUP_DIR ]
@@ -38,9 +40,15 @@ else
 fi
 
 #データベースをバックアップ
+export DBBACKUP_NAME=$BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
+if [ -f $DBBACKUP_NAME ]
+then
+  echo "データベースバックアップファイルが既に存在します。念のため処理を中止します。"
+  exit 1
+fi
 echo "MySQLデータベースをバックアップします。"
-mysqldump -uroot alminium > $BACKUP_DIR/alminium.dump
-if [ -f $BACKUP_DIR/alminium.dump ]
+mysqldump -uroot alminium > $DBBACKUP_NAME
+if [ -f $DBBACKUP_NAME ]
 then
   echo "MySQLデータベースのバックアップが成功しました。"
 else
@@ -50,10 +58,16 @@ fi
 
 #redmineの添付ファイルをバックアップ
 ##大きすぎて非効率な場合は、files以下を退避（移動）しておけば良い
+export FILE_BACKUP=$BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+if [ -f $FILE_BACKUP ] 
+then
+  echo "Redmine添付ファイルのバックアップファイルが既に存在します。処理を中止します。"
+  exit 1
+fi
 echo "Redmineの添付ファイルをバックアップします。"
 cd /opt/alminium/files/
-sudo tar czf $BACKUP_DIR/opt_alminium_files.tar.gz .
-if [ -f $BACKUP_DIR/opt_alminium_files.tar.gz ]
+sudo tar czf $FILE_BACKUP .
+if [ -f $FILE_BACKUP ]
 then
   echo "Redmineの添付ファイルのバックアップが成功しました。"
 else
@@ -63,10 +77,15 @@ fi
 
 #ソースコードリポジトリ
 ##大きすぎて非効率な場合は、/var/opt/alminium/以下を退避（移動）しておけば良い
+export REPOS_BACKUP=$BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+if [ -f $REPOS_BACKUP ]
+then
+  echo "ソースコードリポジトリのバックアップが既に存在します。処理を中止します。"
+fi
 echo "ソースコードリポジトリをバックアップします。"
 cd /var/opt/alminium/
-sudo tar czf $BACKUP_DIR/var_opt_alminium.tar.gz .
-if [ -f $BACKUP_DIR/var_opt_alminium.tar.gz ]
+sudo tar czf $REPOS_BACKUP .
+if [ -f $REPOS_BACKUP ]
 then
   echo "ソースコードリポジトリのバックアップが成功しました。"
 else
@@ -76,6 +95,7 @@ fi
 
 echo "指定したディレクトリにバックアップデータ(alminium.dump, opt_alminium_files.tar.gz, var_opt_alminium.tar.gz)が作成されていることを確認してください。問題がなければEnterキーを押下してください。中止する場合はCtrl+C。"
 echo "#### 何らかのエラーがコンソールに出力されている場合はバックアップに失敗している可能性がありますので、中止(Ctrl+C)してください。"
+echo "#### エラー発生等により中止した場合は、upgradeファイルを参考に手動によりアップグレードを実行することをお勧めします。"
 read DO_CONTINUE
 
 #alminiumを再インストールする。
@@ -97,9 +117,9 @@ service apache2 stop
 echo "バックアップデータを復元します。"
 #バックアップの復元
 cd $CURRENT_DIR
-cd /var/opt/alminium/ && sudo tar xzf $BACKUP_DIR/var_opt_alminium.tar.gz
-cd /opt/alminium/files/ && sudo tar xzf $BACKUP_DIR/opt_alminium_files.tar.gz
-mysql -uroot alminium < $BACKUP_DIR/alminium.dump
+cd /var/opt/alminium/ && tar xzf $REPOS_BACKUP
+cd /opt/alminium/files/ && tar xzf $FILE_BACKUP
+mysql -uroot alminium < $DBBACKUP_NAME
 
 
 #データベースのマイグレーション
