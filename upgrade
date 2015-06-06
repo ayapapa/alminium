@@ -66,7 +66,7 @@ then
 fi
 echo "Redmineの添付ファイルをバックアップします。"
 cd /opt/alminium/files/
-sudo tar czf $FILE_BACKUP .
+tar czf $FILE_BACKUP .
 if [ -f $FILE_BACKUP ]
 then
   echo "Redmineの添付ファイルのバックアップが成功しました。"
@@ -84,7 +84,7 @@ then
 fi
 echo "ソースコードリポジトリをバックアップします。"
 cd /var/opt/alminium/
-sudo tar czf $REPOS_BACKUP .
+tar czf $REPOS_BACKUP .
 if [ -f $REPOS_BACKUP ]
 then
   echo "ソースコードリポジトリのバックアップが成功しました。"
