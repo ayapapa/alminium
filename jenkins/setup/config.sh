@@ -21,7 +21,12 @@ wget -O /tmp/default.js http://updates.jenkins-ci.org/update-center.json
 sed '1d;$d' /tmp/default.js > /tmp/default.json
 
 # Now push it to the update URL
-curl --noproxy localhost -X POST -H "Accept: application/json" -d @/tmp/default.json http://localhost:8080/jenkins/updateCenter/byId/default/postBack --verbose
+#curl --noproxy localhost -X POST -H "Accept: application/json" -d @/tmp/default.json http://localhost:8080/jenkins/updateCenter/byId/default/postBack --verbose
+if [ ! -e /var/lib/jenkins/updates ]
+then
+  mkdir /var/lib/jenkins/updates
+fi
+cp -f /tmp/default.json /var/lib/jenkins/updates/
 
 # Jenkinsのプロキシ設定
 if [ x"$http_proxy" != x"" ]
