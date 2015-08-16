@@ -116,7 +116,7 @@ REPLACE INTO settings(name,value,updated_on) VALUES ('welcome_text','
 ALMinium
 ========
 
-※Jenkinsをインストールした場合は、[http[s]://&lt;ホスト&gt;/jenkins/からアクセス](/jenkins/)できます。
+※Jenkinsをインストールした場合は、[http[s]://&lt;ホスト&gt;/jenkins/](/jenkins/)からアクセスできます。
 
 　近年注目を集めるチケットシステムですが、環境構築をするとなるとそれなりに面倒です。チケットシステムの一つであるRedmineをインストールするためには、Rubyの知識が必要であったり、また、GitやSubversionなどのバージョン管理システムを利用するには、その知識が必要であったりととにかく面倒です。「ALMinium」は、めんどくさがり屋のための、プロジェクト管理構築ツールです。
 

@@ -10,7 +10,7 @@ export INSTALL_DIR=/opt/alminium
 
 export RAILS_ENV=production
 export SCRIPT_DIR=`pwd`
-RM_VER=2.5.2
+RM_VER=2.6.6
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 #RM_ARC=http://redmine.rubyforge.org/svn/tags
 CPCMD='cp -fr'
@@ -239,7 +239,7 @@ do
 done
 
 # create directory for vcs
-mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven}
+mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
 chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
 
 # install chiliproject
