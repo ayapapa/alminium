@@ -1,0 +1,108 @@
+#!/bin/bash
+############################################################
+# backup for ALMinium.
+############################################################
+
+if [ "$1" = "" ]
+then
+  echo "バックアップディレクトリを指定してください"
+  exit 1
+fi
+
+export CURRENT_DIR=`pwd`
+export FIRST_CHAR_BACKUP_DIR=`echo $1 | cut -c 1`
+if [ "$FIRST_CHAR_BACKUP_DIR" = '/' ]
+then
+  export BACKUP_DIR=$1
+else
+  export BACKUP_DIR=$CURRENT_DIR/$1
+fi
+
+# 実行ユーザーチェック
+if [ "$USER" != 'root' ]
+then
+  echo -n "本処理はルートユーザで行う必要があります。"
+  echo "rootユーザもしくはsudoで実行してください。"
+  exit 1
+fi
+
+#
+echo "途中にエラーが発生した場合、復活できなくなる可能性があります。スナップショ
+ットをとるなど、後戻りできるようにしておくことをお勧めします。処理を続行する場合
+は何らかのキーを押下してください。中止する場合はCtrl+C。"
+read DO_CONTINUE
+
+#バックアップディレクトリのチェック
+if [ -d $BACKUP_DIR ]
+then
+  echo "バックアップディレクトリの確認ができました。処理を継続します。"
+else
+  echo "バックアップディレクトリが見つかりませんでした。"
+  exit 1
+fi
+
+#データベースをバックアップ
+if [ "$DBBACKUP_NAME" = "" ]
+then
+  export DBBACKUP_NAME=$BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
+fi
+if [ -f $DBBACKUP_NAME ]
+then
+  echo "データベースバックアップファイルが既に存在します。念のため処理を中止しま
+す。"
+  exit 1
+fi
+echo "MySQLデータベースをバックアップします。"
+mysqldump -uroot alminium > $DBBACKUP_NAME
+if [ -f $DBBACKUP_NAME ]
+then
+  echo "MySQLデータベースのバックアップが成功しました。"
+else
+  echo "MySQLデータベースのバックアップが失敗しました。"
+  exit 1
+fi
+
+#redmineの添付ファイルをバックアップ
+##大きすぎて非効率な場合は、/opt/alminium/files以下を退避（移動）しておけば良い
+if [ "$FILE_BACKUP" = "" ]
+then
+  export FILE_BACKUP=$BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+fi
+if [ -f $FILE_BACKUP ]
+then
+  echo "Redmine添付ファイルのバックアップファイルが既に存在します。処理を中止し>ます。"
+  exit 1
+fi
+echo "Redmineの添付ファイルをバックアップします。"
+cd /opt/alminium/files/
+tar czf $FILE_BACKUP .
+if [ -f $FILE_BACKUP ]
+then
+  echo "Redmineの添付ファイルのバックアップが成功しました。"
+else
+  echo "Redmineの添付ファイルのバックアップが失敗しました。"
+  exit 1
+fi
+
+#ソースコードリポジトリ
+##大きすぎて非効率な場合は、/var/opt/alminium/以下を退避（移動）しておけば良い
+if [ "$REPOS_BACKUP" = "" ]
+then
+  export REPOS_BACKUP=$BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+fi
+if [ -f $REPOS_BACKUP ]
+then
+  echo "ソースコードリポジトリのバックアップが既に存在します。処理を中止します。
+"
+  exit 1
+fi
+echo "ソースコードリポジトリをバックアップします。"
+cd /var/opt/alminium/
+tar czf $REPOS_BACKUP .
+if [ -f $REPOS_BACKUP ]
+then
+  echo "ソースコードリポジトリのバックアップが成功しました。"
+else
+  echo "ソースコードリポジトリのバックアップが失敗しました。"
+  exit 1
+fi
