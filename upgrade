@@ -16,7 +16,12 @@ export DBBACKUP_NAME=$BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
 export FILE_BACKUP=$BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
 export REPOS_BACKUP=$BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
 
-./backup $1
+#バックアップを行う
+./backup $1 "途中にエラーが発生した場合、復活できなくなる可能性があります。スナップショットをとるなど、後戻りできるようにしておくことをお勧めします。"
+if [ $? -gt 0 ]
+then
+  exit 1
+fi
 
 #バックアップの確認
 echo ""
