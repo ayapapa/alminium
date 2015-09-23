@@ -10,7 +10,7 @@ export INSTALL_DIR=/opt/alminium
 
 export RAILS_ENV=production
 export SCRIPT_DIR=`pwd`
-RM_VER=2.6.6
+RM_VER=3.1.0
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 #RM_ARC=http://redmine.rubyforge.org/svn/tags
 CPCMD='cp -fr'
@@ -315,3 +315,7 @@ source inst-script/$OS/post-install
 #then
 #  echo "* * * * * /opt/alminium/extra/svn/reposman.rb -g apache -o apache -s /var/opt/alminium/git -u /var/opt/alminium/git -r localhost --scm git" >> /var/spool/cron/root
 #fi
+
+# プラグインのインストール(last)
+source redmine/setup/redmine-plugins2
+
