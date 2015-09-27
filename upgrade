@@ -56,10 +56,10 @@ mysql -uroot alminium < $DBBACKUP_NAME
 
 #データベースのマイグレーション
 cd /opt/alminium
-rake db:migrate RAILS_ENV="production"
-rake redmine:plugins:migrate RAILS_ENV=production
-rake tmp:cache:clear
-rake tmp:sessions:clear
+bundle exec rake db:migrate RAILS_ENV="production"
+bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+bundle exec rake tmp:cache:clear
+bundle exec rake tmp:sessions:clear
 
 service apache2 start
 
