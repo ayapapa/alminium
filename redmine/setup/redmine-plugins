@@ -86,6 +86,9 @@ then
   mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
 fi
 
+# アップグレード時にエラーになることがあるので、以下を追加
+bundle update
+
 # redmineに必要なgemをインストール
 bundle install --path vendor/bundle --without development test
 
@@ -111,14 +114,14 @@ bundle exec rake tmp:sessions:clear
 # for XLS export
 if [ -d plugins/redmine_xls_export ]
 then
-  bundle exec rake redmine:plugins:process_version_change
+  bundle exec rake redmine:plugins:process_version_change RAILS_ENV=production
 fi
 
 # for backlogs
 if [ -d plugins/redmine_backlogs ]
 then
-  #touch backlogs.dev
-  bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false
+  TASK_TRACKER_NAME=`mysql -u root alminium --execute="select name from trackers where id=3;" | sed -e '1,1d'`
+  bundle exec rake redmine:backlogs:install task_tracker="$TASK_TRACKER_NAME" story_trackers=機能 labels=false RAILS_ENV=production
 fi
 
 # FIXME: to avoid open_flash_chart assets aren't copied.

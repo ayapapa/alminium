@@ -9,12 +9,15 @@ export ALM_VAR_DIR=/var/opt/alminium
 export INSTALL_DIR=/opt/alminium
 
 export RAILS_ENV=production
-export SCRIPT_DIR=`pwd`
-RM_VER=3.1.0
+RM_VER=3.1.1
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
-#RM_ARC=http://redmine.rubyforge.org/svn/tags
 CPCMD='cp -fr'
 RMCMD='rm -fr'
+
+if [ "$1" = "-u" ]
+then
+  UPGRADE=y
+fi
 
 MEM=`free -t | grep Total | awk '{print $2}'`
 if [ $MEM -lt 1000000 ]
@@ -37,7 +40,7 @@ then
     mkdir cache
 fi
 
-
+# OSを確認
 if [ -f /etc/redhat-release ]
 then
     APACHE_USER=apache
@@ -74,8 +77,6 @@ then
     APACHE_USER=www-data
     export APACHE_CONF_DIR=/etc/apache2/conf.d
     MYSQLD='/etc/init.d/mysql'
-#    TODO: -u -pを指定するとcreatedb.sqlの読み込みに失敗する
-#    MYSQL="$MYSQL -u root -p"
     echo "Debian / Ubuntu が検出されました。"
     echo "インストールに失敗するかも知れませんが、お許しくださいm(__)m"
     echo ""
@@ -109,7 +110,7 @@ else
 fi
 
 
-if [ "$ALM_HOSTNAME" == "" ]
+if [ "$ALM_HOSTNAME" = "" ]
 then
 echo "*******************************************************"
 echo "  ホスト名の設定"
@@ -158,34 +159,6 @@ then
   read ENABLE_JENKINS
 fi
 
-#if [ $TYPE = "" ]
-#then
-#    echo "redmine もしくは chiliprojectを選択してください。"
-#    echo
-#    echo " 1. chiliproject"
-#    echo " 2. redmine"
-#    echo
-#    echo -n "番号を入力してください: "
-#
-#    read TYPE
-#fi
-TYPE=2
-
-case $TYPE in
-    1|chiliproject)
-        TYPE=chiliproject
-        ;;
-
-    2|redmine)
-        TYPE=redmine
-        ;;
-    *)
-        echo "未定義のチケットシステムが選択されました。"
-        echo "1もしくは2を入力してください。"
-        exit 1
-        ;;
-esac
-
 # update submodules
 if [ $(git config -l | egrep 'submodule.+url=' | wc -l) -ne \
      $(grep submodule .gitmodules | wc -l) ]
@@ -195,7 +168,7 @@ fi
 git submodule sync
 git submodule update
 
-## install packages
+# install packages
 if [ ! -f packages.installed ]
 then
   echo "*** run pre-install script ***"
@@ -229,54 +202,38 @@ then
   fi
 fi
 
-$MYSQL < redmine/setup/createdb.sql
-
-# setup for apache
-mkdir -p $ALM_ETC_DIR
-for FILE in $(ls -F -I *.conf etc | grep -v /)
-do
-  cp "etc/$FILE" $ALM_ETC_DIR/
-done
-
-# create directory for vcs
-mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
-chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
-
-# install chiliproject
-mkdir -p $INSTALL_DIR
-
-if [ $TYPE = "chiliproject" ]
+if [ "$UPGRADE" = "" ]
 then
-  if [ ! -f chiliproject-$CP_VER.tar.gz ]
-  then
-    wget $CP_ARC
-  fi
-  tar zxf chiliproject-$CP_VER.tar.gz
-  cp -fr chiliproject-$CP_VER/* $INSTALL_DIR/
-  rm -fr chiliproject-$CP_VER
+  # create DB
+  $MYSQL < redmine/setup/createdb.sql
+
+  # setup for apache
+  mkdir -p $ALM_ETC_DIR
+  for FILE in $(ls -F -I *.conf etc | grep -v /)
+  do
+    cp "etc/$FILE" $ALM_ETC_DIR/
+  done
+
+  # create directory for vcs
+  mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
+  chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
+
+  # install redmine
+  mkdir -p $INSTALL_DIR
+
 fi
-if [ $TYPE = "redmine" ]
+
+# install Redmine
+cd cache
+wget $RM_ARC
+if [ ! -f redmine-$RM_VER ]
 then
-  cd cache
-  if [ ! -f redmine-$RM_VER.tar.gz ]
-  then
-    wget $RM_ARC
-  fi
-
-  if [ ! -f redmine-$RM_VER ]
-  then
-
-#    svn checkout $RM_ARC/$RM_VER redmine_$RM_VER
-    tar zxf redmine-$RM_VER.tar.gz
-  fi
-  cd ..
-
-
-  #(cd redmine-$RM_VER; patch -p1 -R < ../patch/redmine_disable_saltpassword.patch)
-
-  $CPCMD cache/redmine-$RM_VER/* $INSTALL_DIR/
-  $RMCMD cache/redmine-$RM_VER
+  tar zxf redmine-$RM_VER.tar.gz
 fi
+cd ..
+
+$CPCMD cache/redmine-$RM_VER/* $INSTALL_DIR/
+$RMCMD cache/redmine-$RM_VER
 
 cp     redmine/Gemfile.local   $INSTALL_DIR/
 $CPCMD redmine/config/*        $INSTALL_DIR/config/
@@ -285,20 +242,17 @@ $CPCMD redmine/public/themes/* $INSTALL_DIR/public/themes/
 # install plugins
 source redmine/setup/redmine-plugins
 
-# Customize
-echo "*** run initialize SQL ***"
-$MYSQL alminium < redmine/setup/init.mysql
+if [ "$UPGRADE" = "" ]
+then
+  # Customize
+  echo "*** run initialize SQL ***"
+  $MYSQL alminium < redmine/setup/init.mysql
+fi
 
 mkdir -p $INSTALL_DIR/bin
 $CPCMD redmine/bin/* $INSTALL_DIR/bin/
 $CPCMD redmine/hooks $INSTALL_DIR/
 chown -R $APACHE_USER:$APACHE_USER $INSTALL_DIR
-
-# setup for email
-#if [ "$SMTPSERVER" != "" ]
-#then
-#  source inst-script/gen-email-config.sh
-#fi
 
 # setup for jenkins
 if [ "$ENABLE_JENKINS" = "y" ]
@@ -307,6 +261,7 @@ then
   source jenkins/setup/config.sh
 fi
 
+echo "*** run post-install script ***"
 source inst-script/$OS/post-install
 
 # プロジェクト作成時に自動的にリポジトリを作成するときに利用
