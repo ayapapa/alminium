@@ -69,10 +69,12 @@ rm -fr cache/* *.installed
 ./smelt -u
 
 #バックアップの復元
-echo "バックアップデータを復元します。"
+echo "***バックアップデータを復元します。"
 service apache2 stop
 cd $CURRENT_DIR
+echo "***リポジトリーデータを復元しています・・・"
 cd /var/opt/alminium/ && tar xzf $REPOS_BACKUP
+echo "***Redmine添付ファイルを復元しています・・・"
 cd /opt/alminium/files/ && tar xzf $FILE_BACKUP
 # mysql -uroot alminium < $DBBACKUP_NAME
 echo "バックアップデータ復元が完了しました。"
