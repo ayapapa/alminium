@@ -18,7 +18,7 @@ redmine_spent_time_column,backlogs-support,https://github.com/mikoto20000/redmin
 #redmine_scm,HEAD,http://svn.s-andy.com/scm-creator/
 #最新版を適用するように変更
 #redmine_scm,master,https://github.com/alminium/redmine_scm.git
-redmine_scm,ALMinium-support,https://github.com/ayapapa/redmine_scm.git
+redmine_scm,0.5.0b-ALMinium-RM2,https://github.com/ayapapa/redmine_scm.git
 #Redmine1.3.1のWikiのセクション編集ができなくなるのでredmine_restructuredtext_formatterを削除
 #redmine_restructuredtext_formatter,japanese-localization,https://github.com/alminium/redmine_restructuredtext_formatter.git
 #redmine_redcarpet_formatter,master,https://github.com/alminium/redmine_redcarpet_formatter.git
@@ -34,5 +34,5 @@ redmine_git_branch_hook,master,https://github.com/mikoto20000/redmine_git_branch
 # advanced_roadmapはbacklogsと競合するためどちらかを選択
 #advanced_roadmap,advanced_roadmap,https://ociotec.com/redmine/attachments/download/155/advanced_roadmap.0.5.1.tar.gz
 #ファイル管理(DMSF)
-redmine_dmsf,v1.5.1-redmine2,https://github.com/ayapapa/redmine_dmsf.git
+redmine_dmsf,ALMinium-support-RM2,https://github.com/ayapapa/redmine_dmsf.git
 
