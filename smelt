@@ -14,9 +14,10 @@ RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 CPCMD='cp -fr'
 RMCMD='rm -fr'
 
+ALM_UPGRADE=""
 if [ "$1" = "-u" ]
 then
-  UPGRADE=y
+  ALM_UPGRADE=y
 fi
 
 MEM=`free -t | grep Total | awk '{print $2}'`
@@ -126,7 +127,7 @@ else
 HOSTNAME=$ALM_HOSTNAME
 fi
 
-if [ "$SSL" == "" ]
+if [ "$SSL" = "" ]
 then
 echo "*******************************************************"
 echo "  SSLのサポート"
@@ -202,7 +203,7 @@ then
   fi
 fi
 
-if [ "$UPGRADE" = "" ]
+if [ "$ALM_UPGRADE" = "" ]
 then
   # create DB
   $MYSQL < redmine/setup/createdb.sql
@@ -244,7 +245,7 @@ $CPCMD redmine/public/themes/* $INSTALL_DIR/public/themes/
 echo "*** install plugins ***"
 source redmine/setup/redmine-plugins
 
-if [ "$UPGRADE" = "" ]
+if [ "$ALM_UPGRADE" = "" ]
 then
   # Customize
   echo "*** run initialize SQL ***"
@@ -261,7 +262,7 @@ if [ "$ENABLE_JENKINS" = "y" ]
 then
   echo "*** install Jenkins ***"
   source jenkins/setup/$OS/install.sh
-  if [ "$UPGRADE" = "" ]
+  if [ "$ALM_UPGRADE" = "" ]
   then
     source jenkins/setup/config.sh
   fi
