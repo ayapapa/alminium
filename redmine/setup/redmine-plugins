@@ -120,11 +120,11 @@ fi
 # for backlogs
 if [ -d plugins/redmine_backlogs ]
 then
-  if [ $ALM_UPGRADE = "y" ]
+  if [ "$ALM_UPGRADE" = "y" ]
   then
-    bundle exec rake redmine:backlogs:install task_tracker=タスク story_tracker
+    bundle exec rake redmine:backlogs:install task_tracker=タスク story_trackers=機能 labels=false RAILS_ENV=production
   else
-    bundle exec rake redmine:backlogs:install task_tracker=サポート story_track
+    bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false RAILS_ENV=production
   fi
 fi
 
