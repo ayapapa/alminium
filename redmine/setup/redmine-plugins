@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# プラグインをインストールすると同時にRedmineの初期設定を行う
+#
 
 # インストールするディレクトリ名
 DEST_NAME=(`grep -v "^#" redmine/setup/redmine-plugins.lst | awk -F, '{print $1}'`)
@@ -74,14 +77,17 @@ do
     esac
 done
 
-
-## setup plugin
-pushd .
-
-cd $INSTALL_DIR
+# ディレクトリを退避
+pushd $INSTALL_DIR
 
 # for Hudson
-mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
+if [ -f plugins/redmine_hudson/Gemfile ]
+then
+  mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
+fi
+
+# アップグレード時にエラーになることがあるので、以下を追加
+bundle update
 
 # redmineに必要なgemをインストール
 bundle install --path vendor/bundle --without development test
@@ -101,14 +107,29 @@ bundle exec rake redmine:plugins:migrate RAILS_ENV=production
 echo 'ja' |\
 bundle exec rake redmine:load_default_data RAILS_ENV=production
 
+# キャッシュクリア
 bundle exec rake tmp:cache:clear
 bundle exec rake tmp:sessions:clear
 
-bundle exec rake redmine:plugins:process_version_change
-touch backlogs.dev
-bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false
+# for XLS export
+if [ -d plugins/redmine_xls_export ]
+then
+  bundle exec rake redmine:plugins:process_version_change RAILS_ENV=production
+fi
+
+# for backlogs
+if [ -d plugins/redmine_backlogs ]
+then
+  TASK_TRACKER_NAME=`mysql -u root alminium --execute="select name from trackers where id=3;" | sed -e '1,1d'`
+  bundle exec rake redmine:backlogs:install task_tracker="$TASK_TRACKER_NAME" story_trackers=機能 labels=false RAILS_ENV=production
+fi
 
 # FIXME: to avoid open_flash_chart assets aren't copied.
-cp -fr plugins/open_flash_chart/assets public/plugin_assets/open_flash_chart
+if [ -d plugins/open_flash_chart/assets ]
+then
+  cp -fr plugins/open_flash_chart/assets public/plugin_assets/open_flash_chart
+fi
 
+# ディレクトリを元に戻す
 popd
+

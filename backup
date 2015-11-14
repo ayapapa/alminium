@@ -7,17 +7,16 @@
 
 if [ "$1" = "" ]
 then
-  echo "バックアップディレクトリを指定してください"
+  echo "バックアップディレクトリ(第一引数)を指定してください"
   exit 1
 fi
 
-export CURRENT_DIR=`pwd`
-export FIRST_CHAR_BACKUP_DIR=`echo $1 | cut -c 1`
-if [ "$FIRST_CHAR_BACKUP_DIR" = '/' ]
+ALM_CURRENT_DIR=`pwd`
+if [ `echo $1 | cut -c 1` = '/' ]
 then
-  export BACKUP_DIR=$1
+  ALM_BACKUP_DIR=$1
 else
-  export BACKUP_DIR=$CURRENT_DIR/$1
+  ALM_BACKUP_DIR=$ALM_CURRENT_DIR/$1
 fi
 
 # 実行ユーザーチェック
@@ -29,7 +28,7 @@ then
 fi
 
 #バックアップディレクトリのチェック
-if [ ! -d $BACKUP_DIR ]
+if [ ! -d $ALM_BACKUP_DIR ]
 then
   echo "バックアップディレクトリが見つかりませんでした。処理を中止します"
   exit 1
@@ -42,19 +41,19 @@ echo "バックアップを開始します。処理を続行する場合は何�
 read DO_CONTINUE
 
 #データベースをバックアップ
-if [ "$DBBACKUP_NAME" = "" ]
+if [ "$ALM_DBBACKUP_NAME" = "" ]
 then
-  export DBBACKUP_NAME=$BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
+  ALM_DBBACKUP_NAME=$ALM_BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
 fi
-if [ -f $DBBACKUP_NAME ]
+if [ -f $ALM_DBBACKUP_NAME ]
 then
   echo "データベースバックアップファイルが既に存在します。念のため処理を中止しま
 す。"
   exit 1
 fi
 echo "MySQLデータベースをバックアップします。"
-mysqldump -uroot alminium > $DBBACKUP_NAME
-if [ -f $DBBACKUP_NAME ]
+mysqldump -uroot alminium > $ALM_DBBACKUP_NAME
+if [ -f $ALM_DBBACKUP_NAME ]
 then
   echo "MySQLデータベースのバックアップが成功しました。"
 else
@@ -64,19 +63,19 @@ fi
 
 #redmineの添付ファイルをバックアップ
 ##大きすぎて非効率な場合は、/opt/alminium/files以下を退避（移動）しておけば良い
-if [ "$FILE_BACKUP" = "" ]
+if [ "$ALM_FILE_BACKUP" = "" ]
 then
-  export FILE_BACKUP=$BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+  ALM_FILE_BACKUP=$ALM_BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
 fi
-if [ -f $FILE_BACKUP ]
+if [ -f $ALM_FILE_BACKUP ]
 then
   echo "Redmine添付ファイルのバックアップファイルが既に存在します。処理を中止し>ます。"
   exit 1
 fi
 echo "Redmineの添付ファイルをバックアップします。"
 cd /opt/alminium/files/
-tar czf $FILE_BACKUP .
-if [ -f $FILE_BACKUP ]
+tar czf $ALM_FILE_BACKUP .
+if [ -f $ALM_FILE_BACKUP ]
 then
   echo "Redmineの添付ファイルのバックアップが成功しました。"
 else
@@ -86,11 +85,11 @@ fi
 
 #ソースコードリポジトリ
 ##大きすぎて非効率な場合は、/var/opt/alminium/以下を退避（移動）しておけば良い
-if [ "$REPOS_BACKUP" = "" ]
+if [ "$ALM_REPOS_BACKUP" = "" ]
 then
-  export REPOS_BACKUP=$BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+  ALM_REPOS_BACKUP=$ALM_BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
 fi
-if [ -f $REPOS_BACKUP ]
+if [ -f $ALM_REPOS_BACKUP ]
 then
   echo "ソースコードリポジトリのバックアップが既に存在します。処理を中止します。
 "
@@ -98,8 +97,8 @@ then
 fi
 echo "ソースコードリポジトリをバックアップします。"
 cd /var/opt/alminium/
-tar czf $REPOS_BACKUP .
-if [ -f $REPOS_BACKUP ]
+tar czf $ALM_REPOS_BACKUP .
+if [ -f $ALM_REPOS_BACKUP ]
 then
   echo "ソースコードリポジトリのバックアップが成功しました。"
 else

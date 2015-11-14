@@ -2,37 +2,25 @@
 # 下記の形式で記述:
 #
 #   プラグインディレクトリ名,アーカイブディレクトリ名 or タグ名,URL
-# 
+#
 # プラグインディレクトリ名はvendor/pluginsに置くプラグインの名前
 # アーカイブディレクトリ名はtgz/zipファイルを展開したときのディレクト名
-redmine_wiki_extensions,redmine_wiki_extensions,https://bitbucket.org/haru_iida/redmine_wiki_extensions/downloads/redmine_wiki_extensions-0.6.5.zip
-#redmine_issue_extensions,redmine_issue_extensions,http://redmineissueext.googlecode.com/files/redmine_issue_extensions1.0.7.1.zip
-redmine_xls_export,0.2.1.t4,https://github.com/two-pack/redmine_xls_export.git
+redmine_wiki_extensions,redmine_wiki_extensions,https://bitbucket.org/haru_iida/redmine_wiki_extensions/downloads/redmine_wiki_extensions-0.7.0.zip
+redmine_xls_export,ALMinium,https://github.com/ayapapa/redmine_xls_export.git
 redmine_plugin_views_revisions,redmine_plugin_views_revisions,http://www.redmine.org/attachments/download/7705/redmine_plugin_views_revisions_v001.zip
 redmine_importer,master,https://github.com/zh/redmine_importer.git
-redmine_code_review,0.6.5,https://bitbucket.org/haru_iida/redmine_code_review
-redmine_hudson,redmine2.x,https://bitbucket.org/okamototk/redmine_hudson
-##redmine_ms_projects,master,https://github.com/suer/redmine_ms_projects.git
-redmine_backlogs,ubuntu1404-support,https://github.com/ayapapa/redmine_backlogs.git
+redmine_code_review,0.7.0,https://bitbucket.org/haru_iida/redmine_code_review
+# jenkins関係をここでインストールすると失敗する（別途インストールするようにした）
+#redmine_bootstrap,0.2.3,https://github.com/jbox-web/redmine_bootstrap_kit.git
+#redmine_jenkins,1.0.1,https://github.com/jbox-web/redmine_jenkins.git
+redmine_backlogs,redmine3-dev,https://github.com/ayapapa/redmine_backlogs.git
 redmine_spent_time_column,backlogs-support,https://github.com/mikoto20000/redmine_spent_time_column.git
-#redmine_scm,HEAD,http://svn.s-andy.com/scm-creator/
-#最新版を適用するように変更
-#redmine_scm,master,https://github.com/alminium/redmine_scm.git
 redmine_scm,ALMinium-support,https://github.com/ayapapa/redmine_scm.git
-#Redmine1.3.1のWikiのセクション編集ができなくなるのでredmine_restructuredtext_formatterを削除
-#redmine_restructuredtext_formatter,japanese-localization,https://github.com/alminium/redmine_restructuredtext_formatter.git
-#redmine_redcarpet_formatter,master,https://github.com/alminium/redmine_redcarpet_formatter.git
-#redmine_mypageparts_collection,master,https://github.com/alminium/redmine_mypageparts_collection.git
 redmine_drafts,alm,https://github.com/alminium/redmine_drafts.git
 clipboard_image_paste,master,https://github.com/peclik/clipboard_image_paste.git
-#redmine_lightbox,master,https://github.com/zipme/redmine_lightbox.git
 redmine_banner,master,https://github.com/akiko-pusu/redmine_banner.git
 open_flash_chart,master,https://github.com/pullmonkey/open_flash_chart.git
-redmine_charts,master,https://github.com/drakontia/redmine_charts.git
-redmine_local_avatars,master,https://github.com/luckval/redmine_local_avatars.git
+#redmine_charts,master,https://github.com/drakontia/redmine_charts.git
+redmine_local_avatars,master,https://github.com/thorin/redmine_local_avatars.git
 redmine_git_branch_hook,master,https://github.com/mikoto20000/redmine_git_branch_hook.git
-# advanced_roadmapはbacklogsと競合するためどちらかを選択
-#advanced_roadmap,advanced_roadmap,https://ociotec.com/redmine/attachments/download/155/advanced_roadmap.0.5.1.tar.gz
-#ファイル管理(DMSF)
 redmine_dmsf,ALMinium-support,https://github.com/ayapapa/redmine_dmsf.git
-

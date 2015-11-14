@@ -1,4 +1,5 @@
 #!/bin/bash
+add-apt-repository -y ppa:brightbox/ruby-ng
 apt-get -q2 update
 apt-get -y install `grep -v "^#" inst-script/debian/packages.lst`
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system

@@ -11,14 +11,14 @@ UPDATE trackers SET name='タスク' WHERE name='サポート';
 UPDATE  issue_statuses SET name='レビュー' WHERE name='解決';
 
 /*** レビュー依頼のトラッカーの設定 ***/
-REPLACE INTO trackers (name,position,is_in_roadmap) VALUES ('レビュー依頼',4,0);
+REPLACE INTO trackers (name,position,is_in_roadmap,default_status_id) VALUES ('レビュー依頼',4,0,1);
 /* copy workflow configuraation from tracker '1' */
 REPLACE INTO workflows (tracker_id,old_status_id,new_status_id,role_id)
        SELECT 4, old_status_id,new_status_id,role_id FROM workflows
        WHERE tracker_id = 1;
 
 /*** レビューコメントのトラッカーの設定 ***/
-REPLACE INTO trackers (name,position,is_in_roadmap) VALUES ('レビューコメント',5,0);
+REPLACE INTO trackers (name,position,is_in_roadmap,default_status_id) VALUES ('レビューコメント',5,0,1);
 REPLACE INTO workflows (tracker_id,old_status_id,new_status_id,role_id)
        SELECT 5, old_status_id,new_status_id,role_id FROM workflows
        WHERE tracker_id = 1;
