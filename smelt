@@ -14,7 +14,7 @@ RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 CPCMD='cp -fr'
 RMCMD='rm -fr'
 
-ALM_UPGRADE=""
+export ALM_UPGRADE=""
 if [ "$1" = "-u" ]
 then
   ALM_UPGRADE=y
@@ -257,6 +257,7 @@ $CPCMD redmine/public/themes/* $INSTALL_DIR/public/themes/
 # install plugins
 echo "*** install plugins ***"
 source redmine/setup/redmine-plugins
+source redmine/setup/redmine-plugins2
 
 if [ "$ALM_UPGRADE" = "" ]
 then
@@ -290,8 +291,4 @@ source inst-script/$OS/post-install
 #then
 #  echo "* * * * * /opt/alminium/extra/svn/reposman.rb -g apache -o apache -s /var/opt/alminium/git -u /var/opt/alminium/git -r localhost --scm git" >> /var/spool/cron/root
 #fi
-
-# プラグインのインストール(last)
-echo "*** install plugins(2nd) ***"
-source redmine/setup/redmine-plugins2
 

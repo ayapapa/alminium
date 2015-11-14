@@ -5,9 +5,6 @@
 # カレントディレクトリを退避
 pushd .
 
-# Apache停止
-service apache2 stop
-
 # install redmine_bootstrap
 cd $INSTALL_DIR/plugins
 git clone https://github.com/jbox-web/redmine_bootstrap_kit.git
@@ -27,9 +24,6 @@ bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_jenki
 
 # 権限を変更
 chown -R $APACHE_USER:$APACHE_USER $INSTALL_DIR
-
-# Apache起動
-service apache2 start
 
 # ディレクトリを元に戻す
 popd

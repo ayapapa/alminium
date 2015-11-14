@@ -120,8 +120,12 @@ fi
 # for backlogs
 if [ -d plugins/redmine_backlogs ]
 then
-  TASK_TRACKER_NAME=`mysql -u root alminium --execute="select name from trackers where id=3;" | sed -e '1,1d'`
-  bundle exec rake redmine:backlogs:install task_tracker="$TASK_TRACKER_NAME" story_trackers=機能 labels=false RAILS_ENV=production
+  if [ $ALM_UPGRADE = "y" ]
+  then
+    bundle exec rake redmine:backlogs:install task_tracker=タスク story_tracker
+  else
+    bundle exec rake redmine:backlogs:install task_tracker=サポート story_track
+  fi
 fi
 
 # FIXME: to avoid open_flash_chart assets aren't copied.
