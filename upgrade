@@ -77,7 +77,6 @@ source ./smelt -u
 
 #バックアップの復元
 echo "***バックアップデータを復元します。"
-service apache2 stop
 cd $ALM_CURRENT_DIR
 echo "***リポジトリーデータを復元しています・・・"
 cd /var/opt/alminium/ && tar xzf $ALM_REPOS_BACKUP
@@ -96,7 +95,8 @@ bundle exec rake tmp:sessions:clear
 echo "データベースのマイグレーションが完了しました。"
 
 echo "サービスを起動します。"
-service apache2 start
+cd $ALM_CURRENT_DIR
+source ./inst-script/$OS/service-restart
 
 echo ""
 echo "以上でアップグレードは終了です。途中にエラーが発生した場合は、元の状態に戻して手動でアップグレードを実施してください。"
