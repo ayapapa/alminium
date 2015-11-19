@@ -33,7 +33,7 @@ REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_backlogs','
 :story_trackers:
 - 2
 :task_tracker: 4
-:card_spec:
+:card_spec: \'APLI 01293\'
 :taskboard_card_order: story_follows_tasks
 :story_points: \'1,2,3,5,8\'
 :show_burndown_in_sidebar: enabled
