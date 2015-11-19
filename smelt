@@ -285,6 +285,12 @@ fi
 echo "*** run post-install script ***"
 source inst-script/$OS/post-install
 
+# for SUBDIRECTORY
+if [ "$ALMINIUM_SUBDIR" = "y" ]
+then
+  ln -sf $INSTALL_DIR/public /var/www/html/alminium
+fi
+
 # プロジェクト作成時に自動的にリポジトリを作成するときに利用
 #CHK=`egrep "reposman" /var/spool/cron/root`
 #if [ "$CHK" = '' ]

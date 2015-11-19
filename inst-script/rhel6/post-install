@@ -8,7 +8,7 @@ fi
 
 if [ "$SSL" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
 if [ "$ENABLE_JENKINS" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
-if [ "$ALMINIUM_SUBDIR" = "y" ]; then REPLACE_DIR="#SUBDIR# *"; fi
+if [ "$ALMINIUM_SUBDIR" = "y" ]; then REPLACE_DIR="#SUBDIR# *"; else REPLACE_DIR="#NO_SUBDIR# *"; fi
 for FILE in $(ls etc/ | grep '.conf$')
 do
   sed -e "s|#HOSTNAME#|$HOSTNAME|" \
@@ -18,11 +18,6 @@ do
       -e "s|$REPLACE_DIR||" \
       "etc/$FILE" > "$ALM_ETC_DIR/$FILE"
 done
-
-if [ "$ALMINIUM_SUBDIR" = "y" ]
-then
-  ln -sf "$INSTALL_DIR/public" "$INSTALL_DIR/public/alminium"
-fi
 
 ln -sf "$ALM_ETC_DIR/passenger.conf" "$APACHE_CONF_DIR/"
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "$APACHE_CONF_DIR/"
