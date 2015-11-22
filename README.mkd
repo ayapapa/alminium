@@ -26,9 +26,8 @@ ALMiniumは、次のような特徴を持っています。
   * アジャイルでない開発でも使えます:)
  * 使いやすさの追求
   * ブラウザのクラッシュ時に嬉しい書きかけのチケットの自動復元機能やクリップボードからのスクリーンショットの添付など無償とはいえ、使いやすさに妥協を許しません。
-  * RedcarpetによるGitHub互換のMarkdown表記をWiki/チケットに標準で利用することができます。Redmine標準のTextileに格段に分り易いです。Wikiエンジンを切り換えることによりreStructuredText(Sphinxで利用しているフォーマット)も利用可能です。
   * Git,Mercurial,Subversionのリポジトリ作成がプロジェクト作成画面から行えます。リポジトリサーバの小難しい設定も不要で、勝手にやってくれます。
-  * MS Project,Excelのインポートなど、既存ツールとの連携を行うことができます。
+  * Excelのインポートなど、既存ツールとの連携を行うことができます。
  * マルチプロジェクト対応
   * 構築したALMiniumサーバ上で複数のプロジェクトを管理することができます。ALMinium(Redmin)のカスタマイズやプラグインによる拡張は全てのプロジェクトが恩恵を受けることができます。
  * 高い品質
@@ -42,20 +41,20 @@ ALMiniumは、次のRedmineプラグインを同梱しています。
 プラグイン   |説明
 -------------|------
 Backlogs     |スクラム開発のサポート
-Hudson Plugin|Jenkins/Hudsonとの連携
+Jenkins Plugin|Jenkinsとの連携
 Code Review  |コードレビュー支援
-Redcarpet Wiki Formatter|GitHubのMarkdown Wikiフォーマットを利用
-MSProjects   |MS Projectのファイルをインポート
 XLS export   |Excelでチケットを出力
 Git Branch Hook| Gitのブランチでの作業をチケットに連動させます
+DMSF         |文書管理
 
-その他のプラグインついては、<a href="config/redmine-plugins.lst">プラグインリストファイル</a>をご覧ください。
+その他のプラグインついては、<a href="redmine/setup/redmine-plugins.lst">プラグインリストファイル</a>をご覧ください。
 
 ## 動作環境
 
  * RHEL6 x64互換環境(OEL,SL,CentOSなど含む)
- * Ubuntu 12.04(x64)
- * Amazon AMI Linux 2011.09
+ * Ubuntu 14.04(x64)
+ * 
+ * ※Amazon AMI Linux は未確認
 
 32ビット版OSはサポートしていません。64ビット版をお使いください。下記のOSはサポートしていませんが、対応コードらしきものはあるのでがんばれば動作するかもしれません。
 
