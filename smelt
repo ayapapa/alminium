@@ -266,8 +266,16 @@ then
   $MYSQL alminium < redmine/setup/init.mysql
 fi
 
+# install hooks
 mkdir -p $INSTALL_DIR/bin
 $CPCMD redmine/bin/* $INSTALL_DIR/bin/
+if [ ! "$ALMINIUM_SUBDIR" = "" ]
+then
+  mv $INSTALL_DIR/bin/alm-sync-scm $INSTALL_DIR/bin/alm-sync-scm.org
+  cat $INSTALL_DIR/bin/alm-sync-scm.org | \
+  sed 's/localhost/localhost\/alminium/g' > $INSTALL_DIR/bin/alm-sync-scm
+  chmod +x $INSTALL_DIR/bin/alm-sync-scm
+fi
 $CPCMD redmine/hooks $INSTALL_DIR/
 chown -R $APACHE_USER:$APACHE_USER $INSTALL_DIR
 
@@ -286,7 +294,7 @@ echo "*** run post-install script ***"
 source inst-script/$OS/post-install
 
 # for SUBDIRECTORY
-if [ "$ALMINIUM_SUBDIR" = "y" ]
+if [ ! "$ALMINIUM_SUBDIR" = "" ]
 then
   ln -sf $INSTALL_DIR/public /var/www/html/alminium
 fi
