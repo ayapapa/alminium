@@ -27,13 +27,15 @@ REPLACE INTO workflows (tracker_id,old_status_id,new_status_id,role_id)
  * トラッカーの「機能」をストーリーに割り当て(backlogsのバグ)
  * TODO: backlogsのバグが直ったら削除
  *       (バージョンによってUPDATEでないと動かなかったり、REPLACE
-          でないと動かなかったりする)
+ *        でないと動かなかったりする)
+ *  下記重複問題は一旦削除して設定するように変更した
  ********************************************************************/
+DELETE FROM settings WHERE name='plugin_redmine_backlogs';
 REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_backlogs','---
 :story_trackers:
 - 2
-:task_tracker: 4
-:card_spec: \'APLI 01293\'
+:task_tracker: 3
+:card_spec: APLI 01293
 :taskboard_card_order: story_follows_tasks
 :story_points: \'1,2,3,5,8\'
 :show_burndown_in_sidebar: enabled
@@ -46,7 +48,8 @@ REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_backlogs','
  * https://github.com/alminium/alminium/issues/69
  * TODO: バグがfixされたら削除
  ********************************************************************/
-DELETE FROM settings WHERE name='plugin_redmine_backlogs' AND id='2';
+/* DELETE FROM settings WHERE name='plugin_redmine_backlogs' AND id='2';
+*/
 
 /*********************************************************************
  * コードレビューとコミットとチケットの関連のパーミッションの設定
@@ -97,9 +100,11 @@ REPLACE INTO settings(name,value,updated_on) VALUES ('ui_theme','gitmike',curren
 REPLACE INTO settings(name,value,updated_on) VALUES ('app_title','ALMinium',current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('default_language','ja',current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('gravatar_enabled',1,current_date);
+REPLACE INTO settings(name,value,updated_on) VALUES ('gravatar_default','retro',current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('sys_api_enabled',1,current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('sys_api_key','',current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('default_projects_modules','--- \n- issue_tracking\n- news\n- wiki\n- repository\n',current_date);
+REPLACE INTO settings(name,value,updated_on) VALUES ('new_project_user_role_id',3,current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('text_formatting','markdown',current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('cache_formatted_text',1,current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('user_format','lastname_firstname',current_date);     
