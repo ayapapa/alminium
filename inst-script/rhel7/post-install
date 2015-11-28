@@ -42,8 +42,8 @@ cp $ALM_ETC_DIR/alminium-logrotate /etc/logrotate.d/alminium
 # セキュリティ無効化の設定
 if [ ! "$USE_DISABLE_SECURITY" = "n" ]
 then
-  # SELinuxを無効化
-#  echo 0 > /selinux/enforce
+  echo "SELinuxを無効化します"
+  setenforce 0
   CHK=`grep SELINUX=enforcing /etc/selinux/config`
   if [ ! "$CHK" = '' ]
   then
@@ -55,22 +55,6 @@ then
   firewall-cmd --add-service=http --add-service=https --zone=public --permanent
   firewall-cmd --reload
   firewall-cmd --list-all
-#  CHK=`grep "dport 80" /etc/sysconfig/iptables`
-#  if [ "$CHK" = '' ]
-#  then
-#    RULENUM=`iptables-save |grep INPUT |grep -n "dport 22"|awk -F : '{print $1}'`
-#    iptables -I  INPUT ${RULENUM} -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
-#    iptables-save > /etc/sysconfig/iptables
-#    echo "tcp 80番ポートのアクセスを許可しました"
-#  fi
-#  CHK=`grep "dport 443" /etc/sysconfig/iptables`
-#  if [ "$CHK" = '' ]
-#  then
-#    RULENUM=`iptables-save |grep INPUT |grep -n "dport 22"|awk -F : '{print $1}'`
-#    iptables -I  INPUT ${RULENUM} -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
-#    iptables-save > /etc/sysconfig/iptables
-#    echo "tcp 443番ポートのアクセスを許可しました"
-#  fi
 fi
 
 # MariaDB設定
@@ -82,7 +66,7 @@ then
   echo -e "\n[mysql]\ndefault-character-set=utf8\n" >> /etc/my.cnf
 fi
 
-chkconfig --add httpd
+#chkconfig --add httpd
 chkconfig httpd on
 service httpd stop
 service httpd start

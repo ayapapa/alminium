@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export USE_DISABLE_SECURITY=""
 if [ "$USE_DISABLE_SECURITY" = "" ]
 then
 echo "*******************************************************"
@@ -12,19 +13,9 @@ echo -n "アプリケーションを動作させるためにセキュリティ�
 read USE_DISABLE_SECURITY
 fi
 yum update -y ca-certificates
-if [ -f /etc/yum.repos.d/epel.repo ]
-then
-  CHK=`grep "enabled=1" /etc/yum.repos.d/epel.repo`
-  if [ "$CHK" = "" ]
-  then
-    sed '1,/enabled=0/s/enabled=0/enabled=1/' /etc/yum.repos.d/epel.repo >/tmp/epel.repo
-    mv -f /tmp/epel.repo /etc/yum.repos.d/epel.repo
-  fi
-else
-  yum -y --nogpgcheck install wget
-  EPEL_RPM_NAME=`wget -O /dev/stdout http://download.fedoraproject.org/pub/epel/7/x86_64/repoview/epel-release.html | grep -o 'epel-release-[0-9]*-[0-9]*.noarch.rpm'`
-  rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/${EPEL_RPM_NAME}
-fi
+
+# 必要なパッケージをインストール
+yum -y install epel-release
 yum -y --nogpgcheck install `grep -v "^#" inst-script/$OS/packages.lst`
 
 #CHK=`grep Amazon /etc/system-release`
@@ -39,22 +30,8 @@ then
     yum -y install mod_ssl
 fi
 
-#chkconfig --add mysqld
-#chkconfig mysqld on
-#service mysqld start
+# データベース起動および自動起動設定
+service mariadb start
+systemctl enable mariadb
 
-#if [[ `which ruby` == "" || ! `ruby --version` =~ 2.1. ]]
-#then
-#    rpm -Uvh "https://github.com/hansode/ruby-rpm/blob/master/7/x86_64/ruby-2.1.2-2.el6.x86_64.rpm?raw=true"
-#fi
-
-# mod_perlをインストール -> 上記のepel設定でyumでインストール可能となっていたのでここは不要
-#pushd $ALM_SRC_DIR/cache
-#wget http://search.cpan.org/CPAN/authors/id/S/SH/SHAY/mod_perl-2.0.9.tar.gz
-#tar xzvf mod_perl-2.0.9.tar.gz
-#cd mod_perl-2.0.9/
-#perl Makefile.PL USE_APXS=1 WITH_APXS=/usr/bin/apxs EVERYTHING=1
-#make 
-#sudo make install
-#popd
 
