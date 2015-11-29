@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Redmine Perlモジュール（リポジトリ認証連携）設定
+#if [ ! -f /etc/httpd/Apache/Authn/Redmine.pm ]
+#then
+#  mkdir -p /etc/httpd/Apache/Authn
+#  cp $INSTALL_DIR/extra/svn/Redmine.pm /etc/httpd/Apache/Authn/
+#fi
+if [ -f /etc/perl/Apache/Authn/Redmine.pm ]
+then
+  #backup Redmine.pm
+  mv /etc/perl/Apache/Authn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm-`date +"%Y-%m-%d-%H-%M-%S"`
+fi
+mkdir -p /etc/httpd/Apache/Authn
+#remove error(unsubstantial) symbolic link
+rm -f /etc/httpd/Apache/Authn/Redmine.pm
+cat $INSTALL_DIR/extra/svn/Redmine.pm | \
+sed s/'  \$r->set_handlers(PerlAuthenHandler => \[\\&OK\])'/'  #modified for anonymous access(see https\:\/\/github.com\/ayapapa\/alminium\/issues\/16)\n  #\$r->set_handlers(PerlAuthenHandler => \[\\\&OK])'/  |
+sed s/'    if is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r);'/'#    if is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r);\n  if (is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r)) {\n      \$r->set_handlers(PerlAuthenHandler => \[\\\&OK]);\n      \$r->user(\"\");\n  }'/ |
+sed s/'    if is_public_project(\$project_id, \$r) \&\& anonymous_allowed_to_browse_repository(\$project_id, \$r);'/'#    if is_public_project(\$project_id, \$r) \&\& anonymous_allowed_to_browse_repository(\$project_id, \$r);\n  if (is_public_project(\$project_id, \$r) \&\& anonymous_allowed_to_browse_repository(\$project_id, \$r)) {\n      \$r->set_handlers(PerlAuthenHandler => \[\\\&OK]);\n      \$r->user(\"\");\n  }'/ > $INSTALL_DIR/extra/svn/Redmine-patched.pm
+ln -s $INSTALL_DIR/extra/svn/Redmine-patched.pm /etc/httpd/Apache/Authn/Redmine.pm
+
+if [ "$SSL" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
+if [ "$ENABLE_JENKINS" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
+if [ "$ALMINIUM_SUBDIR" = "y" ]; then REPLACE_DIR="#SUBDIR# *"; else REPLACE_DIR="#NO_SUBDIR# *"; fi
+for FILE in $(ls etc/ | grep '.conf$')
+do
+  sed -e "s|#HOSTNAME#|$HOSTNAME|" \
+      -e "s|#$OS# *||" \
+      -e "s|$REPLACE_SSL||" \
+      -e "s|$REPLACE_JENKINS||" \
+      -e "s|$REPLACE_DIR||" \
+      "etc/$FILE" > "$ALM_ETC_DIR/$FILE"
+done
+
+ln -sf "$ALM_ETC_DIR/passenger.conf" "$APACHE_CONF_DIR/"
+ln -sf "$ALM_ETC_DIR/alminium.conf"  "$APACHE_CONF_DIR/"
+
+#log rotate
+cp $ALM_ETC_DIR/alminium-logrotate /etc/logrotate.d/alminium
+
+# セキュリティ無効化の設定
+if [ ! "$USE_DISABLE_SECURITY" = "n" ]
+then
+  echo "SELinuxを無効化します"
+  setenforce 0
+  CHK=`grep SELINUX=enforcing /etc/selinux/config`
+  if [ ! "$CHK" = '' ]
+  then
+    sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config 
+    echo "SELinuxが無効化されました"
+  fi
+
+  # ファイアウォールの設定で80番(http)および443番(https)を許可
+  firewall-cmd --add-service=http --add-service=https --zone=public --permanent
+  firewall-cmd --reload
+  firewall-cmd --list-all
+fi
+
+# MariaDB設定
+CHK=`grep "character-set-server=utf8" /etc/my.cnf`
+if [ "$CHK" = "" ]
+then
+  mv /etc/my.cnf /etc/my.cnf.org
+  cat /etc/my.cnf.org | sed -e "s/\[mysqld_safe\]/character-set-server=utf8\n\n\[mysqld_safe\]/g" > /etc/my.cnf
+  echo -e "\n[mysql]\ndefault-character-set=utf8\n" >> /etc/my.cnf
+fi
+
+#chkconfig --add httpd
+chkconfig httpd on
+service httpd stop
+service httpd start

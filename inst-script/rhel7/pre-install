@@ -1,0 +1,37 @@
+#!/bin/bash
+
+export USE_DISABLE_SECURITY=""
+if [ "$USE_DISABLE_SECURITY" = "" ]
+then
+echo "*******************************************************"
+echo "  セキュリティの設定"
+echo "*******************************************************"
+echo "アプリケーションを動作させるために、ファイアフォールの設定とSELinuxの無効化を行います。"
+echo "nと答えると手動でセキュリティの設定が必要となります。分らない場合はYと答えてください。"
+echo 
+echo -n "アプリケーションを動作させるためにセキュリティの設定を行いますか?[Y/n]"
+read USE_DISABLE_SECURITY
+fi
+yum update -y ca-certificates
+
+# 必要なパッケージをインストール
+yum -y install epel-release
+yum -y --nogpgcheck install `grep -v "^#" inst-script/$OS/packages.lst`
+
+#CHK=`grep Amazon /etc/system-release`
+#if [ "$CHK" != '' ]
+#then
+#  rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+#  yum  --enablerepo=remi -y --nogpgcheck install mysqlclient16
+#fi
+
+if [ "$SSL" = "y" ]
+then
+    yum -y install mod_ssl
+fi
+
+# データベース起動および自動起動設定
+service mariadb start
+systemctl enable mariadb
+
+

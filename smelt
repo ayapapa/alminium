@@ -14,6 +14,8 @@ RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 CPCMD='cp -fr'
 RMCMD='rm -fr'
 
+PATH=/usr/local/bin:${PATH}
+
 export ALM_UPGRADE=""
 if [ "$1" = "-u" ]
 then
@@ -42,10 +44,12 @@ then
 fi
 
 # OSを確認
+export OS=""
+export APACHE_CONF_DIR=""
 if [ -f /etc/redhat-release ]
 then
     APACHE_USER=apache
-    export APACHE_CONF_DIR=/etc/httpd/conf.d
+    APACHE_CONF_DIR=/etc/httpd/conf.d
     MYSQLD='/etc/init.d/mysqld'
     MYSQL='mysql'
     CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
@@ -56,6 +60,13 @@ then
         echo "RHEL 5.x / CentOS 5.x / OEL 5.xは、サポートされていません。"
         echo "インストールを中止します。"
         exit 1
+    fi
+    CHK=`egrep "CentOS Linux release 7" /etc/redhat-release`
+    if [ "$CHK" != '' ]
+    then
+        OS='rhel7'
+        echo "CentOS 7.x が検出されました。"
+        MYSQLD='service mariadb'
     else
         OS='rhel6'
         echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
@@ -63,7 +74,7 @@ then
 elif [ -f /etc/system-release ]
 then
     APACHE_USER=apache
-    export APACHE_CONF_DIR=/etc/httpd/conf.d
+    APACHE_CONF_DIR=/etc/httpd/conf.d
     MYSQLD='/etc/init.d/mysqld'
     MYSQL='mysql'
     CHK=`egrep "Amazon Linux AMI" /etc/system-release`
@@ -74,10 +85,10 @@ then
     fi
 elif [ -f /etc/debian_version ]
 then
-    OS='debian'
     APACHE_USER=www-data
-    export APACHE_CONF_DIR=/etc/apache2/conf.d
+    APACHE_CONF_DIR=/etc/apache2/conf.d
     MYSQLD='/etc/init.d/mysql'
+    OS='debian'
     echo "Debian / Ubuntu が検出されました。"
     echo "インストールに失敗するかも知れませんが、お許しくださいm(__)m"
     echo ""
@@ -88,11 +99,11 @@ else
     CHK=`sw_vers | awk '$1 = "ProductName"{ _OS = $2 " " $3 " " $4; getline; print _OS,$2; exit }'`
     if [ "$CHK" != '' ]
     then
-      OS='mac'
       APACHE_USER=www
-      export APACHE_CONF_DIR=/opt/local/apache2/conf
+      APACHE_CONF_DIR=/opt/local/apache2/conf
       MYSQLD=/opt/local/share/mysql55/support-files/mysql.server
-      MYSQLD=mysql
+      MYSQL=mysql
+      OS='mac'
       CPCMD='cp -Rf'
       RMCMD='rm -Rf'
       echo "${CHK}が検出されました。"
@@ -185,7 +196,7 @@ git submodule update
 # install packages
 if [ ! -f packages.installed ]
 then
-  echo "*** run pre-install script ***"
+  echo "*** run $OS's pre-install script ***"
   source inst-script/$OS/pre-install
   touch packages.installed
 fi
@@ -294,7 +305,7 @@ echo "*** run post-install script ***"
 source inst-script/$OS/post-install
 
 # for SUBDIRECTORY
-if [ ! "$ALMINIUM_SUBDIR" = "" ]
+if [ "$ALMINIUM_SUBDIR" != "" ]
 then
   ln -sf $INSTALL_DIR/public /var/www/html/alminium
 fi
