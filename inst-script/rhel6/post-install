@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ ! -f /etc/httpd/Apache/Authn/Redmine.pm ]
-then
-  mkdir -p /etc/httpd/Apache/Authn
-  cp $INSTALL_DIR/extra/svn/Redmine.pm /etc/httpd/Apache/Authn/
-fi
+# set Redmine.pm
+mkdir -p /etc/perl/Apache/Authn
+rm -f /etc/perl/Apache/Authn/Redmine.pm
+ln -s $INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
 
+# Apache configs
 if [ "$SSL" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
 if [ "$ENABLE_JENKINS" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
 if [ "$ALMINIUM_SUBDIR" = "y" ]; then REPLACE_DIR="#SUBDIR# *"; else REPLACE_DIR="#NO_SUBDIR# *"; fi
@@ -22,7 +22,7 @@ done
 ln -sf "$ALM_ETC_DIR/passenger.conf" "$APACHE_CONF_DIR/"
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "$APACHE_CONF_DIR/"
 
-#log rotate
+# log rotate
 cp $ALM_ETC_DIR/alminium-logrotate /etc/logrotate.d/alminium
 
 # セキュリティ無効化の設定
