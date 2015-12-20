@@ -268,7 +268,6 @@ $CPCMD redmine/public/themes/* $INSTALL_DIR/public/themes/
 # install plugins
 echo "*** install plugins ***"
 source redmine/setup/redmine-plugins
-source redmine/setup/redmine-plugins2
 
 if [ "$ALM_UPGRADE" = "" ]
 then

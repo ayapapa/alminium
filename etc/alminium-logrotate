@@ -1,5 +1,7 @@
 /opt/alminium/log/*.log {
   weekly        # 週一回rotateを実行する
+  rotate 52     # 52週分残す
+  maxage 365    # 365日より前に保存されたログは削除する
   missingok     # ファイルが存在しなくてもエラーにならない
   notifempty    # logファイルが空の時はrotateしない
   copytruncate  # ログを別名でコピーした後、元のファイルの内容を空にする
