@@ -3,7 +3,6 @@
 # upgrader for ALMinium.
 ############################################################
 
-# 新たにインストールするRedmineのバージョン
 ALM_INSTALL_DIR=/opt/alminium
 ALM_CURRENT_DIR=`pwd`
 
