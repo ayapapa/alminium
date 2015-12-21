@@ -3,20 +3,20 @@
 # Smart installer for redmine/chiliproject.
 ############################################################
 
-export ALM_SRC_DIR=$(cd $(dirname $0);pwd)
-export ALM_ETC_DIR=/etc/opt/alminium
-export ALM_VAR_DIR=/var/opt/alminium
-export INSTALL_DIR=/opt/alminium
+ALM_SRC_DIR=$(cd $(dirname $0);pwd)
+ALM_ETC_DIR=/etc/opt/alminium
+ALM_VAR_DIR=/var/opt/alminium
+INSTALL_DIR=/opt/alminium
 
-export RAILS_ENV=production
-RM_VER=3.1.2
+RAILS_ENV=production
+RM_VER=3.1.3
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 CPCMD='cp -fr'
 RMCMD='rm -fr'
 
 PATH=/usr/local/bin:${PATH}
 
-export ALM_UPGRADE=""
+ALM_UPGRADE=""
 if [ "$1" = "-u" ]
 then
   ALM_UPGRADE=y
@@ -44,8 +44,8 @@ then
 fi
 
 # OSを確認
-export OS=""
-export APACHE_CONF_DIR=""
+OS=""
+APACHE_CONF_DIR=""
 if [ -f /etc/redhat-release ]
 then
     APACHE_USER=apache
@@ -196,7 +196,7 @@ git submodule update
 # install packages
 if [ ! -f packages.installed ]
 then
-  echo "*** run $OS's pre-install script ***"
+  echo "*** run pre-install script ***"
   source inst-script/$OS/pre-install
   touch packages.installed
 fi
@@ -208,7 +208,7 @@ then
   touch gems.installed
 fi
 
-export RAKE=`which rake2.0`
+RAKE=`which rake2.0`
 
 if [ "$RAKE" = "" ]
 then
@@ -268,7 +268,6 @@ $CPCMD redmine/public/themes/* $INSTALL_DIR/public/themes/
 # install plugins
 echo "*** install plugins ***"
 source redmine/setup/redmine-plugins
-source redmine/setup/redmine-plugins2
 
 if [ "$ALM_UPGRADE" = "" ]
 then
@@ -302,7 +301,7 @@ then
 fi
 
 echo "*** run post-install script ***"
-source inst-script/$OS/post-install
+source inst-script/post-install
 
 # for SUBDIRECTORY
 if [ "$ALMINIUM_SUBDIR" != "" ]

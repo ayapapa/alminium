@@ -3,7 +3,6 @@
 # upgrader for ALMinium.
 ############################################################
 
-# 新たにインストールするRedmineのバージョン
 ALM_INSTALL_DIR=/opt/alminium
 ALM_CURRENT_DIR=`pwd`
 
@@ -96,7 +95,7 @@ echo "データベースのマイグレーションが完了しました。"
 
 echo "サービスを起動します。"
 cd $ALM_CURRENT_DIR
-source ./inst-script/$OS/service-restart
+source ./inst-script/service-restart
 
 echo ""
 echo "以上でアップグレードは終了です。途中にエラーが発生した場合は、元の状態に戻して手動でアップグレードを実施してください。"
