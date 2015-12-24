@@ -1,30 +1,11 @@
 #!/bin/bash
 
 # set Redmine.pm
-# modified for https://github.com/ayapapa/alminium/issues/16
-# 上記問題は本家で解決されたためRedmine.pmは本家のものをそのまま利用するようにする
-#if [ ! -f /etc/perl/Apache/Authn/Redmine.pm ]
-#then
-#  mkdir -p /etc/perl/Apache/Authn
-#  cat  $INSTALL_DIR/extra/svn/Redmine.pm |sed 's/Digest::SHA1/Digest::SHA/g' > /etc/perl/Apache/Authn/Redmine.pm
-#  cp $INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
-#fi
-#if [ -f /etc/perl/Apache/Authn/Redmine.pm ]
-#then
-#  #backup Redmine.pm
-#  mv /etc/perl/Apache/Authn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm-`date +"%Y-%m-%d-%H-%M-%S"`
-#fi
 mkdir -p /etc/perl/Apache/Authn
-#remove error(unsubstantial) symbolic link
 rm -f /etc/perl/Apache/Authn/Redmine.pm
-#cat $INSTALL_DIR/extra/svn/Redmine.pm | \
-#sed s/'  \$r->set_handlers(PerlAuthenHandler => \[\\&OK\])'/'  #modified for anonymous access(see https\:\/\/github.com\/ayapapa\/alminium\/issues\/16)\n  #\$r->set_handlers(PerlAuthenHandler => \[\\\&OK])'/  |
-#sed s/'    if is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r);'/'#    if is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r);\n  if (is_public_project(\$project_id, \$r) \&\& anonymous_role_allows_browse_repository(\$r)) {\n      \$r->set_handlers(PerlAuthenHandler => \[\\\&OK]);\n      \$r->user(\"\");\n  }'/ |
-#sed s/'    if is_public_project(\$project_id, \$r) \&\& anonymous_allowed_to_browse_repository(\$project_id, \$r);'/'#    if is_public_project(\$project_id, \$r) \&\& anonymous_allowed_to_browse_repository(\$project_id, \$r);\n  if (is_public_project(\$project_id, \$r) \&\& anonymous_allowed_to_browse_repository(\$project_id, \$r)) {\n      \$r->set_handlers(PerlAuthenHandler => \[\\\&OK]);\n      \$r->user(\"\");\n  }'/ > $INSTALL_DIR/extra/svn/Redmine-patched.pm
-#ln -s $INSTALL_DIR/extra/svn/Redmine-patched.pm /etc/perl/Apache/Authn/Redmine.pm
 ln -s $INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
 
-
+# Apache configs
 if [ "$SSL" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
 if [ "$ENABLE_JENKINS" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
 for FILE in $(ls etc/ | grep '.conf$')
@@ -36,7 +17,7 @@ do
       "etc/$FILE" > "$ALM_ETC_DIR/$FILE"
 done
 
-ln -sf "$ALM_ETC_DIR/passenger.conf" "/etc/apache2/mods-available/passenger.load"
+#ln -sf "$ALM_ETC_DIR/passenger.conf" "/etc/apache2/mods-available/passenger.load"
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "/etc/apache2/sites-available/alminium.conf"
 
 #log rotate

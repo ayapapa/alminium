@@ -84,11 +84,11 @@ cd $INSTALL_DIR
 mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
 
 # redmineに必要なgemをインストール
-bundle install --path vendor/bundle --without development test
+bundle install --path vendor/bundle --without development test xapian
 
 # mod_passengerをインストール
-bundle exec passenger-install-apache2-module --auto
-bundle exec passenger-install-apache2-module --snippet > $ALM_ETC_DIR/passenger.conf
+#bundle exec passenger-install-apache2-module --auto
+#bundle exec passenger-install-apache2-module --snippet > $ALM_ETC_DIR/passenger.conf
 
 # セッションストア秘密鍵を生成
 bundle exec rake generate_secret_token

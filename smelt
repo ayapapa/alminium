@@ -3,13 +3,13 @@
 # Smart installer for redmine/chiliproject.
 ############################################################
 
-export ALM_SRC_DIR=$(cd $(dirname $0);pwd)
-export ALM_ETC_DIR=/etc/opt/alminium
-export ALM_VAR_DIR=/var/opt/alminium
-export INSTALL_DIR=/opt/alminium
+ALM_SRC_DIR=$(cd $(dirname $0);pwd)
+ALM_ETC_DIR=/etc/opt/alminium
+ALM_VAR_DIR=/var/opt/alminium
+INSTALL_DIR=/opt/alminium
 
-export RAILS_ENV=production
-export SCRIPT_DIR=`pwd`
+RAILS_ENV=production
+SCRIPT_DIR=`pwd`
 RM_VER=2.6.9
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 #RM_ARC=http://redmine.rubyforge.org/svn/tags
@@ -41,7 +41,7 @@ fi
 if [ -f /etc/redhat-release ]
 then
     APACHE_USER=apache
-    export APACHE_CONF_DIR=/etc/httpd/conf.d
+    APACHE_CONF_DIR=/etc/httpd/conf.d
     MYSQLD='/etc/init.d/mysqld'
     MYSQL='mysql'
     CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
@@ -59,7 +59,7 @@ then
 elif [ -f /etc/system-release ]
 then
     APACHE_USER=apache
-    export APACHE_CONF_DIR=/etc/httpd/conf.d
+    APACHE_CONF_DIR=/etc/httpd/conf.d
     MYSQLD='/etc/init.d/mysqld'
     MYSQL='mysql'
     CHK=`egrep "Amazon Linux AMI" /etc/system-release`
@@ -72,7 +72,7 @@ elif [ -f /etc/debian_version ]
 then
     OS='debian'
     APACHE_USER=www-data
-    export APACHE_CONF_DIR=/etc/apache2/conf.d
+    APACHE_CONF_DIR=/etc/apache2/conf.d
     MYSQLD='/etc/init.d/mysql'
 #    TODO: -u -pを指定するとcreatedb.sqlの読み込みに失敗する
 #    MYSQL="$MYSQL -u root -p"
@@ -88,7 +88,7 @@ else
     then
       OS='mac'
       APACHE_USER=www
-      export APACHE_CONF_DIR=/opt/local/apache2/conf
+      APACHE_CONF_DIR=/opt/local/apache2/conf
       MYSQLD=/opt/local/share/mysql55/support-files/mysql.server
       MYSQLD=mysql
       CPCMD='cp -Rf'
@@ -210,7 +210,7 @@ then
   touch gems.installed
 fi
 
-export RAKE=`which rake2.0`
+RAKE=`which rake2.0`
 
 if [ "$RAKE" = "" ]
 then
