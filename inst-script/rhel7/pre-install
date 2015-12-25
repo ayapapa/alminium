@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export USE_DISABLE_SECURITY=""
 if [ "$USE_DISABLE_SECURITY" = "" ]
 then
 echo "*******************************************************"

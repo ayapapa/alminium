@@ -44,8 +44,6 @@ then
 fi
 
 # OSを確認
-OS=""
-APACHE_CONF_DIR=""
 if [ -f /etc/redhat-release ]
 then
     APACHE_USER=apache
@@ -121,55 +119,54 @@ else
     fi
 fi
 
-
 if [ "$ALM_HOSTNAME" = "" ]
 then
-echo "*******************************************************"
-echo "  ホスト名の設定"
-echo "*******************************************************"
-echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
-echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
-echo "(上記の設定ではhttp://localhost/では接続できないのでご注意ください)"
-echo -n "ホスト名: "
-read HOSTNAME
-echo ""
-echo ""
+  echo "*******************************************************"
+  echo "  ホスト名の設定"
+  echo "*******************************************************"
+  echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
+  echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
+  echo "(上記の設定ではhttp://localhost/では接続できないのでご注意ください)"
+  echo -n "ホスト名: "
+  read HOSTNAME
+  echo ""
+  echo ""
 else
-HOSTNAME=$ALM_HOSTNAME
+  HOSTNAME=$ALM_HOSTNAME
 fi
 
 if [ "$SSL" = "" ]
 then
-echo "*******************************************************"
-echo "  SSLのサポート"
-echo "*******************************************************"
-echo "SSLのサポートを有効にすると、httpsのみの接続を許可します。"
-echo "httpでのアクセスは、全てhttpsのポートへ転送されるようになります。"
-echo "SSLの証明書は認証機関により署名されたものではありません。通信の暗号化のみ"
-echo "に利用します。"
-echo "gitの利用では、"
-echo ""
-echo "  $ git config --global http.sslVerify false"
-echo ""
-echo "などのコマンドで、SSLの証明書を無効にする必要があります。"
-echo ""
-echo -n "SSL(https)サポートを有効にしますか?(y/N) "
-read SSL
-echo ""
-echo ""
+  echo "*******************************************************"
+  echo "  SSLのサポート"
+  echo "*******************************************************"
+  echo "SSLのサポートを有効にすると、httpsのみの接続を許可します。"
+  echo "httpでのアクセスは、全てhttpsのポートへ転送されるようになります。"
+  echo "SSLの証明書は認証機関により署名されたものではありません。通信の暗号化のみ"
+  echo "に利用します。"
+  echo "gitの利用では、"
+  echo ""
+  echo "  $ git config --global http.sslVerify false"
+  echo ""
+  echo "などのコマンドで、SSLの証明書を無効にする必要があります。"
+  echo ""
+  echo -n "SSL(https)サポートを有効にしますか?(y/N) "
+  read SSL
+  echo ""
+  echo ""
 fi
 
 if [ "$ALMINIUM_SUBDIR" = "" ]
 then
-echo "*******************************************************"
-echo "  サブディレクトリで利用  "
-echo "*******************************************************"
-echo "サブディレクトリで利用するを選択するとhttp[s]://(サーバー名)/alminium"
-echo "でアクセスすることができます。"
-echo -n "サブディレクトリで利用しますか?(y/N) "
-read ALMINIUM_SUBDIR
-echo ""
-echo ""
+  echo "*******************************************************"
+  echo "  サブディレクトリで利用  "
+  echo "*******************************************************"
+  echo "サブディレクトリで利用するを選択するとhttp[s]://(サーバー名)/alminium"
+  echo "でアクセスすることができます。"
+  echo -n "サブディレクトリで利用しますか?(y/N) "
+  read ALMINIUM_SUBDIR
+  echo ""
+  echo ""
 fi
 
 # source inst-script/config-email.sh
@@ -245,7 +242,6 @@ then
 
   # install redmine
   mkdir -p $INSTALL_DIR
-
 fi
 
 # install Redmine
