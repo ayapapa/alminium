@@ -6,7 +6,6 @@ rm -f /etc/perl/Apache/Authn/Redmine.pm
 ln -s $INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
 
 # set Apache configs
-ln -sf "$ALM_ETC_DIR/passenger.conf" "/etc/apache2/mods-available/passenger.load"
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "/etc/apache2/sites-available/alminium.conf"
 
 a2enmod expires

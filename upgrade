@@ -60,7 +60,7 @@ echo "#### エラー発生等により中止した場合は、upgradeファイ�
 read DO_CONTINUE
 
 #
-# alminium再インストールの確認
+# alminium再インストール
 # 
 echo ""
 echo ""
@@ -68,7 +68,7 @@ echo "ALMiniumのアップグレードを開始・・・"
 
 # プラグインおよびインストール時のキャッシュデータを削除する
 cd $ALM_CURRENT_DIR
-rm -fr $ALM_INSTALL_DIR/plugins/*
+rm -fr $ALM_INSTALL_DIR
 rm -fr cache/* *.installed
 
 #　install ALMinium by smelt
@@ -87,10 +87,10 @@ echo "バックアップデータ復元が完了しました。"
 #データベースのマイグレーション
 echo "データベースのマイグレーションを実施します。"
 cd /opt/alminium
-bundle exec rake db:migrate RAILS_ENV="production"
+bundle exec rake db:migrate RAILS_ENV=production
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production
-bundle exec rake tmp:cache:clear
-bundle exec rake tmp:sessions:clear
+bundle exec rake tmp:cache:clear RAILS_ENV=production
+bundle exec rake tmp:sessions:clear RAILS_ENV=production
 echo "データベースのマイグレーションが完了しました。"
 
 echo "サービスを起動します。"
