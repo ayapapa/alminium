@@ -229,20 +229,18 @@ then
   # create DB
   $MYSQL < redmine/setup/createdb.sql
 
-  # setup for apache
-  mkdir -p $ALM_ETC_DIR
-  for FILE in $(ls -F -I *.conf etc | grep -v /)
-  do
-    cp "etc/$FILE" $ALM_ETC_DIR/
-  done
-
   # create directory for vcs
   mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
   chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
-
-  # install redmine
-  mkdir -p $INSTALL_DIR
 fi
+# setup for apache
+mkdir -p $ALM_ETC_DIR
+for FILE in $(ls -F -I *.conf etc | grep -v /)
+do
+  cp "etc/$FILE" $ALM_ETC_DIR/
+done
+# install redmine
+mkdir -p $INSTALL_DIR
 
 # install Redmine
 echo "*** install Redmine ***"

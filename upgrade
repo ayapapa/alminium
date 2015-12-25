@@ -68,7 +68,7 @@ echo "ALMiniumのアップグレードを開始・・・"
 
 # プラグインおよびインストール時のキャッシュデータを削除する
 cd $ALM_CURRENT_DIR
-rm -fr $ALM_INSTALL_DIR/plugins/*
+rm -fr $ALM_INSTALL_DIR
 rm -fr cache/* *.installed
 
 #　install ALMinium by smelt
