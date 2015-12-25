@@ -5,8 +5,17 @@ mkdir -p /etc/perl/Apache/Authn
 rm -f /etc/perl/Apache/Authn/Redmine.pm
 ln -s $INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
 
+#
 # set Apache
+#
+# mod_passenger
+pushd $INSTALL_DIR
+bundle exec passenger-install-apache2-module --snippet > $ALM_ETC_DIR/passenger.conf
+bundle exec passenger-install-apache2-module --auto
+popd
 ln -sf "$ALM_ETC_DIR/passenger.conf" "$APACHE_CONF_DIR/"
+
+#set alminium config
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "$APACHE_CONF_DIR/"
 
 # セキュリティ無効化の設定

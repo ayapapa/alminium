@@ -1,2 +1,2 @@
 #gem 'rake-compiler'
-#gem 'passenger'
+gem 'passenger'
