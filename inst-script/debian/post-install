@@ -17,7 +17,6 @@ do
       "etc/$FILE" > "$ALM_ETC_DIR/$FILE"
 done
 
-#ln -sf "$ALM_ETC_DIR/passenger.conf" "/etc/apache2/mods-available/passenger.load"
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "/etc/apache2/sites-available/alminium.conf"
 
 #log rotate

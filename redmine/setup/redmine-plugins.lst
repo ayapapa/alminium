@@ -7,17 +7,14 @@
 # アーカイブディレクトリ名はtgz/zipファイルを展開したときのディレクト名
 redmine_wiki_extensions,redmine_wiki_extensions,https://bitbucket.org/haru_iida/redmine_wiki_extensions/downloads/redmine_wiki_extensions-0.6.5.zip
 #redmine_issue_extensions,redmine_issue_extensions,http://redmineissueext.googlecode.com/files/redmine_issue_extensions1.0.7.1.zip
-redmine_xls_export,0.2.1.t4,https://github.com/two-pack/redmine_xls_export.git
+redmine_xls_export,ALMinium,https://github.com/ayapapa/redmine_xls_export.git
 redmine_plugin_views_revisions,redmine_plugin_views_revisions,http://www.redmine.org/attachments/download/7705/redmine_plugin_views_revisions_v001.zip
 redmine_importer,master,https://github.com/zh/redmine_importer.git
 redmine_code_review,0.6.5,https://bitbucket.org/haru_iida/redmine_code_review
-redmine_hudson,redmine2.x,https://bitbucket.org/okamototk/redmine_hudson
+redmine_hudson,redmine_hudson,https://bitbucket.org/nobiinu_and/redmine_hudson/downloads/redmine_hudson-2.1.2.zip
 ##redmine_ms_projects,master,https://github.com/suer/redmine_ms_projects.git
 redmine_backlogs,ubuntu1404-support,https://github.com/ayapapa/redmine_backlogs.git
 redmine_spent_time_column,backlogs-support,https://github.com/mikoto20000/redmine_spent_time_column.git
-#redmine_scm,HEAD,http://svn.s-andy.com/scm-creator/
-#最新版を適用するように変更
-#redmine_scm,master,https://github.com/alminium/redmine_scm.git
 redmine_scm,0.5.0b-ALMinium-RM2,https://github.com/ayapapa/redmine_scm.git
 #Redmine1.3.1のWikiのセクション編集ができなくなるのでredmine_restructuredtext_formatterを削除
 #redmine_restructuredtext_formatter,japanese-localization,https://github.com/alminium/redmine_restructuredtext_formatter.git

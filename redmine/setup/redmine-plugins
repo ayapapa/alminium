@@ -74,7 +74,6 @@ do
     esac
 done
 
-
 ## setup plugin
 pushd .
 
@@ -84,11 +83,7 @@ cd $INSTALL_DIR
 mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
 
 # redmineに必要なgemをインストール
-bundle install --path vendor/bundle --without development test xapian
-
-# mod_passengerをインストール
-#bundle exec passenger-install-apache2-module --auto
-#bundle exec passenger-install-apache2-module --snippet > $ALM_ETC_DIR/passenger.conf
+bundle install --path vendor/bundle --without development test xapian RAILS_ENV=production
 
 # セッションストア秘密鍵を生成
 bundle exec rake generate_secret_token
@@ -104,9 +99,9 @@ bundle exec rake redmine:load_default_data RAILS_ENV=production
 bundle exec rake tmp:cache:clear
 bundle exec rake tmp:sessions:clear
 
-bundle exec rake redmine:plugins:process_version_change
+bundle exec rake redmine:plugins:process_version_change RAILS_ENV=production
 touch backlogs.dev
-bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false
+bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false RAILS_ENV=production
 
 # FIXME: to avoid open_flash_chart assets aren't copied.
 cp -fr plugins/open_flash_chart/assets public/plugin_assets/open_flash_chart

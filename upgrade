@@ -56,7 +56,7 @@ mysql -uroot alminium < $DBBACKUP_NAME
 
 #データベースのマイグレーション
 cd /opt/alminium
-bundle exec rake db:migrate RAILS_ENV="production"
+bundle exec rake db:migrate RAILS_ENV=production
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production
 bundle exec rake tmp:cache:clear
 bundle exec rake tmp:sessions:clear

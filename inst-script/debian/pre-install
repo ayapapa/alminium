@@ -10,7 +10,7 @@ chmod 600 /etc/apt/sources.list.d/passenger.list
 # install APT packages
 apt-get -q2 update
 apt-get -y install `grep -v "^#" inst-script/debian/packages.lst`
-#REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
+REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 if [ "$SSL" = "y" ]
 then
