@@ -19,7 +19,7 @@ git checkout 1.0.1
 
 #Install gems and migrate database
 cd $INSTALL_DIR/
-bundle install --without development test
+bundle install --path vendor/bundle --without development test
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_jenkins
 
 # 権限を変更

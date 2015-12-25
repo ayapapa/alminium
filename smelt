@@ -294,10 +294,7 @@ if [ "$ENABLE_JENKINS" = "y" ]
 then
   echo "*** install Jenkins ***"
   source jenkins/setup/$OS/install.sh
-  if [ "$ALM_UPGRADE" = "" ]
-  then
-    source jenkins/setup/config.sh
-  fi
+  source jenkins/setup/config.sh
 fi
 
 echo "*** run post-install script ***"
