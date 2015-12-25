@@ -28,11 +28,10 @@ read YN
 
 if [ "$YN" = "y" ]
 then
-    rm -fr /etc/httpd/conf.d/{alminium,passenger}.conf
-    rm -fr /etc/apache2/conf.d/{alminium,passenger}.conf
+    rm -fr /etc/httpd/conf.d/{alminium}.conf
+    rm -fr /etc/apache2/conf.d/{alminium}.conf
     rm -fr /etc/apache2/sites-{available,enabled}/alminium.conf
-    rm -fr /etc/apache2/mods-{available,enabled}/passenger.load
-    rm -fr /opt/local/apache2/conf/{alminium,passenger}.conf
+    rm -fr /opt/local/apache2/conf/{alminium}.conf
     rm -fr /etc/opt/alminium
 fi
 

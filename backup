@@ -11,13 +11,13 @@ then
   exit 1
 fi
 
-export CURRENT_DIR=`pwd`
-export FIRST_CHAR_BACKUP_DIR=`echo $1 | cut -c 1`
+CURRENT_DIR=`pwd`
+FIRST_CHAR_BACKUP_DIR=`echo $1 | cut -c 1`
 if [ "$FIRST_CHAR_BACKUP_DIR" = '/' ]
 then
-  export BACKUP_DIR=$1
+  BACKUP_DIR=$1
 else
-  export BACKUP_DIR=$CURRENT_DIR/$1
+  BACKUP_DIR=$CURRENT_DIR/$1
 fi
 
 # 実行ユーザーチェック
@@ -44,7 +44,7 @@ read DO_CONTINUE
 #データベースをバックアップ
 if [ "$DBBACKUP_NAME" = "" ]
 then
-  export DBBACKUP_NAME=$BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
+  DBBACKUP_NAME=$BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
 fi
 if [ -f $DBBACKUP_NAME ]
 then
@@ -66,7 +66,7 @@ fi
 ##大きすぎて非効率な場合は、/opt/alminium/files以下を退避（移動）しておけば良い
 if [ "$FILE_BACKUP" = "" ]
 then
-  export FILE_BACKUP=$BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+  FILE_BACKUP=$BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
 fi
 if [ -f $FILE_BACKUP ]
 then
@@ -88,7 +88,7 @@ fi
 ##大きすぎて非効率な場合は、/var/opt/alminium/以下を退避（移動）しておけば良い
 if [ "$REPOS_BACKUP" = "" ]
 then
-  export REPOS_BACKUP=$BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+  REPOS_BACKUP=$BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
 fi
 if [ -f $REPOS_BACKUP ]
 then

@@ -20,7 +20,7 @@ make
 fonts-ipafont-gothic
 #libmysql-ruby
 libapache2-mod-auth-mysql
-#libapache2-mod-passenger
+libapache2-mod-passenger
 libapache2-svn
 libapache2-mod-wsgi
 libcurl4-openssl-dev
