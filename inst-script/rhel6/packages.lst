@@ -59,3 +59,5 @@ mysql-devel
 #postgresql-devel
 sqlite-devel
 libffi-devel
+libuuid-devel
+

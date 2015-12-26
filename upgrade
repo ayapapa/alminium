@@ -1,0 +1,103 @@
+#!/bin/bash
+############################################################
+# upgrader for ALMinium.
+############################################################
+
+# 新たにインストールするRedmineのバージョン
+ALM_INSTALL_DIR=/opt/alminium
+ALM_CURRENT_DIR=`pwd`
+
+# 実行ユーザーをチェック
+if [ "$USER" != 'root' ]
+then
+    echo "ALMiniumのインストールはルートユーザで行う必要があります。"
+    echo "rootユーザもしくはsudoで実行してください。"
+    exit 1
+fi
+
+# ALMiniumインストール状況をチェック
+if [ ! -d $ALM_INSTALL_DIR ]
+then
+  echo "ALMiniumインストールディレクトリが見つかりませんでした。処理を中止します"
+  exit 1
+fi
+
+# バックアップディレクトリ指定をチェック
+if [ "$1" = '' ]
+then
+    echo "第一引数にバックアップディレクトリを指定してください。"
+    exit 1
+fi
+
+# カスタマイズ警告
+echo "★★★　ご自身によるカスタマイズ（プラグイン、設定ファイル等）　★★★"
+echo "★★★　がある場合は、アップグレードすることにより削除・上書き　★★★"
+echo "★★★　されてしまいますので、アップグレード後に手動でカスタマ　★★★"
+echo "★★★　イズを実行する必要があります。処理を続行する場合は    　★★★"
+echo "★★★　Enterキーを、中止する場合はCtrl+Cを押下してください。　 ★★★"
+read DO_CONTINUE
+
+# バックアップ
+if [ `echo $1 | cut -c 1` = '/' ]
+then
+  ALM_BACKUP_DIR=$1
+else
+  ALM_BACKUP_DIR=$ALM_CURRENT_DIR/$1
+fi
+ALM_DBBACKUP_NAME=$ALM_BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
+ALM_FILE_BACKUP=$ALM_BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+ALM_REPOS_BACKUP=$ALM_BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
+source ./backup $1 "途中にエラーが発生した場合、復活できなくなる可能性があります。スナップショットをとるなど、後戻りできるようにしておくことをお勧めします。"
+if [ $? -gt 0 ]
+then
+  exit 1
+fi
+
+#バックアップの確認依頼
+echo ""
+echo "指定したディレクトリにバックアップデータ(データベース：alminiumDB-(日時).dump, 添付ファイル：opt_alminium_files-(日時).tar.gz, リポジトリ：var_opt_alminium-(日時).tar.gz)が作成されていることを確認してください。問題がなければEnterキーを押下してください。中止する場合はCtrl+C。"
+echo "#### 何らかのエラーがコンソールに出力されている場合はバックアップに失敗している可能性がありますので、中止(Ctrl+C)してください。"
+echo "#### エラー発生等により中止した場合は、upgradeファイルを参考に手動によりアップグレードを実行することをお勧めします。"
+read DO_CONTINUE
+
+#
+# alminium再インストールの確認
+# 
+echo ""
+echo ""
+echo "ALMiniumのアップグレードを開始・・・"
+
+# プラグインおよびインストール時のキャッシュデータを削除する
+cd $ALM_CURRENT_DIR
+rm -fr $ALM_INSTALL_DIR/plugins/*
+rm -fr cache/* *.installed
+
+#　install ALMinium by smelt
+source ./smelt -u
+
+#バックアップの復元
+echo "***バックアップデータを復元します。"
+cd $ALM_CURRENT_DIR
+echo "***リポジトリーデータを復元しています・・・"
+cd /var/opt/alminium/ && tar xzf $ALM_REPOS_BACKUP
+echo "***Redmine添付ファイルを復元しています・・・"
+cd /opt/alminium/files/ && tar xzf $ALM_FILE_BACKUP
+# mysql -uroot alminium < $ALM_DBBACKUP_NAME
+echo "バックアップデータ復元が完了しました。"
+
+#データベースのマイグレーション
+echo "データベースのマイグレーションを実施します。"
+cd /opt/alminium
+bundle exec rake db:migrate RAILS_ENV="production"
+bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+bundle exec rake tmp:cache:clear
+bundle exec rake tmp:sessions:clear
+echo "データベースのマイグレーションが完了しました。"
+
+echo "サービスを起動します。"
+cd $ALM_CURRENT_DIR
+source ./inst-script/$OS/service-restart
+
+echo ""
+echo "以上でアップグレードは終了です。途中にエラーが発生した場合は、元の状態に戻して手動でアップグレードを実施してください。"
+

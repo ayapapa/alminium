@@ -9,8 +9,8 @@ then
 fi
 
 # インストールするディレクトリ名
-NAME=(`grep -v "^#" config/rubygems.lst | awk -F, '{print $1}'`)
-VER=(`grep -v "^#" config/rubygems.lst | awk -F, '{print $2}'`)
+NAME=(`grep -v "^#" inst-script/rubygems.lst | awk -F, '{print $1}'`)
+VER=(`grep -v "^#" inst-script/rubygems.lst | awk -F, '{print $2}'`)
 
 for (( i = 0; i < ${#NAME[@]}; ++i ))
 do
@@ -23,33 +23,3 @@ do
     $GEM install -f $NAME -v=$VER --no-rdoc --no-ri
   fi
 done
-
-
-## install mod_passenger
-case $OS in
-    rhel6)
-        if [ ! -f /usr/lib64/ruby/gems/2.1.0/gems/passenger-4.*/buildout/apache2/mod_passenger.so ]
-        then
-            $GEM install passenger --no-rdoc --no-ri
-            passenger-install-apache2-module --auto
-        fi
-        ;;
-    mac)
-        if [ ! -f /opt/local/lib/ruby2.0/gems/2.0.0/gems/passenger-4.*/buildout/apache2/mod_passenger.so ]
-        then
-            $GEM install passenger --no-rdoc --no-ri
-            export APXS2=/opt/local/apache2/bin/apxs
-            export PATH=/opt/local/apache2/bin:$PATH
-            passenger-install-apache2-module --auto
-        fi
-        ;;
-    debian)
-        if [ ! -f /var/lib/gems/2.0.0/gems/passenger-4.0.*/buildout/apache2/mod_passenger.so ]
-        then
-            $GEM install thin
-            $GEM install passenger --no-rdoc --no-ri
-            passenger-install-apache2-module --auto
-        fi
-        ;;
-
-esac

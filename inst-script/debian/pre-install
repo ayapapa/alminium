@@ -1,4 +1,5 @@
 #!/bin/bash
+add-apt-repository -y ppa:brightbox/ruby-ng
 apt-get -q2 update
 apt-get -y install `grep -v "^#" inst-script/debian/packages.lst`
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
@@ -7,6 +8,8 @@ if [ "$SSL" = "y" ]
 then
     apt-get -y install libapache2-mod-gnutls ssl-cert
     a2enmod ssl rewrite
+    a2dismod gnutls
+    # sslとgnutlsが両方有効化されてしまいappache2がエラーになるため後者を無効化しておく（要調査）
 fi
 
 service mysql start

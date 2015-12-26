@@ -1,13 +1,16 @@
 #!/bin/bash
+#
+# プラグインをインストールすると同時にRedmineの初期設定を行う
+#
 
 # インストールするディレクトリ名
-DEST_NAME=(`grep -v "^#" config/redmine-plugins.lst | awk -F, '{print $1}'`)
+DEST_NAME=(`grep -v "^#" redmine/setup/redmine-plugins.lst | awk -F, '{print $1}'`)
 
 # 展開したアーカイブのディレクトリ名 or タグ名
-DIR_NAME=(`grep -v "^#" config/redmine-plugins.lst | awk -F, '{print $2}'`)
+DIR_NAME=(`grep -v "^#" redmine/setup/redmine-plugins.lst | awk -F, '{print $2}'`)
 
 # URL
-URL_NAME=(`grep -v "^#" config/redmine-plugins.lst | awk -F, '{print $3}'`)
+URL_NAME=(`grep -v "^#" redmine/setup/redmine-plugins.lst | awk -F, '{print $3}'`)
 
 for (( i = 0; i < ${#DIR_NAME[@]}; ++i ))
 do
@@ -74,27 +77,63 @@ do
     esac
 done
 
-
-## setup plugin
-pushd .
-
-cd $INSTALL_DIR
+# ディレクトリを退避
+pushd $INSTALL_DIR
 
 # for Hudson
-mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
+if [ -f plugins/redmine_hudson/Gemfile ]
+then
+  mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
+fi
 
-bundle install --path vendor/bundler --without development test postgresql sqlite
+# アップグレード時にエラーになることがあるので、以下を追加
+bundle update
 
-bundle exec $RAKE redmine:plugins:migrate
-bundle exec $RAKE generate_secret_token
-bundle exec $RAKE db:migrate
-bundle exec $RAKE tmp:cache:clear
-bundle exec $RAKE tmp:sessions:clear
-bundle exec $RAKE redmine:plugins:process_version_change
-touch backlogs.dev
-bundle exec $RAKE redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false
+# redmineに必要なgemをインストール
+bundle install --path vendor/bundle --without development test
+
+# mod_passengerをインストール
+bundle exec passenger-install-apache2-module --auto
+bundle exec passenger-install-apache2-module --snippet > $ALM_ETC_DIR/passenger.conf
+
+# セッションストア秘密鍵を生成
+bundle exec rake generate_secret_token
+
+# データベース上にテーブルを作成
+bundle exec rake db:migrate RAILS_ENV=production
+bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+
+# データベースにデフォルトデータを登録
+echo 'ja' |\
+bundle exec rake redmine:load_default_data RAILS_ENV=production
+
+# キャッシュクリア
+bundle exec rake tmp:cache:clear
+bundle exec rake tmp:sessions:clear
+
+# for XLS export
+if [ -d plugins/redmine_xls_export ]
+then
+  bundle exec rake redmine:plugins:process_version_change RAILS_ENV=production
+fi
+
+# for backlogs
+if [ -d plugins/redmine_backlogs ]
+then
+  if [ "$ALM_UPGRADE" = "y" ]
+  then
+    bundle exec rake redmine:backlogs:install task_tracker=タスク story_trackers=機能 labels=false RAILS_ENV=production
+  else
+    bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false RAILS_ENV=production
+  fi
+fi
 
 # FIXME: to avoid open_flash_chart assets aren't copied.
-cp -fr plugins/open_flash_chart/assets public/plugin_assets/open_flash_chart
+if [ -d plugins/open_flash_chart/assets ]
+then
+  cp -fr plugins/open_flash_chart/assets public/plugin_assets/open_flash_chart
+fi
 
+# ディレクトリを元に戻す
 popd
+

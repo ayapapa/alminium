@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ "$1" != "" ]
+then
+    wget --no-proxy -q -O /dev/null http://localhost/sys/fetch_changesets?id=`echo $1 | sed 's/\/.*\/\([^\.]*\)\(\..*\)\?/\1/'`
+else
+    wget --no-proxy -q -O /dev/null http://localhost/sys/fetch_changesets?id=`echo $PWD | sed 's/\/.*\/\([^\.]*\)\(\..*\)\?/\1/'`
+fi
+

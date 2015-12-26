@@ -1,0 +1,30 @@
+#!/bin/bash
+# 最後にインストールする必要があるプラグインをインストールする
+#
+
+# カレントディレクトリを退避
+pushd .
+
+# install redmine_bootstrap
+cd $INSTALL_DIR/plugins
+git clone https://github.com/jbox-web/redmine_bootstrap_kit.git
+cd redmine_bootstrap_kit/
+git checkout 0.2.3
+
+# install redmine_jenkins
+cd $INSTALL_DIR/plugins
+git clone https://github.com/jbox-web/redmine_jenkins.git
+cd redmine_jenkins/
+git checkout 1.0.1
+
+#Install gems and migrate database
+cd $INSTALL_DIR/
+bundle install --without development test
+bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_jenkins
+
+# 権限を変更
+chown -R $APACHE_USER:$APACHE_USER $INSTALL_DIR
+
+# ディレクトリを元に戻す
+popd
+

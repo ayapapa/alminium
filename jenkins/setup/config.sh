@@ -1,31 +1,12 @@
-#!/bin/sh
-
-wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
-echo "deb http://pkg.jenkins-ci.org/debian binary/" > /etc/apt/sources.list.d/jenkins.list
-apt-get -q2 update
-apt-get -y install jenkins
-
-if [ ! -d /var/lib/jenkins/persona ]
-then
-  git clone https://github.com/okamototk/jenkins-persona-hudmi /var/lib/jenkins/persona
-fi
-
-if [ ! -f /etc/apache2/sites-available/jenkins ]
-then
-  cp inst-script/debian/httpd-jenkins.conf /etc/apache2/sites-available/jenkins
-  a2ensite jenkins
-fi
- 
-sed -i 's/JENKINS_ARGS="--webroot/JENKINS_ARGS="--prefix=\/jenkins --webroot/' /etc/default/jenkins
+#!/bin/bash
 
 if [ ! -f /var/lib/jenkins/plugins ]
 then
   mkdir /var/lib/jenkins/plugins
-  chown jenkins.jenkins -R /var/lib/jenkins/plugins
+  chown jenkins:jenkins /var/lib/jenkins/plugins
 fi
 
-service jenkins restart
-
+# download jenkins-cli.jar
 RET=-1
 until  [ "$RET" -eq "0" ]
 do
@@ -35,20 +16,38 @@ do
 done
 
 wget -O /tmp/default.js http://updates.jenkins-ci.org/update-center.json
- 
+
 # remove first and last line javascript wrapper
 sed '1d;$d' /tmp/default.js > /tmp/default.json
-  
-# Now push it to the update URL
-curl --noproxy localhost -X POST -H "Accept: application/json" -d @/tmp/default.json http://localhost:8080/jenkins/updateCenter/byId/default/postBack --verbose
 
+# Now push it to the update URL
+#curl --noproxy localhost -X POST -H "Accept: application/json" -d @/tmp/default.json http://localhost:8080/jenkins/updateCenter/byId/default/postBack --verbose
+if [ ! -e /var/lib/jenkins/updates ]
+then
+  mkdir /var/lib/jenkins/updates
+fi
+cp -f /tmp/default.json /var/lib/jenkins/updates/
+
+# Jenkinsのプロキシ設定
 if [ x"$http_proxy" != x"" ]
 then
   # set proxy. sorry IPv4 only and user:pass not supported...
+  proxyuser=`echo $http_proxy | sed -n 's/.*:\/\/\([a-zA-Z0-9]*\):.*/\1/p'`
+  proxypass=`echo $http_proxy | sed -n 's/.*:\/\/[a-zA-Z0-9]*:\([a-zA-Z0-9:]*\)\@.*/\1/p'`
+  echo
+  echo proxyuser=$proxyuser
+  echo proxypass=$proxypass
+
+  if [ x"$proxyuser" != x"" ]
+  then
+    http_proxy=`echo $http_proxy | sed "s/$proxyuser:$proxypass\@//"`
+  fi
+
   proxyserver=`echo $http_proxy | cut -d':' -f2 | sed 's/\/\///g'`
   proxyport=`echo $http_proxy | cut -d':' -f3 | sed 's/\///g'`
-  #echo $proxyserver
-  #echo $proxyport
+  echo proxyserver=$proxyserver
+  echo proxyport=$proxyport
+
   curl --noproxy localhost -X POST --data "json={\"name\": \"$proxyserver\", \"port\": \"$proxyport\", \"userName\": \"$proxyuser\", \"password\": \"$proxypass\", \"noProxyHost\": \"\"}" http://localhost:8080/jenkins/pluginManager/proxyConfigure --verbose
   RET=$?
   if [ "$RET" -ne "0" ]
@@ -59,6 +58,9 @@ then
   #service jenkins restart
 fi
 
+# プラグインインストール
+mkdir tmp
+pushd tmp
 RET=-1
 until  [ "$RET" -eq "0" ]
 do
@@ -67,18 +69,25 @@ do
   RET=$?
 done
 
-#java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin reverse-proxy-auth-plugin
 java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin persona
 java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin git
 java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin redmine
 java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin dashboard-view
+popd
+rm -rf tmp
 
 sleep 10
 
-if [ ! -f /var/lib/jenkins/config.xml ]
+# persona-hudmi取得
+if [ ! -d /var/lib/jenkins/persona ]
 then
-  cp config/jenkins-config.xml /var/lib/jenkins/config.xml
+  git clone https://github.com/okamototk/jenkins-persona-hudmi /var/lib/jenkins/persona
 fi
 
-java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ restart
+if [ ! -f /var/lib/jenkins/config.xml ]
+then
+  cp jenkins/config.xml /var/lib/jenkins/config.xml
+fi
 
+chown -R jenkins:jenkins /var/lib/jenkins/
+service jenkins restart

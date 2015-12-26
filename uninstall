@@ -21,31 +21,21 @@ then
     rm -fr /opt/alminium /var/opt/alminium
 fi
 
+
 echo ""
 echo -n "Apacheの設定を削除しますか?(y/N)"
 read YN
 
-
 if [ "$YN" = "y" ]
 then
-    rm -fr /etc/apache2/sites-{available,enabled}/jenkins
-    rm -fr /etc/apache2/sites-{available,enabled}/redmine
-    rm -fr /etc/apache2/sites-{available,enabled}/vcs
-    rm -fr /etc/httpd/conf.d/jenkins.conf
-    rm -fr /etc/httpd/conf.d/redmine.conf
-    rm -fr /etc/httpd/conf.d/vcs.conf
+    rm -fr /etc/httpd/conf.d/{alminium,passenger}.conf
+    rm -fr /etc/apache2/conf.d/{alminium,passenger}.conf
+    rm -fr /etc/apache2/sites-{available,enabled}/alminium.conf
+    rm -fr /etc/apache2/mods-{available,enabled}/passenger.load
+    rm -fr /opt/local/apache2/conf/{alminium,passenger}.conf
     rm -fr /etc/opt/alminium
 fi
 
-echo ""
-echo -n "Passengerを削除しますか?(y/N)"
-read YN
-
-
-if [ "$YN" = "y" ]
-then
-    echo "3" | $GEM uninstall passenger
-fi
 
 echo ""
 echo -n "Jenkisとその設定を削除しますか?(y/N)"
@@ -53,18 +43,13 @@ read YN
 
 if [ "$YN" = "y" ]
 then
-    if [ -f /usr/bin/yum ]; then
-        yum -y remove jenkins
-    elif [ -f /usr/bin/apt-get ]; then
-        apt-get -y purge jenkins
-    fi
-    rm -fr /var/lib/jenkins
+    source jenkins/setup/uninstall.sh
 fi
+
 
 echo ""
 echo -n "キャッシュされたファイルを削除しますか?(y/N)"
 read YN
-
 
 if [ "$YN" = "y" ]
 then
