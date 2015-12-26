@@ -3,20 +3,20 @@
 # Smart installer for redmine/chiliproject.
 ############################################################
 
-export ALM_SRC_DIR=$(cd $(dirname $0);pwd)
-export ALM_ETC_DIR=/etc/opt/alminium
-export ALM_VAR_DIR=/var/opt/alminium
-export INSTALL_DIR=/opt/alminium
+ALM_SRC_DIR=$(cd $(dirname $0);pwd)
+ALM_ETC_DIR=/etc/opt/alminium
+ALM_VAR_DIR=/var/opt/alminium
+INSTALL_DIR=/opt/alminium
 
-export RAILS_ENV=production
-RM_VER=3.1.2
+RAILS_ENV=production
+RM_VER=3.1.3
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 CPCMD='cp -fr'
 RMCMD='rm -fr'
 
 PATH=/usr/local/bin:${PATH}
 
-export ALM_UPGRADE=""
+ALM_UPGRADE=""
 if [ "$1" = "-u" ]
 then
   ALM_UPGRADE=y
@@ -44,8 +44,6 @@ then
 fi
 
 # OSを確認
-export OS=""
-export APACHE_CONF_DIR=""
 if [ -f /etc/redhat-release ]
 then
     APACHE_USER=apache
@@ -121,55 +119,54 @@ else
     fi
 fi
 
-
 if [ "$ALM_HOSTNAME" = "" ]
 then
-echo "*******************************************************"
-echo "  ホスト名の設定"
-echo "*******************************************************"
-echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
-echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
-echo "(上記の設定ではhttp://localhost/では接続できないのでご注意ください)"
-echo -n "ホスト名: "
-read HOSTNAME
-echo ""
-echo ""
+  echo "*******************************************************"
+  echo "  ホスト名の設定"
+  echo "*******************************************************"
+  echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
+  echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
+  echo "(上記の設定ではhttp://localhost/では接続できないのでご注意ください)"
+  echo -n "ホスト名: "
+  read HOSTNAME
+  echo ""
+  echo ""
 else
-HOSTNAME=$ALM_HOSTNAME
+  HOSTNAME=$ALM_HOSTNAME
 fi
 
 if [ "$SSL" = "" ]
 then
-echo "*******************************************************"
-echo "  SSLのサポート"
-echo "*******************************************************"
-echo "SSLのサポートを有効にすると、httpsのみの接続を許可します。"
-echo "httpでのアクセスは、全てhttpsのポートへ転送されるようになります。"
-echo "SSLの証明書は認証機関により署名されたものではありません。通信の暗号化のみ"
-echo "に利用します。"
-echo "gitの利用では、"
-echo ""
-echo "  $ git config --global http.sslVerify false"
-echo ""
-echo "などのコマンドで、SSLの証明書を無効にする必要があります。"
-echo ""
-echo -n "SSL(https)サポートを有効にしますか?(y/N) "
-read SSL
-echo ""
-echo ""
+  echo "*******************************************************"
+  echo "  SSLのサポート"
+  echo "*******************************************************"
+  echo "SSLのサポートを有効にすると、httpsのみの接続を許可します。"
+  echo "httpでのアクセスは、全てhttpsのポートへ転送されるようになります。"
+  echo "SSLの証明書は認証機関により署名されたものではありません。通信の暗号化のみ"
+  echo "に利用します。"
+  echo "gitの利用では、"
+  echo ""
+  echo "  $ git config --global http.sslVerify false"
+  echo ""
+  echo "などのコマンドで、SSLの証明書を無効にする必要があります。"
+  echo ""
+  echo -n "SSL(https)サポートを有効にしますか?(y/N) "
+  read SSL
+  echo ""
+  echo ""
 fi
 
 if [ "$ALMINIUM_SUBDIR" = "" ]
 then
-echo "*******************************************************"
-echo "  サブディレクトリで利用  "
-echo "*******************************************************"
-echo "サブディレクトリで利用するを選択するとhttp[s]://(サーバー名)/alminium"
-echo "でアクセスすることができます。"
-echo -n "サブディレクトリで利用しますか?(y/N) "
-read ALMINIUM_SUBDIR
-echo ""
-echo ""
+  echo "*******************************************************"
+  echo "  サブディレクトリで利用  "
+  echo "*******************************************************"
+  echo "サブディレクトリで利用するを選択するとhttp[s]://(サーバー名)/alminium"
+  echo "でアクセスすることができます。"
+  echo -n "サブディレクトリで利用しますか?(y/N) "
+  read ALMINIUM_SUBDIR
+  echo ""
+  echo ""
 fi
 
 # source inst-script/config-email.sh
@@ -196,7 +193,7 @@ git submodule update
 # install packages
 if [ ! -f packages.installed ]
 then
-  echo "*** run $OS's pre-install script ***"
+  echo "*** run pre-install script ***"
   source inst-script/$OS/pre-install
   touch packages.installed
 fi
@@ -208,7 +205,7 @@ then
   touch gems.installed
 fi
 
-export RAKE=`which rake2.0`
+RAKE=`which rake2.0`
 
 if [ "$RAKE" = "" ]
 then
@@ -232,21 +229,18 @@ then
   # create DB
   $MYSQL < redmine/setup/createdb.sql
 
-  # setup for apache
-  mkdir -p $ALM_ETC_DIR
-  for FILE in $(ls -F -I *.conf etc | grep -v /)
-  do
-    cp "etc/$FILE" $ALM_ETC_DIR/
-  done
-
   # create directory for vcs
   mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
   chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
-
-  # install redmine
-  mkdir -p $INSTALL_DIR
-
 fi
+# setup for apache
+mkdir -p $ALM_ETC_DIR
+for FILE in $(ls -F -I *.conf etc | grep -v /)
+do
+  cp "etc/$FILE" $ALM_ETC_DIR/
+done
+# install redmine
+mkdir -p $INSTALL_DIR
 
 # install Redmine
 echo "*** install Redmine ***"
@@ -268,7 +262,6 @@ $CPCMD redmine/public/themes/* $INSTALL_DIR/public/themes/
 # install plugins
 echo "*** install plugins ***"
 source redmine/setup/redmine-plugins
-source redmine/setup/redmine-plugins2
 
 if [ "$ALM_UPGRADE" = "" ]
 then
@@ -295,14 +288,11 @@ if [ "$ENABLE_JENKINS" = "y" ]
 then
   echo "*** install Jenkins ***"
   source jenkins/setup/$OS/install.sh
-  if [ "$ALM_UPGRADE" = "" ]
-  then
-    source jenkins/setup/config.sh
-  fi
+  source jenkins/setup/config.sh
 fi
 
 echo "*** run post-install script ***"
-source inst-script/$OS/post-install
+source inst-script/post-install
 
 # for SUBDIRECTORY
 if [ "$ALMINIUM_SUBDIR" != "" ]

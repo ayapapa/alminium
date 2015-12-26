@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source ./inst-script/$OS/service-restart
+

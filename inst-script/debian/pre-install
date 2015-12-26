@@ -1,5 +1,16 @@
 #!/bin/bash
+
+# add passenger to APT repository
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
+apt-get install apt-transport-https ca-certificates
+echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list
+chown root: /etc/apt/sources.list.d/passenger.list
+chmod 600 /etc/apt/sources.list.d/passenger.list
+
+# add ruby's APT repository
 add-apt-repository -y ppa:brightbox/ruby-ng
+
+# install APT packages
 apt-get -q2 update
 apt-get -y install `grep -v "^#" inst-script/debian/packages.lst`
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
