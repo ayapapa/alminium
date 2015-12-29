@@ -77,8 +77,15 @@ do
     esac
 done
 
-# ディレクトリを退避
+# ALMiniumインストールディレクトリへ移動
 pushd $INSTALL_DIR
+
+# passenger package
+if [ "$ALM_PASSSENGER_PACKAGE_AVAILABLE" = "1" ]
+then
+  mv Gemfile.local Gemfile.local.org
+  cat Gemfile.local.org | sed "s/gem 'passenger'/#gem 'passenger'/" > Gemfile.local
+fi
 
 # for Hudson
 if [ -f plugins/redmine_hudson/Gemfile ]
