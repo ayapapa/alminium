@@ -1,13 +1,16 @@
 #!/bin/bash
 
-# add passenger to APT repository
+# # add passenger to APT repository
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
 apt-get install apt-transport-https ca-certificates
 echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list
 chown root: /etc/apt/sources.list.d/passenger.list
-chmod 600 /etc/apt/sources.list.d/passenger.list
+#chmod 600 /etc/apt/sources.list.d/passenger.list
+#  set passenger-package available
+ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
 # add ruby's APT repository
+apt-get -y install software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng
 
 # install APT packages

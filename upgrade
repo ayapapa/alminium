@@ -66,8 +66,12 @@ echo ""
 echo ""
 echo "ALMiniumのアップグレードを開始・・・"
 
-# プラグインおよびインストール時のキャッシュデータを削除する
+# アップグレード対象を削除
 cd $ALM_CURRENT_DIR
+if [ -f $ALM_INSTALL_DIR/subdirname ]
+then
+  rm -f /var/www/html`cat $ALM_INSTALL_DIR/subdirname`
+fi
 rm -fr $ALM_INSTALL_DIR
 rm -fr cache/* *.installed
 

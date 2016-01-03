@@ -156,17 +156,31 @@ then
   echo ""
 fi
 
-if [ "$ALMINIUM_SUBDIR" = "" ]
+#
+# サブディレクトリ指定
+#
+if [ "$ALM_RELATIVE_URL_ROOT" = "" ]
 then
-  echo "*******************************************************"
-  echo "  サブディレクトリで利用  "
-  echo "*******************************************************"
-  echo "サブディレクトリで利用するを選択するとhttp[s]://(サーバー名)/alminium"
+  echo "*****************************"
+  echo "  サブディレクトリ指定  "
+  echo "*****************************"
+  echo "サブディレクトリを指定すると"
+  echo "http[s]://(サーバー名)/(サブディレクトリ)"
   echo "でアクセスすることができます。"
-  echo -n "サブディレクトリで利用しますか?(y/N) "
-  read ALMINIUM_SUBDIR
+  echo "指定しない場合はそのままEnterキーを押下してください"
+  echo -n "サブディレクトリー名："
+  read ALM_SUBDIR
   echo ""
   echo ""
+else
+  ALM_SUBDIR="$ALM_RELATIVE_URL_ROOT"
+fi
+if [ "$ALM_SUBDIR" != "" ]
+then
+  if [ `echo $ALM_SUBDIR | cut -c 1` != '/' ]
+  then
+    ALM_SUBDIR="/$ALM_SUBDIR"
+  fi
 fi
 
 # source inst-script/config-email.sh
@@ -233,16 +247,18 @@ then
   mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
   chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
 fi
+
 # setup for apache
 mkdir -p $ALM_ETC_DIR
 for FILE in $(ls -F -I *.conf etc | grep -v /)
 do
   cp "etc/$FILE" $ALM_ETC_DIR/
 done
-# install redmine
-mkdir -p $INSTALL_DIR
 
+#
 # install Redmine
+#
+mkdir -p $INSTALL_DIR
 echo "*** install Redmine ***"
 cd cache
 wget $RM_ARC
@@ -273,11 +289,11 @@ fi
 # install hooks
 mkdir -p $INSTALL_DIR/bin
 $CPCMD redmine/bin/* $INSTALL_DIR/bin/
-if [ ! "$ALMINIUM_SUBDIR" = "" ]
+if [ "$ALM_SUBDIR" != "" ]
 then
   mv $INSTALL_DIR/bin/alm-sync-scm $INSTALL_DIR/bin/alm-sync-scm.org
   cat $INSTALL_DIR/bin/alm-sync-scm.org | \
-  sed 's/localhost/localhost\/alminium/g' > $INSTALL_DIR/bin/alm-sync-scm
+  sed 's/localhost/localhost$ALM_SUBDIR/g' > $INSTALL_DIR/bin/alm-sync-scm
   chmod +x $INSTALL_DIR/bin/alm-sync-scm
 fi
 $CPCMD redmine/hooks $INSTALL_DIR/
@@ -295,9 +311,10 @@ echo "*** run post-install script ***"
 source inst-script/post-install
 
 # for SUBDIRECTORY
-if [ "$ALMINIUM_SUBDIR" != "" ]
+if [ "$ALM_SUBDIR" != "" ]
 then
-  ln -sf $INSTALL_DIR/public /var/www/html/alminium
+  ln -sf $INSTALL_DIR/public /var/www/html$ALM_SUBDIR
+  echo $ALM_SUBDIR > $INSTALL_DIR/subdirname
 fi
 
 # プロジェクト作成時に自動的にリポジトリを作成するときに利用
@@ -306,4 +323,10 @@ fi
 #then
 #  echo "* * * * * /opt/alminium/extra/svn/reposman.rb -g apache -o apache -s /var/opt/alminium/git -u /var/opt/alminium/git -r localhost --scm git" >> /var/spool/cron/root
 #fi
+
+# flags for initialized status
+touch $INSTALL_DIR/initialized
+touch $ALM_VAR_DIR/initialized
+touch $ALM_ETC_DIR/initialized
+touch /var/lib/mysql/initialized
 
