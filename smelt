@@ -247,16 +247,18 @@ then
   mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
   chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
 fi
+
 # setup for apache
 mkdir -p $ALM_ETC_DIR
 for FILE in $(ls -F -I *.conf etc | grep -v /)
 do
   cp "etc/$FILE" $ALM_ETC_DIR/
 done
-# install redmine
-mkdir -p $INSTALL_DIR
 
+#
 # install Redmine
+#
+mkdir -p $INSTALL_DIR
 echo "*** install Redmine ***"
 cd cache
 wget $RM_ARC
@@ -312,6 +314,7 @@ source inst-script/post-install
 if [ "$ALM_SUBDIR" != "" ]
 then
   ln -sf $INSTALL_DIR/public /var/www/html$ALM_SUBDIR
+  echo $ALM_SUBDIR > $INSTALL_DIR/subdirname
 fi
 
 # プロジェクト作成時に自動的にリポジトリを作成するときに利用
