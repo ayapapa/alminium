@@ -240,7 +240,7 @@ done
 
 # create directory for vcs
 mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
-chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
+chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR/*
 
 # install chiliproject
 mkdir -p $INSTALL_DIR
@@ -292,7 +292,7 @@ $MYSQL alminium < redmine/setup/init.mysql
 mkdir -p $INSTALL_DIR/bin
 $CPCMD redmine/bin/* $INSTALL_DIR/bin/
 $CPCMD redmine/hooks $INSTALL_DIR/
-chown -R $APACHE_USER:$APACHE_USER $INSTALL_DIR
+chown -R $APACHE_USER:$APACHE_USER $INSTALL_DIR/* $INSTALL_DIR/.[^.]*
 
 # setup for email
 #if [ "$SMTPSERVER" != "" ]

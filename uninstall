@@ -18,7 +18,8 @@ then
     mysql alminium -e "DELETE FROM mysql.user WHERE User LIKE 'alminium'"
     mysql alminium -e "FLUSH PRIVILEGES"
     mysql alminium -e "DROP DATABASE alminium"
-    rm -fr /opt/alminium /var/opt/alminium
+    rm -fr /opt/alminium/* /opt/alminium/.[^.]*
+    rm -fr /var/opt/alminium/*
 fi
 
 
