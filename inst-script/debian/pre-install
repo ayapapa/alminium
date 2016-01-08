@@ -5,13 +5,22 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
 apt-get install apt-transport-https ca-certificates
 echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list
 chown root: /etc/apt/sources.list.d/passenger.list
-#chmod 600 /etc/apt/sources.list.d/passenger.list
+# remove old passenger's info 
+if [ `ls /etc/apache2/mods-available/passenger.load` != "" \
+     -a ! -f /etc/apache2/mods-available/passenger.load ]
+then
+  rm -f /etc/apache2/mods*/passenger.*
+fi
 #  set passenger-package available
 ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
-# add ruby's APT repository
+# add ruby2.1's APT repository
 apt-get -y install software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng
+if [ `ruby --version | grep 1.9` != "" ]
+then
+  apt-get -y remove ruby1.9*
+fi
 
 # install APT packages
 apt-get -q2 update
