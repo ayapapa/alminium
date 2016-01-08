@@ -5,6 +5,7 @@
 
 ALM_INSTALL_DIR=/opt/alminium
 ALM_CURRENT_DIR=`pwd`
+ALM_ETC_DIR=/etc/opt/alminium
 
 # 実行ユーザーをチェック
 if [ "$USER" != 'root' ]
@@ -74,7 +75,7 @@ then
 fi
 rm -fr $ALM_INSTALL_DIR
 rm -fr cache/* *.installed
-
+rm -fr $ALM_ETC_DIR/passenger.*
 #　install ALMinium by smelt
 source ./smelt -u
 
