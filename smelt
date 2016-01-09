@@ -67,56 +67,59 @@ then
         MYSQLD='service mariadb'
     else
         OS='rhel6'
-        echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
+        echo "CentOS 6.xが検出されました。"
+        #echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
     fi
-elif [ -f /etc/system-release ]
-then
-    APACHE_USER=apache
-    APACHE_CONF_DIR=/etc/httpd/conf.d
-    MYSQLD='/etc/init.d/mysqld'
-    MYSQL='mysql'
-    CHK=`egrep "Amazon Linux AMI" /etc/system-release`
-    if [ "$CHK" != '' ]
-    then
-        OS='rhel6'
-        echo "Amazon Linux AMIが検出されました。"
-    fi
+#elif [ -f /etc/system-release ]
+#then
+#    APACHE_USER=apache
+#    APACHE_CONF_DIR=/etc/httpd/conf.d
+#    MYSQLD='/etc/init.d/mysqld'
+#    MYSQL='mysql'
+#    CHK=`egrep "Amazon Linux AMI" /etc/system-release`
+#    if [ "$CHK" != '' ]
+#    then
+#        OS='rhel6'
+#        echo "Amazon Linux AMIが検出されました。"
+#    fi
 elif [ -f /etc/debian_version ]
 then
     APACHE_USER=www-data
     APACHE_CONF_DIR=/etc/apache2/conf.d
     MYSQLD='/etc/init.d/mysql'
     OS='debian'
-    echo "Debian / Ubuntu が検出されました。"
-    echo "インストールに失敗するかも知れませんが、お許しくださいm(__)m"
+    echo "Ubuntu が検出されました。"
+    #echo "Debian / Ubuntu が検出されました。"
+    #echo "インストールに失敗するかも知れませんが、お許しくださいm(__)m"
     echo ""
     echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください。"
     echo "MySQLのパスワードを設定するとインストールに失敗します。"
     echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
 else
-    CHK=`sw_vers | awk '$1 = "ProductName"{ _OS = $2 " " $3 " " $4; getline; print _OS,$2; exit }'`
-    if [ "$CHK" != '' ]
-    then
-      APACHE_USER=www
-      APACHE_CONF_DIR=/opt/local/apache2/conf
-      MYSQLD=/opt/local/share/mysql55/support-files/mysql.server
-      MYSQL=mysql
-      OS='mac'
-      CPCMD='cp -Rf'
-      RMCMD='rm -Rf'
-      echo "${CHK}が検出されました。"
-    else
+    #CHK=`sw_vers | awk '$1 = "ProductName"{ _OS = $2 " " $3 " " $4; getline; print _OS,$2; exit }'`
+    #if [ "$CHK" != '' ]
+    #then
+    #  APACHE_USER=www
+    #  APACHE_CONF_DIR=/opt/local/apache2/conf
+    #  MYSQLD=/opt/local/share/mysql55/support-files/mysql.server
+    #  MYSQL=mysql
+    #  OS='mac'
+    #  CPCMD='cp -Rf'
+    #  RMCMD='rm -Rf'
+    #  echo "${CHK}が検出されました。"
+    #else
       echo "サポートされていないOSです。"
       echo "現在サポートされいているOSは、"
       echo ""
-      echo "  * Ubuntu 12.04 Server"
-      echo "  * Debian GNU/Linux 6.0"
-      echo "  * RHEL/Oracle EL/CentOS/SL 6.0/6.1"
-      echo "  * Amazon Linux AMI"
-      echo "  * Mac OS X 10.7"
+      echo "  * Ubuntu 14.04"
+      echo "  * CentOS 6.0/7.0"
+      #echo "  * Debian GNU/Linux 6.0"
+      #echo "  * RHEL/Oracle EL/CentOS/SL 6.0/6.1"
+      #echo "  * Amazon Linux AMI"
+      #echo "  * Mac OS X 10.7"
       echo "です。"
       exit
-    fi
+    #fi
 fi
 
 if [ "$ALM_HOSTNAME" = "" ]
