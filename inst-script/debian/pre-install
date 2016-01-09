@@ -17,16 +17,21 @@ ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 # add ruby2.1's APT repository
 apt-get -y install software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng
-if [ "`ruby --version | grep 1.9`" != "" ]
-then
-  apt-get -y remove ruby1.9*
-fi
+#if [ "`ruby --version | grep 1.9`" != "" ]
+#then
+#  apt-get -y remove ruby1.9*
+#fi
 
 # install APT packages
 apt-get -q2 update
 apt-get -y install `grep -v "^#" inst-script/debian/packages.lst`
+#REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
+
+# switch to ruby2.1
+ruby-switch --set ruby2.1
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
+# SSL
 if [ "$SSL" = "y" ]
 then
     apt-get -y install libapache2-mod-gnutls ssl-cert
