@@ -6,7 +6,7 @@
 ALM_SRC_DIR=$(cd $(dirname $0);pwd)
 ALM_ETC_DIR=/etc/opt/alminium
 ALM_VAR_DIR=/var/opt/alminium
-INSTALL_DIR=/opt/alminium
+ALM_INSTALL_DIR=/opt/alminium
 
 RAILS_ENV=production
 RM_VER=3.2.0
@@ -16,10 +16,11 @@ RMCMD='rm -fr'
 
 PATH=/usr/local/bin:${PATH}
 
-ALM_UPGRADE=""
 if [ "$1" = "-u" ]
 then
   ALM_UPGRADE=y
+else
+  ALM_UPGRADE=""
 fi
 
 MEM=`free -t | grep Total | awk '{print $2}'`
@@ -122,6 +123,9 @@ else
     #fi
 fi
 
+echo -----------------
+echo "$ALM_HOSTNAME"
+echo -----------------
 if [ "$ALM_HOSTNAME" = "" ]
 then
   echo "*******************************************************"
@@ -131,14 +135,12 @@ then
   echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
   echo "(上記の設定ではhttp://localhost/では接続できないのでご注意ください)"
   echo -n "ホスト名: "
-  read HOSTNAME
+  read ALM_HOSTNAME
   echo ""
   echo ""
-else
-  HOSTNAME=$ALM_HOSTNAME
 fi
 
-if [ "$SSL" = "" ]
+if [ "$ALM_ENABLE_SSL" = "" ]
 then
   echo "*******************************************************"
   echo "  SSLのサポート"
@@ -154,7 +156,7 @@ then
   echo "などのコマンドで、SSLの証明書を無効にする必要があります。"
   echo ""
   echo -n "SSL(https)サポートを有効にしますか?(y/N) "
-  read SSL
+  read ALM_ENABLE_SSL
   echo ""
   echo ""
 fi
@@ -188,14 +190,14 @@ fi
 
 # source inst-script/config-email.sh
 
-if [ -e jenkins/setup/$OS/install.sh -a "$ENABLE_JENKINS" = "" ]
+if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]
 then
   echo -n "継続的インテグレーションツールのJenkinsのインストール・設定を"
   echo -n "行うことができます。デフォルトはインストールしません。"
   echo -n "よく分からなければNを選択してください。"
   echo -n ""
   echo -n "Jenkinsをインストールしますか?[y/N]"
-  read ENABLE_JENKINS
+  read ALM_ENABLE_JENKINS
 fi
 
 # update submodules
@@ -261,7 +263,7 @@ done
 #
 # install Redmine
 #
-mkdir -p $INSTALL_DIR
+mkdir -p $ALM_INSTALL_DIR
 echo "*** install Redmine ***"
 cd cache
 wget $RM_ARC
@@ -271,12 +273,12 @@ then
 fi
 cd ..
 
-$CPCMD cache/redmine-$RM_VER/* $INSTALL_DIR/
+$CPCMD cache/redmine-$RM_VER/* $ALM_INSTALL_DIR/
 $RMCMD cache/redmine-$RM_VER
 
-cp     redmine/Gemfile.local   $INSTALL_DIR/
-$CPCMD redmine/config/*        $INSTALL_DIR/config/
-$CPCMD redmine/public/themes/* $INSTALL_DIR/public/themes/
+cp     redmine/Gemfile.local   $ALM_INSTALL_DIR/
+$CPCMD redmine/config/*        $ALM_INSTALL_DIR/config/
+$CPCMD redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
 
 # install plugins
 echo "*** install plugins ***"
@@ -290,20 +292,20 @@ then
 fi
 
 # install hooks
-mkdir -p $INSTALL_DIR/bin
-$CPCMD redmine/bin/* $INSTALL_DIR/bin/
+mkdir -p $ALM_INSTALL_DIR/bin
+$CPCMD redmine/bin/* $ALM_INSTALL_DIR/bin/
 if [ "$ALM_SUBDIR" != "" ]
 then
-  mv $INSTALL_DIR/bin/alm-sync-scm $INSTALL_DIR/bin/alm-sync-scm.org
-  cat $INSTALL_DIR/bin/alm-sync-scm.org | \
-  sed 's/localhost/localhost$ALM_SUBDIR/g' > $INSTALL_DIR/bin/alm-sync-scm
-  chmod +x $INSTALL_DIR/bin/alm-sync-scm
+  mv $ALM_INSTALL_DIR/bin/alm-sync-scm $ALM_INSTALL_DIR/bin/alm-sync-scm.org
+  cat $ALM_INSTALL_DIR/bin/alm-sync-scm.org | \
+  sed 's/localhost/localhost$ALM_SUBDIR/g' > $ALM_INSTALL_DIR/bin/alm-sync-scm
+  chmod +x $ALM_INSTALL_DIR/bin/alm-sync-scm
 fi
-$CPCMD redmine/hooks $INSTALL_DIR/
-chown -R $APACHE_USER:$APACHE_USER $INSTALL_DIR
+$CPCMD redmine/hooks $ALM_INSTALL_DIR/
+chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR
 
 # setup for jenkins
-if [ "$ENABLE_JENKINS" = "y" ]
+if [ "$ALM_ENABLE_JENKINS" = "y" ]
 then
   echo "*** install Jenkins ***"
   source jenkins/setup/$OS/install.sh
@@ -316,8 +318,8 @@ source inst-script/post-install
 # for SUBDIRECTORY
 if [ "$ALM_SUBDIR" != "" ]
 then
-  ln -sf $INSTALL_DIR/public /var/www/html$ALM_SUBDIR
-  echo $ALM_SUBDIR > $INSTALL_DIR/subdirname
+  ln -sf $ALM_INSTALL_DIR/public /var/www/html$ALM_SUBDIR
+  echo $ALM_SUBDIR > $ALM_INSTALL_DIR/subdirname
 fi
 
 # プロジェクト作成時に自動的にリポジトリを作成するときに利用
@@ -328,7 +330,7 @@ fi
 #fi
 
 # flags for initialized status
-touch $INSTALL_DIR/initialized
+touch $ALM_INSTALL_DIR/initialized
 touch $ALM_VAR_DIR/initialized
 touch $ALM_ETC_DIR/initialized
 touch /var/lib/mysql/initialized

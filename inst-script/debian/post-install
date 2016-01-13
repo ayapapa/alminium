@@ -3,7 +3,7 @@
 # set Redmine.pm
 mkdir -p /etc/perl/Apache/Authn
 rm -f /etc/perl/Apache/Authn/Redmine.pm
-ln -s $INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
+ln -s $ALM_INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
 
 # set Apache configs
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "/etc/apache2/sites-available/alminium.conf"
@@ -21,6 +21,6 @@ a2enmod wsgi
 a2enmod cgi
 a2dismod mpm_event
 a2enmod mpm_prefork
-a2ensite alminium.conf
+a2ensite alminium
 
 # vim: set ts=2 sw=2 et:

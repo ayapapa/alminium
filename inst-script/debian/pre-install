@@ -32,7 +32,7 @@ ruby-switch --set ruby2.1
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 # SSL
-if [ "$SSL" = "y" ]
+if [ "$ALM_ENABLE_SSL" = "y" ]
 then
     apt-get -y install libapache2-mod-gnutls ssl-cert
     a2enmod ssl rewrite

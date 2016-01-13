@@ -24,7 +24,7 @@ yum -y --nogpgcheck install `grep -v "^#" inst-script/$OS/packages.lst`
 #  yum  --enablerepo=remi -y --nogpgcheck install mysqlclient16
 #fi
 
-if [ "$SSL" = "y" ]
+if [ "$ALM_ENABLE_SSL" = "y" ]
 then
     yum -y install mod_ssl
 fi

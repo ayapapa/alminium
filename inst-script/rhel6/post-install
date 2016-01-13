@@ -3,13 +3,13 @@
 # set Redmine.pm
 mkdir -p /etc/perl/Apache/Authn
 rm -f /etc/perl/Apache/Authn/Redmine.pm
-ln -s $INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
+ln -s $ALM_INSTALL_DIR/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
 
 #
 # set Apache
 #
 # mod_passenger
-pushd $INSTALL_DIR
+pushd $ALM_INSTALL_DIR
 bundle exec passenger-install-apache2-module --snippet > $ALM_ETC_DIR/passenger.conf
 bundle exec passenger-install-apache2-module --auto
 popd
