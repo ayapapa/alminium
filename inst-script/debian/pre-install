@@ -2,11 +2,11 @@
 
 # # add passenger to APT repository
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
-apt-get install apt-transport-https ca-certificates
+apt-get -y install apt-transport-https ca-certificates
 echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list
 chown root: /etc/apt/sources.list.d/passenger.list
 # remove old passenger's info 
-if [ "`ls /etc/apache2/mods-available/passenger.load`" != "" \
+if [ "`ls /etc/apache2/mods-available/passenger.load 2>/dev/null`" != "" \
      -a ! -f /etc/apache2/mods-available/passenger.load ]
 then
   rm -f /etc/apache2/mods*/passenger.*
