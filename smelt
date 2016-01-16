@@ -326,9 +326,3 @@ fi
 #  echo "* * * * * /opt/alminium/extra/svn/reposman.rb -g apache -o apache -s /var/opt/alminium/git -u /var/opt/alminium/git -r localhost --scm git" >> /var/spool/cron/root
 #fi
 
-# flags for initialized status
-touch $ALM_INSTALL_DIR/initialized
-touch $ALM_VAR_DIR/initialized
-touch $ALM_ETC_DIR/initialized
-touch /var/lib/mysql/initialized
-
