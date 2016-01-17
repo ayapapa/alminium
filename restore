@@ -1,0 +1,55 @@
+#!/bin/bash
+######################################
+# restore from ALMinium's backup.    #
+# 第一引数：バックアップファイル名   #
+######################################
+
+# 実行ユーザーをチェック
+if [ "$USER" != 'root' ]
+then
+    echo "ALMiniumのインストールはルートユーザで行う必要があります。"
+    echo "rootユーザもしくはsudoで実行してください。"
+    exit 1
+fi
+
+# バックアップファイルをチェック
+if [ "$1" = '' ]
+then
+    echo "第一引数にバックアップディレクトリを指定してください。"
+    exit 1
+fi
+if [ ! -f "$1" ]
+then
+  echo "指定したバックアップファイルが在りません。処理を中止します。"
+fi
+
+ALM_BACKUP_NAME=$1
+ALM_DBBACKUP_NAME=/tmp/db.dump
+ALM_FILE_BACKUP=/tmp/files.tar.gz
+ALM_REPOS_BACKUP=/tmp/repo.tar.gz
+echo "${ALM_BACKUP_NAME}を復元します。"
+cd /tmp
+tar xzf $ALM_BACKUP_NAME
+
+#バックアップの復元
+echo "***リポジトリーデータを復元しています..."
+cd /var/opt/alminium/ && tar xzf $ALM_REPOS_BACKUP
+echo "***Redmine添付ファイルを復元しています..."
+cd /opt/alminium/files/ && tar xzf $ALM_FILE_BACKUP
+echo "***データベースを復元しています..."
+mysql -uroot alminium < $ALM_DBBACKUP_NAME
+echo "データ復元が完了しました。"
+
+#データベースのマイグレーション
+echo "データベースのマイグレーションを実施します。"
+cd /opt/alminium
+bundle exec rake db:migrate RAILS_ENV=production
+bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+bundle exec rake tmp:cache:clear RAILS_ENV=production
+bundle exec rake tmp:sessions:clear RAILS_ENV=production
+echo "データベースのマイグレーションが完了しました。"
+
+echo "サービスを起動します。"
+cd $ALM_CURRENT_DIR
+source ./inst-script/service-restart
+

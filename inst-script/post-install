@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Apache configs
-if [ "$SSL" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
-if [ "$ENABLE_JENKINS" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
+if [ "$ALM_ENABLE_SSL" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
+if [ "$ALM_ENABLE_JENKINS" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
 if [ "$ALM_SUBDIR" = "" ]
 then
   DOCMENT_ROOT="/opt/alminium/public"
@@ -12,7 +12,7 @@ fi
 
 for FILE in $(ls etc/ | grep '.conf$')
 do
-  sed -e "s|#HOSTNAME#|$HOSTNAME|" \
+  sed -e "s|#HOSTNAME#|$ALM_HOSTNAME|" \
       -e "s|#$OS# *||" \
       -e "s|$REPLACE_SSL||" \
       -e "s|$REPLACE_JENKINS||" \

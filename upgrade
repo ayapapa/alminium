@@ -5,6 +5,7 @@
 
 ALM_INSTALL_DIR=/opt/alminium
 ALM_CURRENT_DIR=`pwd`
+ALM_ETC_DIR=/etc/opt/alminium
 
 # 実行ユーザーをチェック
 if [ "$USER" != 'root' ]
@@ -28,12 +29,15 @@ then
     exit 1
 fi
 
-# カスタマイズ警告
-echo "★★★　ご自身によるカスタマイズ（プラグイン、設定ファイル等）　★★★"
-echo "★★★　がある場合は、アップグレードすることにより削除・上書き　★★★"
-echo "★★★　されてしまいますので、アップグレード後に手動でカスタマ　★★★"
-echo "★★★　イズを実行する必要があります。処理を続行する場合は    　★★★"
-echo "★★★　Enterキーを、中止する場合はCtrl+Cを押下してください。　 ★★★"
+# バックアップの確認 
+echo "#####################################################################"
+echo "# 途中にエラーが発生した場合、復活できなくなる可能性があるため、    #"
+echo "# スナップショットをとるなど、後戻りできるようにしておいてください。#"
+echo "# また、ご自身によるカスタマイズ（プラグイン、設定ファイル等）があ  #"
+echo "# る場合は、アップグレードすることにより削除・上書きされてしまいま  #"
+echo "# すので、アップグレード後に手動でカスタマイズを実行する必要があり  #"
+echo "# ます。処理を続行する場合はEnterキーを押下してください。           #"
+echo "#####################################################################"
 read DO_CONTINUE
 
 # バックアップ
@@ -43,12 +47,10 @@ then
 else
   ALM_BACKUP_DIR=$ALM_CURRENT_DIR/$1
 fi
-ALM_DBBACKUP_NAME=$ALM_BACKUP_DIR/alminiumDB-`date +"%Y-%m-%d-%H-%M-%S"`.dump
-ALM_FILE_BACKUP=$ALM_BACKUP_DIR/opt_alminium_files-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
-ALM_REPOS_BACKUP=$ALM_BACKUP_DIR/var_opt_alminium-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz
-source ./backup $1 "途中にエラーが発生した場合、復活できなくなる可能性があります。スナップショットをとるなど、後戻りできるようにしておくことをお勧めします。"
+source ./backup $1 
 if [ $? -gt 0 ]
 then
+  echo "バックアップに失敗したため、処理を中止します"
   exit 1
 fi
 
@@ -74,32 +76,12 @@ then
 fi
 rm -fr $ALM_INSTALL_DIR
 rm -fr cache/* *.installed
-
+rm -fr $ALM_ETC_DIR/passenger.*
 #　install ALMinium by smelt
 source ./smelt -u
 
 #バックアップの復元
-echo "***バックアップデータを復元します。"
-cd $ALM_CURRENT_DIR
-echo "***リポジトリーデータを復元しています・・・"
-cd /var/opt/alminium/ && tar xzf $ALM_REPOS_BACKUP
-echo "***Redmine添付ファイルを復元しています・・・"
-cd /opt/alminium/files/ && tar xzf $ALM_FILE_BACKUP
-# mysql -uroot alminium < $ALM_DBBACKUP_NAME
-echo "バックアップデータ復元が完了しました。"
-
-#データベースのマイグレーション
-echo "データベースのマイグレーションを実施します。"
-cd /opt/alminium
-bundle exec rake db:migrate RAILS_ENV=production
-bundle exec rake redmine:plugins:migrate RAILS_ENV=production
-bundle exec rake tmp:cache:clear RAILS_ENV=production
-bundle exec rake tmp:sessions:clear RAILS_ENV=production
-echo "データベースのマイグレーションが完了しました。"
-
-echo "サービスを起動します。"
-cd $ALM_CURRENT_DIR
-source ./inst-script/service-restart
+source ./restore $ALM_BACKUP_NAME
 
 echo ""
 echo "以上でアップグレードは終了です。途中にエラーが発生した場合は、元の状態に戻して手動でアップグレードを実施してください。"

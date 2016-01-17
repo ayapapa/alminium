@@ -3,13 +3,13 @@
 # Redmine Perlモジュール（リポジトリ認証連携）設定
 mkdir -p /etc/httpd/Apache/Authn
 rm -f /etc/httpd/Apache/Authn/Redmine.pm
-ln -s $INSTALL_DIR/extra/svn/Redmine.pm /etc/httpd/Apache/Authn/Redmine.pm
+ln -s $ALM_INSTALL_DIR/extra/svn/Redmine.pm /etc/httpd/Apache/Authn/Redmine.pm
 
 #
 # Apache configs
 #
 # mod_passenger
-pushd $INSTALL_DIR
+pushd $ALM_INSTALL_DIR
 bundle exec passenger-install-apache2-module --snippet > $ALM_ETC_DIR/passenger.conf
 bundle exec passenger-install-apache2-module --auto
 popd

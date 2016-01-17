@@ -8,7 +8,7 @@ echo -n
 
 port install `grep -v "^#" inst-script/mac/packages.lst`
 
-if [ "$SSL" = "y" ]
+if [ "$ALM_ENABLE_SSL" = "y" ]
 then
    port install openssl
 fi

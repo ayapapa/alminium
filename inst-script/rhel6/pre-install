@@ -34,7 +34,7 @@ then
   yum  --enablerepo=remi -y --nogpgcheck install mysqlclient16
 fi
 
-if [ "$SSL" = "y" ]
+if [ "$ALM_ENABLE_SSL" = "y" ]
 then
     yum -y install mod_ssl
 fi
