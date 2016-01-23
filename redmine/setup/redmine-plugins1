@@ -23,8 +23,8 @@ do
           wget -P cache ${URL_NAME[$i]}
         fi
         yes | unzip -q cache/$FILE_NAME
-         $RMCMD $INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        mv ${DIR_NAME[$i]} $INSTALL_DIR/plugins/${DEST_NAME[$i]}
+         $RMCMD $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        mv ${DIR_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
         rm -f $FILE_NAME
         ;;
 
@@ -34,8 +34,8 @@ do
           wget -P cache ${URL_NAME[$i]}
         fi
         tar zxf cache/$FILE_NAME
-        $RMCMD $INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        mv ${DIR_NAME[$i]} $INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        $RMCMD $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        mv ${DIR_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
         rm -f $FILE_NAME
         ;;
     git)
@@ -48,8 +48,8 @@ do
           cd cache/${DEST_NAME[$i]}
           git checkout ${DIR_NAME[$i]}
           cd ../..
-          $RMCMD $INSTALL_DIR/plugins/${DEST_NAME[$i]}
-          ${CPCMD}a cache/${DEST_NAME[$i]} $INSTALL_DIR/plugins/
+          $RMCMD $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+          ${CPCMD}a cache/${DEST_NAME[$i]} $ALM_INSTALL_DIR/plugins/
         fi
         ;;
     *)
@@ -71,14 +71,14 @@ do
             fi
           fi
         fi
-        $RMCMD $INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        ${CPCMD}a cache/${DEST_NAME[$i]} $INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        $RMCMD $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        ${CPCMD}a cache/${DEST_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
         ;;
     esac
 done
 
 # ALMiniumインストールディレクトリへ移動
-pushd $INSTALL_DIR
+pushd $ALM_INSTALL_DIR
 
 # passenger package
 if [ "$ALM_PASSSENGER_PACKAGE_AVAILABLE" = "1" ]
