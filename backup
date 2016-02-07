@@ -1,21 +1,21 @@
 #!/bin/bash
 ############################################################
 # backup for ALMinium.
-# 第一引数：バックアップディレクトリ
+# 第一引数：バックアップディレクトリ(defaultは/var/opt/alminium-backup)
 ############################################################
 
-if [ "$1" = "" ]
-then
-  echo "バックアップディレクトリ(第一引数)を指定してください"
-  exit 1
-fi
-
 ALM_CURRENT_DIR=`pwd`
-if [ `echo $1 | cut -c 1` = '/' ]
+if [ "$1" != "" ]
 then
-  ALM_BACKUP_DIR=$1
+  if [ `echo $1 | cut -c 1` = '/' ]
+  then
+    ALM_BACKUP_DIR=$1
+  else
+    ALM_BACKUP_DIR=$ALM_CURRENT_DIR/$1
+  fi
 else
-  ALM_BACKUP_DIR=$ALM_CURRENT_DIR/$1
+  # デフォルトバックアップディレクトリを設定
+  ALM_BACKUP_DIR=/var/opt/alminium-backup
 fi
 
 # 実行ユーザーチェック
@@ -39,6 +39,9 @@ ALM_DBBACKUP_NAME=db.dump
 ALM_FILE_BACKUP=files.tar.gz
 ALM_REPOS_BACKUP=repo.tar.gz
 ALM_BACKUP_NAME=$ALM_BACKUP_DIR/${ALM_BACKUP_ID}-alm-backup.tar.gz
+
+# バックアップ開始
+echo "[`date`] : ALMiniumのデータの($ALM_BACKUP_NAME)へのバックアップを開始します。"
 
 #データベースをバックアップ
 echo "MySQLデータベースをバックアップします。"
@@ -77,8 +80,15 @@ fi
 
 # バックアップ統合
 cd $ALM_BACKUP_DIR
-echo #################################
-pwd
-echo #################################
 tar czf $ALM_BACKUP_NAME ./$ALM_DBBACKUP_NAME ./$ALM_FILE_BACKUP ./$ALM_REPOS_BACKUP
+
+# バックアップ終了
+echo "[`date`] : ALMiniumのデータの($ALM_BACKUP_NAME)へのバックアップが終了しました。"
+
+# 古いバックアップファイルを削除
+if [ "$ALM_BACKUP_EXPIRY" != "" ]
+then
+  echo "[`date`] : $ALM_BACKUP_EXPIRY日経過したバックアップファイルを削除します。"
+  find $ALM_BACKUP_DIR/*.tar.gz -mtime +$ALM_BACKUP_EXPIRY -exec rm -f {} \;
+fi
 

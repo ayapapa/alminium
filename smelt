@@ -326,3 +326,14 @@ fi
 #  echo "* * * * * /opt/alminium/extra/svn/reposman.rb -g apache -o apache -s /var/opt/alminium/git -u /var/opt/alminium/git -r localhost --scm git" >> /var/spool/cron/root
 #fi
 
+#
+# 定期バックアップ設定
+#
+cd $ALM_SRC_DIR
+mkdir -p $ALM_VAR_DIR-backup
+chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR-backup
+cp ./{backup,restore} $ALM_INSTALL_DIR/
+chown $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/{backup,restore}
+cp ./etc/alminium-backup-cron /etc/cron.d/
+chown root:root /etc/cron.d/alminium-backup-cron
+
