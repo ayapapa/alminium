@@ -83,13 +83,14 @@ then
 #        OS='rhel6'
 #        echo "Amazon Linux AMIが検出されました。"
 #    fi
-elif [ -f /etc/debian_version ]
+elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]
 then
     APACHE_USER=www-data
     APACHE_CONF_DIR=/etc/apache2/conf.d
     MYSQLD='/etc/init.d/mysql'
+    MYSQL='mysql'
     OS='debian'
-    echo "Ubuntu が検出されました。"
+    echo "Ubuntu 14.04 が検出されました。"
     #echo "Debian / Ubuntu が検出されました。"
     #echo "インストールに失敗するかも知れませんが、お許しくださいm(__)m"
     echo ""
@@ -222,23 +223,10 @@ then
 fi
 
 RAKE=`which rake2.0`
-
-if [ "$RAKE" = "" ]
-then
-  RAKE=rake
-fi
+RAKE=${RAKE:-rake}
 
 # setup database
 $MYSQLD start
-
-if [ "$MYSQL" = "" ]
-then
-  MYSQL=`which mysql`
-  if [ "$MYSQL" = "" ]
-  then
-    MYSQL=`which mysql5`
-  fi
-fi
 
 if [ "$ALM_UPGRADE" = "" ]
 then
@@ -325,4 +313,15 @@ fi
 #then
 #  echo "* * * * * /opt/alminium/extra/svn/reposman.rb -g apache -o apache -s /var/opt/alminium/git -u /var/opt/alminium/git -r localhost --scm git" >> /var/spool/cron/root
 #fi
+
+#
+# 定期バックアップ設定
+#
+cd $ALM_SRC_DIR
+mkdir -p $ALM_VAR_DIR-backup
+chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR-backup
+cp ./{backup,restore} $ALM_INSTALL_DIR/
+chown $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/{backup,restore}
+cp ./etc/alminium-backup-cron /etc/cron.d/
+chown root:root /etc/cron.d/alminium-backup-cron
 

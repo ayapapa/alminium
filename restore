@@ -36,18 +36,19 @@ echo "***リポジトリーデータを復元しています..."
 cd /var/opt/alminium/ && tar xzf $ALM_REPOS_BACKUP
 echo "***Redmine添付ファイルを復元しています..."
 cd /opt/alminium/files/ && tar xzf $ALM_FILE_BACKUP
-echo "***データベースを復元しています..."
-mysql -uroot alminium < $ALM_DBBACKUP_NAME
-echo "データ復元が完了しました。"
-
-#データベースのマイグレーション
-echo "データベースのマイグレーションを実施します。"
-cd /opt/alminium
-bundle exec rake db:migrate RAILS_ENV=production
-bundle exec rake redmine:plugins:migrate RAILS_ENV=production
-bundle exec rake tmp:cache:clear RAILS_ENV=production
-bundle exec rake tmp:sessions:clear RAILS_ENV=production
-echo "データベースのマイグレーションが完了しました。"
+if [ "$ALM_DB_RESTORE" != "no" ]; then
+  echo "***データベースを復元しています..."
+  mysql -uroot alminium < $ALM_DBBACKUP_NAME
+  echo "データ復元が完了しました。"
+  #データベースのマイグレーション
+  echo "データベースのマイグレーションを実施します。"
+  cd /opt/alminium
+  bundle exec rake db:migrate RAILS_ENV=production
+  bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+  bundle exec rake tmp:cache:clear RAILS_ENV=production
+  bundle exec rake tmp:sessions:clear RAILS_ENV=production
+  echo "データベースのマイグレーションが完了しました。"
+fi
 
 echo "サービスを起動します。"
 cd $ALM_CURRENT_DIR

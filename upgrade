@@ -22,13 +22,6 @@ then
   exit 1
 fi
 
-# バックアップディレクトリ指定をチェック
-if [ "$1" = '' ]
-then
-    echo "第一引数にバックアップディレクトリを指定してください。"
-    exit 1
-fi
-
 # バックアップの確認 
 echo "#####################################################################"
 echo "# 途中にエラーが発生した場合、復活できなくなる可能性があるため、    #"
@@ -40,13 +33,7 @@ echo "# ます。処理を続行する場合はEnterキーを押下してくだ�
 echo "#####################################################################"
 read DO_CONTINUE
 
-# バックアップ
-if [ `echo $1 | cut -c 1` = '/' ]
-then
-  ALM_BACKUP_DIR=$1
-else
-  ALM_BACKUP_DIR=$ALM_CURRENT_DIR/$1
-fi
+# バックアップ実行
 source ./backup $1 
 if [ $? -gt 0 ]
 then
@@ -54,9 +41,9 @@ then
   exit 1
 fi
 
-#バックアップの確認依頼
+#バックアップ結果の確認
 echo ""
-echo "指定したディレクトリにバックアップデータ(データベース：alminiumDB-(日時).dump, 添付ファイル：opt_alminium_files-(日時).tar.gz, リポジトリ：var_opt_alminium-(日時).tar.gz)が作成されていることを確認してください。問題がなければEnterキーを押下してください。中止する場合はCtrl+C。"
+echo "ディレクトリにバックアップファイル($ALM_BACKUP_NAME)が作成されていることを確認してください。問題がなければEnterキーを押下してください。中止する場合はCtrl+C。"
 echo "#### 何らかのエラーがコンソールに出力されている場合はバックアップに失敗している可能性がありますので、中止(Ctrl+C)してください。"
 echo "#### エラー発生等により中止した場合は、upgradeファイルを参考に手動によりアップグレードを実行することをお勧めします。"
 read DO_CONTINUE
@@ -81,6 +68,7 @@ rm -fr $ALM_ETC_DIR/passenger.*
 source ./smelt -u
 
 #バックアップの復元
+ALM_DB_RESTORE=no
 source ./restore $ALM_BACKUP_NAME
 
 echo ""
