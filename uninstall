@@ -1,19 +1,14 @@
 #!/bin/bash
 
 GEM=`which gem2.0`
-
-if [ "$GEM" = "" ]
-then
-  GEM=gem
-fi
+GEM=${GEM:-gem}
 
 echo "ALMiniumをアンインストールします。"
 echo ""
 echo -n "データベース(全てのRedmineの情報)とリポジトリを削除しますか?(y/N)"
 read YN
 
-if [ "$YN" = "y" ]
-then
+if [ "$YN" = "y" ]; then
     mysql alminium -e "REVOKE ALL ON alminium.* FROM alminium@localhost"
     mysql alminium -e "DELETE FROM mysql.user WHERE User LIKE 'alminium'"
     mysql alminium -e "FLUSH PRIVILEGES"
@@ -21,13 +16,11 @@ then
     rm -fr /opt/alminium /var/opt/alminium
 fi
 
-
 echo ""
 echo -n "Apacheの設定を削除しますか?(y/N)"
 read YN
 
-if [ "$YN" = "y" ]
-then
+if [ "$YN" = "y" ]; then
     rm -fr /etc/httpd/conf.d/{alminium}.conf
     rm -fr /etc/apache2/conf.d/{alminium}.conf
     rm -fr /etc/apache2/sites-{available,enabled}/alminium.conf
@@ -39,8 +32,7 @@ echo ""
 echo -n "Jenkisとその設定を削除しますか?(y/N)"
 read YN
 
-if [ "$YN" = "y" ]
-then
+if [ "$YN" = "y" ]; then
     source jenkins/setup/uninstall.sh
 fi
 
@@ -49,7 +41,6 @@ echo ""
 echo -n "キャッシュされたファイルを削除しますか?(y/N)"
 read YN
 
-if [ "$YN" = "y" ]
-then
+if [ "$YN" = "y" ]; then
     rm -fr cache *.installed
 fi

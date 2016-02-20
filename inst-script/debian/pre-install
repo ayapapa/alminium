@@ -7,8 +7,7 @@ echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /
 chown root: /etc/apt/sources.list.d/passenger.list
 # remove old passenger's info 
 if [ "`ls /etc/apache2/mods-available/passenger.load 2>/dev/null`" != "" \
-     -a ! -f /etc/apache2/mods-available/passenger.load ]
-then
+     -a ! -f /etc/apache2/mods-available/passenger.load ]; then
   rm -f /etc/apache2/mods*/passenger.*
 fi
 #  set passenger-package available
@@ -17,8 +16,7 @@ ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 # add ruby2.1's APT repository
 apt-get -y install software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng
-#if [ "`ruby --version | grep 1.9`" != "" ]
-#then
+#if [ "`ruby --version | grep 1.9`" != "" ]; then
 #  apt-get -y remove ruby1.9*
 #fi
 
@@ -32,8 +30,7 @@ ruby-switch --set ruby2.1
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 # SSL
-if [ "$ALM_ENABLE_SSL" = "y" ]
-then
+if [ "$ALM_ENABLE_SSL" = "y" ]; then
     apt-get -y install libapache2-mod-gnutls ssl-cert
     a2enmod ssl rewrite
     a2dismod gnutls
