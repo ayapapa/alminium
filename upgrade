@@ -8,16 +8,14 @@ ALM_CURRENT_DIR=`pwd`
 ALM_ETC_DIR=/etc/opt/alminium
 
 # 実行ユーザーをチェック
-if [ "$USER" != 'root' ]
-then
+if [ "$USER" != 'root' ]; then
     echo "ALMiniumのインストールはルートユーザで行う必要があります。"
     echo "rootユーザもしくはsudoで実行してください。"
     exit 1
 fi
 
 # ALMiniumインストール状況をチェック
-if [ ! -d $ALM_INSTALL_DIR ]
-then
+if [ ! -d $ALM_INSTALL_DIR ]; then
   echo "ALMiniumインストールディレクトリが見つかりませんでした。処理を中止します"
   exit 1
 fi
@@ -35,8 +33,7 @@ read DO_CONTINUE
 
 # バックアップ実行
 source ./backup $1 
-if [ $? -gt 0 ]
-then
+if [ $? -gt 0 ]; then
   echo "バックアップに失敗したため、処理を中止します"
   exit 1
 fi
@@ -57,8 +54,7 @@ echo "ALMiniumのアップグレードを開始・・・"
 
 # アップグレード対象を削除
 cd $ALM_CURRENT_DIR
-if [ -f $ALM_INSTALL_DIR/subdirname ]
-then
+if [ -f $ALM_INSTALL_DIR/subdirname ]; then
   rm -f /var/www/html`cat $ALM_INSTALL_DIR/subdirname`
 fi
 rm -fr $ALM_INSTALL_DIR

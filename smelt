@@ -7,6 +7,7 @@ ALM_SRC_DIR=$(cd $(dirname $0);pwd)
 ALM_ETC_DIR=/etc/opt/alminium
 ALM_VAR_DIR=/var/opt/alminium
 ALM_INSTALL_DIR=/opt/alminium
+ALM_ENABLE_AUTO_BACKUP=${ALM_ENABLE_AUTO_BACKUP:-y}
 
 RAILS_ENV=production
 RM_VER=3.2.0
@@ -16,44 +17,34 @@ RMCMD='rm -fr'
 
 PATH=/usr/local/bin:${PATH}
 
-if [ "$1" = "-u" ]
-then
+if [ "$1" = "-u" ]; then
   ALM_UPGRADE=y
 else
   ALM_UPGRADE=""
 fi
 
 MEM=`free -t | grep Total | awk '{print $2}'`
-if [ $MEM -lt 1000000 ]
-then
+if [ $MEM -lt 1000000 ]; then
   echo "メモリが不足しています。"
   echo "ALMiniumのインストールは1GB以上のRAMが利用できるマシン及び仮想マシンに"
   echo "インストールしてください"
   exit
 fi
 
-if [ "$USER" != 'root' ]
-then
+if [ "$USER" != 'root' ]; then
     echo "ALMiniumのインストールはルートユーザで行う必要があります。"
     echo "rootユーザもしくはsudoで実行してください。"
     exit 1
 fi
 
-if [ ! -d cache ]
-then
-    mkdir cache
-fi
-
 # OSを確認
-if [ -f /etc/redhat-release ]
-then
+if [ -f /etc/redhat-release ]; then
     APACHE_USER=apache
     APACHE_CONF_DIR=/etc/httpd/conf.d
     MYSQLD='/etc/init.d/mysqld'
     MYSQL='mysql'
     CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
-    if [ "$CHK" != '' ]
-    then
+    if [ "$CHK" != '' ]; then
         OS='rhel5'
         echo "RHEL 5.x / CentOS 5.x / OEL 5.xが検出されました。"
         echo "RHEL 5.x / CentOS 5.x / OEL 5.xは、サポートされていません。"
@@ -61,8 +52,7 @@ then
         exit 1
     fi
     CHK=`egrep "CentOS Linux release 7" /etc/redhat-release`
-    if [ "$CHK" != '' ]
-    then
+    if [ "$CHK" != '' ]; then
         OS='rhel7'
         echo "CentOS 7.x が検出されました。"
         MYSQLD='service mariadb'
@@ -71,20 +61,17 @@ then
         echo "CentOS 6.xが検出されました。"
         #echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
     fi
-#elif [ -f /etc/system-release ]
-#then
+#elif [ -f /etc/system-release ]; then
 #    APACHE_USER=apache
 #    APACHE_CONF_DIR=/etc/httpd/conf.d
 #    MYSQLD='/etc/init.d/mysqld'
 #    MYSQL='mysql'
 #    CHK=`egrep "Amazon Linux AMI" /etc/system-release`
-#    if [ "$CHK" != '' ]
-#    then
+#    if [ "$CHK" != '' ]; then
 #        OS='rhel6'
 #        echo "Amazon Linux AMIが検出されました。"
 #    fi
-elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]
-then
+elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]; then
     APACHE_USER=www-data
     APACHE_CONF_DIR=/etc/apache2/conf.d
     MYSQLD='/etc/init.d/mysql'
@@ -99,8 +86,7 @@ then
     echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
 else
     #CHK=`sw_vers | awk '$1 = "ProductName"{ _OS = $2 " " $3 " " $4; getline; print _OS,$2; exit }'`
-    #if [ "$CHK" != '' ]
-    #then
+    #if [ "$CHK" != '' ]; then
     #  APACHE_USER=www
     #  APACHE_CONF_DIR=/opt/local/apache2/conf
     #  MYSQLD=/opt/local/share/mysql55/support-files/mysql.server
@@ -124,22 +110,20 @@ else
     #fi
 fi
 
-if [ "$ALM_HOSTNAME" = "" ]
-then
+if [ "$ALM_HOSTNAME" = "" ]; then
   echo "*******************************************************"
   echo "  ホスト名の設定"
   echo "*******************************************************"
   echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
   echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
-  echo "(上記の設定ではhttp://localhost/では接続できないのでご注意ください)"
-  echo -n "ホスト名: "
+  IP_ADDR="`ip -f inet -o addr show eth0|cut -d\  -f 7 | cut -d/ -f 1`"
+  echo -n "ホスト名[$IP_ADDR]:"
   read ALM_HOSTNAME
-  echo ""
+  ALM_HOSTNAME=${ALM_HOSTNAME:-$IP_ADDR}
   echo ""
 fi
 
-if [ "$ALM_ENABLE_SSL" = "" ]
-then
+if [ "$ALM_ENABLE_SSL" = "" ]; then
   echo "*******************************************************"
   echo "  SSLのサポート"
   echo "*******************************************************"
@@ -162,8 +146,7 @@ fi
 #
 # サブディレクトリ指定
 #
-if [ "$ALM_RELATIVE_URL_ROOT" = "" ]
-then
+if [ "$ALM_RELATIVE_URL_ROOT" = "" ]; then
   echo "*****************************"
   echo "  サブディレクトリ指定  "
   echo "*****************************"
@@ -178,45 +161,40 @@ then
 else
   ALM_SUBDIR="$ALM_RELATIVE_URL_ROOT"
 fi
-if [ "$ALM_SUBDIR" != "" ]
-then
-  if [ `echo $ALM_SUBDIR | cut -c 1` != '/' ]
-  then
+
+if [ "$ALM_SUBDIR" != "" ]; then
+  if [ `echo $ALM_SUBDIR | cut -c 1` != '/' ]; then
     ALM_SUBDIR="/$ALM_SUBDIR"
   fi
 fi
 
 # source inst-script/config-email.sh
 
-if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]
-then
+if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]; then
   echo -n "継続的インテグレーションツールのJenkinsのインストール・設定を"
   echo -n "行うことができます。デフォルトはインストールしません。"
   echo -n "よく分からなければNを選択してください。"
   echo -n ""
-  echo -n "Jenkinsをインストールしますか?[y/N]"
+  echo -n "Jenkinsをインストールしますか?(y/N)"
   read ALM_ENABLE_JENKINS
 fi
 
 # update submodules
 if [ $(git config -l | egrep 'submodule.+url=' | wc -l) -ne \
-     $(grep submodule .gitmodules | wc -l) ]
-then
+     $(grep submodule .gitmodules | wc -l) ]; then
   git submodule init
 fi
 git submodule sync
 git submodule update
 
 # install packages
-if [ ! -f packages.installed ]
-then
+if [ ! -f packages.installed ]; then
   echo "*** run pre-install script ***"
   source inst-script/$OS/pre-install
   touch packages.installed
 fi
 
-if [ ! -f gems.installed ]
-then
+if [ ! -f gems.installed ]; then
   echo "*** run gems script ***"
   source inst-script/gems
   touch gems.installed
@@ -228,8 +206,7 @@ RAKE=${RAKE:-rake}
 # setup database
 $MYSQLD start
 
-if [ "$ALM_UPGRADE" = "" ]
-then
+if [ "$ALM_UPGRADE" = "" ]; then
   # create DB
   $MYSQL < redmine/setup/createdb.sql
 
@@ -250,10 +227,10 @@ done
 #
 mkdir -p $ALM_INSTALL_DIR
 echo "*** install Redmine ***"
+mkdir -p cache
 cd cache
 wget $RM_ARC
-if [ ! -f redmine-$RM_VER ]
-then
+if [ ! -f redmine-$RM_VER ]; then
   tar zxf redmine-$RM_VER.tar.gz
 fi
 cd ..
@@ -264,13 +241,13 @@ $RMCMD cache/redmine-$RM_VER
 cp     redmine/Gemfile.local   $ALM_INSTALL_DIR/
 $CPCMD redmine/config/*        $ALM_INSTALL_DIR/config/
 $CPCMD redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
+cp ./{backup,restore} ./inst-script/config-backup $ALM_INSTALL_DIR/
 
 # install plugins
 echo "*** install plugins ***"
 source redmine/setup/redmine-plugins
 
-if [ "$ALM_UPGRADE" = "" ]
-then
+if [ "$ALM_UPGRADE" = "" ]; then
   # Customize
   echo "*** run initialize SQL ***"
   $MYSQL alminium < redmine/setup/init.mysql
@@ -279,8 +256,7 @@ fi
 # install hooks
 mkdir -p $ALM_INSTALL_DIR/bin
 $CPCMD redmine/bin/* $ALM_INSTALL_DIR/bin/
-if [ "$ALM_SUBDIR" != "" ]
-then
+if [ "$ALM_SUBDIR" != "" ]; then
   mv $ALM_INSTALL_DIR/bin/alm-sync-scm $ALM_INSTALL_DIR/bin/alm-sync-scm.org
   cat $ALM_INSTALL_DIR/bin/alm-sync-scm.org | \
   sed 's/localhost/localhost$ALM_SUBDIR/g' > $ALM_INSTALL_DIR/bin/alm-sync-scm
@@ -290,8 +266,7 @@ $CPCMD redmine/hooks $ALM_INSTALL_DIR/
 chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR
 
 # setup for jenkins
-if [ "$ALM_ENABLE_JENKINS" = "y" ]
-then
+if [ "$ALM_ENABLE_JENKINS" = "y" ]; then
   echo "*** install Jenkins ***"
   source jenkins/setup/$OS/install.sh
   source jenkins/setup/config.sh
@@ -300,28 +275,23 @@ fi
 echo "*** run post-install script ***"
 source inst-script/post-install
 
-# for SUBDIRECTORY
-if [ "$ALM_SUBDIR" != "" ]
-then
+# setup for SUBDIRECTORY
+if [ "$ALM_SUBDIR" != "" ]; then
   ln -sf $ALM_INSTALL_DIR/public /var/www/html$ALM_SUBDIR
   echo $ALM_SUBDIR > $ALM_INSTALL_DIR/subdirname
 fi
 
 # プロジェクト作成時に自動的にリポジトリを作成するときに利用
 #CHK=`egrep "reposman" /var/spool/cron/root`
-#if [ "$CHK" = '' ]
-#then
+#if [ "$CHK" = '' ]; then
 #  echo "* * * * * /opt/alminium/extra/svn/reposman.rb -g apache -o apache -s /var/opt/alminium/git -u /var/opt/alminium/git -r localhost --scm git" >> /var/spool/cron/root
 #fi
 
 #
 # 定期バックアップ設定
 #
-cd $ALM_SRC_DIR
-mkdir -p $ALM_VAR_DIR-backup
-chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR-backup
-cp ./{backup,restore} $ALM_INSTALL_DIR/
-chown $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/{backup,restore}
-cp ./etc/alminium-backup-cron /etc/cron.d/
-chown root:root /etc/cron.d/alminium-backup-cron
+if [ "$ALM_ENABLE_AUTO_BACKUP" = "y" ]; then
+  cd $ALM_SRC_DIR
+  source ./inst-script/config-backup
+fi
 

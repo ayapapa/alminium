@@ -18,8 +18,7 @@ do
   EXT=`echo ${URL_NAME[$i]} | sed -e "s/.*\.\(.*$\)/\1/"`
     case $EXT in
     zip)
-        if [ ! -f cache/$FILE_NAME ]
-        then
+        if [ ! -f cache/$FILE_NAME ]; then
           wget -P cache ${URL_NAME[$i]}
         fi
         yes | unzip -q cache/$FILE_NAME
@@ -29,8 +28,7 @@ do
         ;;
 
     tgz|gz)
-        if [ ! -f cache/$FILE_NAME ]
-        then
+        if [ ! -f cache/$FILE_NAME ]; then
           wget -P cache ${URL_NAME[$i]}
         fi
         tar zxf cache/$FILE_NAME
@@ -39,12 +37,10 @@ do
         rm -f $FILE_NAME
         ;;
     git)
-        if [ ! -d cache/${DEST_NAME[$i]} ]
-        then
+        if [ ! -d cache/${DEST_NAME[$i]} ]; then
           git clone ${URL_NAME[$i]} cache/${DEST_NAME[$i]}
         fi
-        if [ -d cache/${DEST_NAME[$i]} ]
-        then
+        if [ -d cache/${DEST_NAME[$i]} ]; then
           cd cache/${DEST_NAME[$i]}
           git checkout ${DIR_NAME[$i]}
           cd ../..
@@ -53,18 +49,15 @@ do
         fi
         ;;
     *)
-        if [ ! -d cache/${DEST_NAME[$i]} ]
-        then
-          if [[ ${URL_NAME[$i]} =~ "bitbucket.org" ]]
-          then
+        if [ ! -d cache/${DEST_NAME[$i]} ]; then
+          if [[ ${URL_NAME[$i]} =~ "bitbucket.org" ]]; then
             hg clone ${URL_NAME[$i]} cache/${DEST_NAME[$i]}
             cd cache/${DEST_NAME[$i]}
             hg checkout ${DIR_NAME[$i]}
             cd ../..
           else
             svn co ${URL_NAME[$i]} cache/${DEST_NAME[$i]}
-            if [ "${DIR_NAME[$i]}" != "HEAD" ]
-            then
+            if [ "${DIR_NAME[$i]}" != "HEAD" ]; then
               cd cache/${DEST_NAME[$i]}
               svn update -r ${DIR_NAME[$i]}
               cd ../..
@@ -81,15 +74,13 @@ done
 pushd $ALM_INSTALL_DIR
 
 # passenger package
-if [ "$ALM_PASSSENGER_PACKAGE_AVAILABLE" = "1" ]
-then
+if [ "$ALM_PASSSENGER_PACKAGE_AVAILABLE" = "1" ]; then
   mv Gemfile.local Gemfile.local.org
   cat Gemfile.local.org | sed "s/gem 'passenger'/#gem 'passenger'/" > Gemfile.local
 fi
 
 # for Hudson
-if [ -f plugins/redmine_hudson/Gemfile ]
-then
+if [ -f plugins/redmine_hudson/Gemfile ]; then
   mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
 fi
 
@@ -112,16 +103,13 @@ bundle exec rake tmp:cache:clear RAILS_ENV=production
 bundle exec rake tmp:sessions:clear RAILS_ENV=production
 
 # for XLS export
-if [ -d plugins/redmine_xls_export ]
-then
+if [ -d plugins/redmine_xls_export ]; then
   bundle exec rake redmine:plugins:process_version_change RAILS_ENV=production
 fi
 
 # for backlogs
-if [ -d plugins/redmine_backlogs ]
-then
-  if [ "$ALM_UPGRADE" = "y" ]
-  then
+if [ -d plugins/redmine_backlogs ]; then
+  if [ "$ALM_UPGRADE" = "y" ]; then
     bundle exec rake redmine:backlogs:install task_tracker=タスク story_trackers=機能 labels=false RAILS_ENV=production
   else
     bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false RAILS_ENV=production
@@ -129,8 +117,7 @@ then
 fi
 
 # FIXME: to avoid open_flash_chart assets aren't copied.
-if [ -d plugins/open_flash_chart/assets ]
-then
+if [ -d plugins/open_flash_chart/assets ]; then
   cp -fr plugins/open_flash_chart/assets public/plugin_assets/open_flash_chart
 fi
 

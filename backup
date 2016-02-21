@@ -5,10 +5,8 @@
 ############################################################
 
 ALM_CURRENT_DIR=`pwd`
-if [ "$1" != "" ]
-then
-  if [ `echo $1 | cut -c 1` = '/' ]
-  then
+if [ "$1" != "" ]; then
+  if [ "`echo $1 | cut -c 1`" = "/" ]; then
     ALM_BACKUP_DIR=$1
   else
     ALM_BACKUP_DIR=$ALM_CURRENT_DIR/$1
@@ -19,16 +17,14 @@ else
 fi
 
 # 実行ユーザーチェック
-if [ "$USER" != 'root' ]
-then
+if [ "$USER" != 'root' ]; then
   echo -n "本処理はルートユーザで行う必要があります。"
   echo "rootユーザもしくはsudoで実行してください。"
   exit 1
 fi
 
 #バックアップディレクトリのチェック
-if [ ! -d $ALM_BACKUP_DIR ]
-then
+if [ ! -d $ALM_BACKUP_DIR ]; then
   mkdir -p $ALM_BACKUP_DIR
   #echo "バックアップディレクトリが見つかりませんでした。処理を中止します"
   #exit 1
@@ -47,8 +43,7 @@ echo "[`date`] : ALMiniumのデータの($ALM_BACKUP_NAME)へのバックアッ�
 #データベースをバックアップ
 echo "MySQLデータベースをバックアップします。"
 mysqldump -uroot alminium > $ALM_BACKUP_DIR/$ALM_DBBACKUP_NAME
-if [ -f $ALM_BACKUP_DIR/$ALM_DBBACKUP_NAME ]
-then
+if [ -f $ALM_BACKUP_DIR/$ALM_DBBACKUP_NAME ]; then
   echo "MySQLデータベースのバックアップが成功しました。"
 else
   echo "MySQLデータベースのバックアップが失敗しました。"
@@ -59,8 +54,7 @@ fi
 echo "Redmineの添付ファイルをバックアップします。"
 cd /opt/alminium/files/
 tar czf $ALM_BACKUP_DIR/$ALM_FILE_BACKUP .
-if [ -f $ALM_BACKUP_DIR/$ALM_FILE_BACKUP ]
-then
+if [ -f $ALM_BACKUP_DIR/$ALM_FILE_BACKUP ]; then
   echo "Redmineの添付ファイルのバックアップが成功しました。"
 else
   echo "Redmineの添付ファイルのバックアップが失敗しました。"
@@ -71,8 +65,7 @@ fi
 echo "ソースコードリポジトリをバックアップします。"
 cd /var/opt/alminium/
 tar czf $ALM_BACKUP_DIR/$ALM_REPOS_BACKUP .
-if [ -f $ALM_BACKUP_DIR/$ALM_REPOS_BACKUP ]
-then
+if [ -f $ALM_BACKUP_DIR/$ALM_REPOS_BACKUP ]; then
   echo "ソースコードリポジトリのバックアップが成功しました。"
 else
   echo "ソースコードリポジトリのバックアップが失敗しました。"
@@ -87,8 +80,7 @@ tar czf $ALM_BACKUP_NAME ./$ALM_DBBACKUP_NAME ./$ALM_FILE_BACKUP ./$ALM_REPOS_BA
 echo "[`date`] : ALMiniumのデータの($ALM_BACKUP_NAME)へのバックアップが終了しました。"
 
 # 古いバックアップファイルを削除
-if [ "$ALM_BACKUP_EXPIRY" != "" ]
-then
+if [ "$ALM_BACKUP_EXPIRY" != "" ]; then
   echo "[`date`] : $ALM_BACKUP_EXPIRY日経過したバックアップファイルを削除します。"
   find $ALM_BACKUP_DIR/*.tar.gz -mtime +$ALM_BACKUP_EXPIRY -exec rm -f {} \;
 fi

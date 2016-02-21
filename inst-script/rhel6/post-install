@@ -19,29 +19,25 @@ ln -sf "$ALM_ETC_DIR/passenger.conf" "$APACHE_CONF_DIR/"
 ln -sf "$ALM_ETC_DIR/alminium.conf"  "$APACHE_CONF_DIR/"
 
 # セキュリティ無効化の設定
-if [ ! "$USE_DISABLE_SECURITY" = "n" ]
-then
+if [ ! "$USE_DISABLE_SECURITY" = "n" ]; then
   # SELinuxを無効化
   echo 0 > /selinux/enforce
   CHK=`grep SELINUX=enforcing /etc/selinux/config`
-  if [ ! "$CHK" = '' ]
-  then
+  if [ ! "$CHK" = '' ]; then
     sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config 
     echo "SELinuxが無効化されました"
   fi
 
   # ファイアウォールの設定で80番(http)を許可
   CHK=`grep "dport 80" /etc/sysconfig/iptables`
-  if [ "$CHK" = '' ]
-  then
+  if [ "$CHK" = '' ]; then
     RULENUM=`iptables-save |grep INPUT |grep -n "dport 22"|awk -F : '{print $1}'`
     iptables -I  INPUT ${RULENUM} -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
     iptables-save > /etc/sysconfig/iptables
     echo "tcp 80番ポートのアクセスを許可しました"
   fi
   CHK=`grep "dport 443" /etc/sysconfig/iptables`
-  if [ "$CHK" = '' ]
-  then
+  if [ "$CHK" = '' ]; then
     RULENUM=`iptables-save |grep INPUT |grep -n "dport 22"|awk -F : '{print $1}'`
     iptables -I  INPUT ${RULENUM} -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
     iptables-save > /etc/sysconfig/iptables
