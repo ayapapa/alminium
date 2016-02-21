@@ -4,10 +4,10 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 USER=root
 MAILTO=root
 
-#ALM_BACKUP_EXPIRY=14 # 14日以上経過したバックアップファイルを削除(backupコマンド内で利用する環境変数)
-ALM_BACKUP_DIR=/var/opt/alminium-backup
 ALM_BACKUP_CMD=/opt/alminium/backup
+ALM_BACKUP_DIR=#ALM_BACKUP_DIR#
+ALM_BACKUP_LOG=#ALM_BACKUP_LOG#
 
-# 2日に一度、午前3時0分にバックアップする
-0 3 */2 * * root ALM_BACKUP_EXPIRY=14 $ALM_BACKUP_CMD $ALM_BACKUP_DIR >> /opt/alminium/log/backup.log
+#ALM_BACKUP_MINUTE# #ALM_BACKUP_HOUR# #ALM_BACKUP_DAY# * * root ALM_BACKUP_EXPIRY=#ALM_BACKUP_EXPIRY# $ALM_BACKUP_CMD $ALM_BACKUP_DIR >> $ALM_BACKUP_LOG
+
 
