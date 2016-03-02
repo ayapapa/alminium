@@ -31,6 +31,7 @@ if [ $MEM -lt 1000000 ]; then
   exit
 fi
 
+USER=${USER:-`whoami`}
 if [ "$USER" != 'root' ]; then
     echo "ALMiniumのインストールはルートユーザで行う必要があります。"
     echo "rootユーザもしくはsudoで実行してください。"

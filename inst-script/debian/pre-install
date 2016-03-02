@@ -2,7 +2,8 @@
 
 # # add passenger to APT repository
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
-apt-get -y install apt-transport-https ca-certificates
+apt-get install -y ca-certificates
+apt-get install -y --force-yes apt-transport-https
 echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list
 chown root: /etc/apt/sources.list.d/passenger.list
 # remove old passenger's info 
@@ -14,7 +15,7 @@ fi
 ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
 # add ruby2.1's APT repository
-apt-get -y install software-properties-common
+apt-get install -y --force-yes software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng
 #if [ "`ruby --version | grep 1.9`" != "" ]; then
 #  apt-get -y remove ruby1.9*
