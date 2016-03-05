@@ -31,11 +31,15 @@ if [ $MEM -lt 1000000 ]; then
   exit
 fi
 
+USER=${USER:-`whoami`}
 if [ "$USER" != 'root' ]; then
     echo "ALMiniumのインストールはルートユーザで行う必要があります。"
     echo "rootユーザもしくはsudoで実行してください。"
     exit 1
 fi
+
+# ネットワーク0のデバイス名
+ETH0=eth0
 
 # OSを確認
 if [ -f /etc/redhat-release ]; then
@@ -56,6 +60,7 @@ if [ -f /etc/redhat-release ]; then
         OS='rhel7'
         echo "CentOS 7.x が検出されました。"
         MYSQLD='service mariadb'
+        ETH0=enp0s3
     else
         OS='rhel6'
         echo "CentOS 6.xが検出されました。"
@@ -116,7 +121,7 @@ if [ "$ALM_HOSTNAME" = "" ]; then
   echo "*******************************************************"
   echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
   echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
-  IP_ADDR="`ip -f inet -o addr show eth0|cut -d\  -f 7 | cut -d/ -f 1`"
+  IP_ADDR="`ip -f inet -o addr show $ETH0 | cut -d\  -f 7 | cut -d/ -f 1`"
   echo -n "ホスト名[$IP_ADDR]:"
   read ALM_HOSTNAME
   ALM_HOSTNAME=${ALM_HOSTNAME:-$IP_ADDR}
