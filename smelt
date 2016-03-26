@@ -10,7 +10,7 @@ INSTALL_DIR=/opt/alminium
 
 RAILS_ENV=production
 SCRIPT_DIR=`pwd`
-RM_VER=2.6.9
+RM_VER=2.6.10
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 #RM_ARC=http://redmine.rubyforge.org/svn/tags
 CPCMD='cp -fr'
@@ -281,7 +281,9 @@ fi
 cp     redmine/Gemfile.local   $INSTALL_DIR/
 $CPCMD redmine/config/*        $INSTALL_DIR/config/
 $CPCMD redmine/public/themes/* $INSTALL_DIR/public/themes/
-
+# avoid bundle install error, because of nokogiri version mismatch
+mv $INSTALL_DIR/Gemfile $INSTALL_DIR/Gemfile.org
+sed "s/gem \"nokogiri\"/#gem \"nokogiri\"/" $INSTALL_DIR/Gemfile.org > $INSTALL_DIR/Gemfile
 # install plugins
 source redmine/setup/redmine-plugins
 
