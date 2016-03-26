@@ -10,7 +10,7 @@ ALM_INSTALL_DIR=/opt/alminium
 ALM_ENABLE_AUTO_BACKUP=${ALM_ENABLE_AUTO_BACKUP:-y}
 
 RAILS_ENV=production
-RM_VER=3.2.0
+RM_VER=3.2.1
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 CPCMD='cp -fr'
 RMCMD='rm -fr'
@@ -247,7 +247,9 @@ cp     redmine/Gemfile.local   $ALM_INSTALL_DIR/
 $CPCMD redmine/config/*        $ALM_INSTALL_DIR/config/
 $CPCMD redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
 cp ./{backup,restore} ./inst-script/config-backup $ALM_INSTALL_DIR/
-
+# avoid bandle install error because of noogiri version conflict
+mv $ALM_INSTALL_DIR/Gemfile $ALM_INSTALL_DIR/Gemfile.org
+sed "s/gem \"nokogiri\", \">= 1.6.7.2\"/gem \"nokogiri\"#, \">= 1.6.7.2\"/" $ALM_INSTALL_DIR/Gemfile.org > $ALM_INSTALL_DIR/Gemfile
 # install plugins
 echo "*** install plugins ***"
 source redmine/setup/redmine-plugins
