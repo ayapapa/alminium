@@ -2,7 +2,6 @@
 ############################################################
 # Smart installer for redmine/chiliproject.
 ############################################################
-
 ALM_SRC_DIR=$(cd $(dirname $0);pwd)
 ALM_ETC_DIR=/etc/opt/alminium
 ALM_VAR_DIR=/var/opt/alminium
@@ -87,6 +86,18 @@ elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]; then
     #echo "インストールに失敗するかも知れませんが、お許しくださいm(__)m"
     echo ""
     echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください。"
+    echo "MySQLのパスワードを設定するとインストールに失敗します。"
+    echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
+elif [ -f /etc/lsb-release -a "`grep 16.04 /etc/lsb-release`" != "" ]; then
+    APACHE_USER=www-data
+    APACHE_CONF_DIR=/etc/apache2/conf.d
+    MYSQLD='/etc/init.d/mysql'
+    MYSQL='mysql'
+    OS='ubuntu1604'
+    ETH0=enp0s3
+    echo "Ubuntu 16.04 が検出されました。"
+    echo ""
+    echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください>。"
     echo "MySQLのパスワードを設定するとインストールに失敗します。"
     echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
 else
@@ -194,7 +205,7 @@ git submodule update
 
 # install packages
 if [ ! -f packages.installed ]; then
-  echo "*** run pre-install script ***"
+  echo "*** run $OS's pre-install script ***"
   source inst-script/$OS/pre-install
   touch packages.installed
 fi

@@ -30,4 +30,3 @@ fi
 service mariadb start
 systemctl enable mariadb
 
-

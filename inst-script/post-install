@@ -8,11 +8,14 @@ if [ "$ALM_SUBDIR" = "" ]; then
 else
   DOCMENT_ROOT="/var/www/html\nRailsBaseURI $ALM_SUBDIR"
 fi
+OS_TYPE=$OS
+if [ `echo $OS_TYPE | grep ubuntu` != "" ]; then OS_TYPE=debian
+elif [ `echo $OS_TYPE | grep rhel` != "" ]; then OS_TYPE=rhel; fi
 
 for FILE in $(ls etc/ | grep '.conf$')
 do
   sed -e "s|#HOSTNAME#|$ALM_HOSTNAME|" \
-      -e "s|#$OS# *||" \
+      -e "s|#$OS_TYPE# *||" \
       -e "s|$REPLACE_SSL||" \
       -e "s|$REPLACE_JENKINS||" \
       -e "s|#SUBDIR#|$ALM_SUBDIR|" \
