@@ -10,7 +10,6 @@ ln -sf "$ALM_ETC_DIR/alminium.conf"  "/etc/apache2/sites-available/alminium.conf
 
 a2enmod expires
 a2enmod dav_fs
-a2enmod auth_mysql
 a2enmod authz_svn
 a2enmod proxy_http
 a2enmod headers
