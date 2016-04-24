@@ -9,8 +9,8 @@ else
   DOCMENT_ROOT="/var/www/html\nRailsBaseURI $ALM_SUBDIR"
 fi
 OS_TYPE=$OS
-if [ `echo $OS_TYPE | grep ubuntu` != "" ]; then OS_TYPE=debian
-elif [ `echo $OS_TYPE | grep rhel` != "" ]; then OS_TYPE=rhel; fi
+if [ "`echo $OS_TYPE | grep ubuntu`" != "" ]; then OS_TYPE=debian
+elif [ "`echo $OS_TYPE | grep rhel`" != "" ]; then OS_TYPE=rhel; fi
 
 for FILE in $(ls etc/ | grep '.conf$')
 do
