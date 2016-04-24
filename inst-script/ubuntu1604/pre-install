@@ -14,16 +14,10 @@ fi
 #  set passenger-package available
 ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
-# add ruby2.1's APT repository
-apt-get install -y --force-yes software-properties-common
-add-apt-repository -y ppa:brightbox/ruby-ng
-
 # install APT packages
 apt-get -q2 update
 apt-get -y install `grep -v "^#" inst-script/$OS/packages.lst`
 
-# switch to ruby2.1
-ruby-switch --set ruby2.1
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 # SSL

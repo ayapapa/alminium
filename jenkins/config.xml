@@ -8,16 +8,18 @@
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
   <authorizationStrategy class="hudson.security.AuthorizationStrategy$Unsecured"/>
-  <securityRealm class="org.jenkinsci.plugins.reverse_proxy_auth.ReverseProxySecurityRealm" plugin="reverse-proxy-auth-plugin">
-    <proxyTemplate/>
-    <authContext/>
-    <inhibitInferRootDN>false</inhibitInferRootDN>
-    <userSearchBase></userSearchBase>
-    <userSearch>uid={0}</userSearch>
-    <authorities/>
-    <forwardedUser>X-Forwarded-User</forwardedUser>
-    <headerGroups>X-Forwarded-Groups</headerGroups>
-    <headerGroupsDelimiter>|</headerGroupsDelimiter>
+  <securityRealm class="hudson.plugins.redmine.RedmineSecurityRealm" plugin="redmine@0.15">
+    <dbms>MySQL</dbms>
+    <dbServer>127.0.0.1</dbServer>
+    <databaseName>alminium</databaseName>
+    <port>3306</port>
+    <dbUserName>alminium</dbUserName>
+    <dbPassword>alminium</dbPassword>
+    <version>1.2.0</version>
+    <loginTable>users</loginTable>
+    <userField>login</userField>
+    <passField>hashed_password</passField>
+    <saltField>salt</saltField>
   </securityRealm>
   <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
   <workspaceDir>${ITEM_ROOTDIR}/workspace</workspaceDir>
