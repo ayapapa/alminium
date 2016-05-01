@@ -53,10 +53,6 @@ if [ x"$http_proxy" != x"" ]; then
   #service jenkins restart
 fi
 
-# for issue https://github.com/ayapapa/alminium/issues/64
-# avoid plug-in failure
-ISSUE64=open
-if [ "$ISSUE64" != "open" ]; then
 # プラグインインストール
 mkdir tmp
 pushd tmp
@@ -85,8 +81,6 @@ fi
 if [ ! -f /var/lib/jenkins/config.xml ]; then
   cp jenkins/config.xml /var/lib/jenkins/config.xml
 fi
-
-fi # for issue https://github.com/ayapapa/alminium/issues/64
 
 chown -R jenkins:jenkins /var/lib/jenkins/
 service jenkins restart
