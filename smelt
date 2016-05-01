@@ -314,21 +314,3 @@ if [ "$ALM_ENABLE_AUTO_BACKUP" = "y" ]; then
   source ./inst-script/config-backup
 fi
 
-#
-# Jenkinsプラグイン設定エラー回避対応
-# see https://github.com/ayapapa/alminium/issues/64
-if [ "$ALM_ENABLE_JENKINS" = "y" -a "$ISSUE64" = "open" ]; then
-  echo "### 必ずお読みください ### "
-  echo "Jenkinsプラグイン設定エラー: https://github.com/ayapapa/alminium/issues/64"
-  echo "を回避するため、現在スクリプトによるJenkinsプラグインインストールを停止しています。"
-  echo "このため、インストール終了後に以下のことを手動で実行してくだい。"
-  echo "1. Jenkinsの起動(http[s]://(alminium-server-name)/jenkins)"
-  echo "2. 以下のJenkinsプラグインのインストール"
-  echo "   Dashboard View, Git Plugin, Persona Plugin,"
-  echo "   Reverse Proxy Auth Plugin, Redmine plugin "
-  echo "3. sudo git clone https://github.com/okamototk/jenkins-persona-hudmi /var/lib/jenkins/persona"
-  echo "4. sudo cp /var/lib/jenkins/config.xml /var/lib/jenkins/config.xml.bak"
-  echo "5. sudo cp jenkins/config.xml /var/lib/jenkins/config.xml"
-  echo "6. sudo service jenkins restart"
-fi
-
