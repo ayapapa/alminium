@@ -95,6 +95,9 @@ elif [ -f /etc/lsb-release -a "`grep 16.04 /etc/lsb-release`" != "" ]; then
     MYSQL='mysql'
     OS='ubuntu1604'
     ETH0=enp0s3
+    if [ ! -f jenkins/setup/ubuntu1604 ]; then
+      ln -s debian jenkins/setup/ubuntu1604
+    fi
     echo "Ubuntu 16.04 が検出されました。"
     echo ""
     echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください>。"
@@ -186,7 +189,6 @@ fi
 
 # source inst-script/config-email.sh
 
-ln -s debian jenkins/setup/ubuntu1604
 if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]; then
   echo -n "継続的インテグレーションツールのJenkinsのインストール・設定を"
   echo -n "行うことができます。デフォルトはインストールしません。"

@@ -6,6 +6,7 @@ if [ ! -f /var/lib/jenkins/plugins ]; then
 fi
 
 # download jenkins-cli.jar
+sleep 10
 RET=-1
 until  [ "$RET" -eq "0" ]
 do
@@ -54,6 +55,7 @@ if [ x"$http_proxy" != x"" ]; then
 fi
 
 # プラグインインストール
+sleep 10
 mkdir tmp
 pushd tmp
 RET=-1
@@ -70,8 +72,6 @@ java -jar $ALM_INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/
 java -jar $ALM_INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin dashboard-view
 popd
 rm -rf tmp
-
-sleep 10
 
 # persona-hudmi取得
 if [ ! -d /var/lib/jenkins/persona ]; then
