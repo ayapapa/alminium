@@ -9,7 +9,9 @@ ALM_INSTALL_DIR=/opt/alminium
 ALM_ENABLE_AUTO_BACKUP=${ALM_ENABLE_AUTO_BACKUP:-y}
 
 RAILS_ENV=production
-RM_VER=3.2.1
+if [ "$RM_VER" = "" ]; then
+  RM_VER="`cat RM_VERSION`"
+fi
 RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 CPCMD='cp -fr'
 RMCMD='rm -fr'
