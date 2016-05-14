@@ -280,9 +280,7 @@ fi
 mkdir -p $ALM_INSTALL_DIR/bin
 $CPCMD redmine/bin/* $ALM_INSTALL_DIR/bin/
 if [ "$ALM_SUBDIR" != "" ]; then
-  mv $ALM_INSTALL_DIR/bin/alm-sync-scm $ALM_INSTALL_DIR/bin/alm-sync-scm.org
-  cat $ALM_INSTALL_DIR/bin/alm-sync-scm.org | \
-  sed 's/localhost/localhost$ALM_SUBDIR/g' > $ALM_INSTALL_DIR/bin/alm-sync-scm
+  sed -i "s|localhost|localhost$ALM_SUBDIR|g" $ALM_INSTALL_DIR/bin/alm-sync-scm
   chmod +x $ALM_INSTALL_DIR/bin/alm-sync-scm
 fi
 $CPCMD redmine/hooks $ALM_INSTALL_DIR/
