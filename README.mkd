@@ -38,28 +38,24 @@ ALMiniumは、次のような特徴を持っています。
 
 ALMiniumは、次のRedmineプラグインを同梱しています。
 
-プラグイン   |説明
--------------|------
-Backlogs     |スクラム開発のサポート
-Jenkins Plugin|Jenkinsとの連携
-Code Review  |コードレビュー支援
-XLS export   |Excelでチケットを出力
+プラグイン     | 説明
+---------------|------
+Backlogs       | スクラム開発のサポート
+Jenkins Plugin | Jenkinsとの連携
+Code Review    | コードレビュー支援
+XLS export     | Excelでチケットを出力
 Git Branch Hook| Gitのブランチでの作業をチケットに連動させます
-DMSF         |文書管理
-
+DMSF           | 文書管理
+OAuth Provider | OAuthプロバイダー(see https://github.com/suer/redmine_oauth_provider)
+ 
 その他のプラグインついては、<a href="redmine/setup/redmine-plugins.lst">プラグインリストファイル</a>をご覧ください。
 
 ## 動作環境
 
- * RHEL6 x64互換環境(OEL,SL,CentOSなど含む)
- * CentOS7
- * Ubuntu 14.04(x64)
- * ※Amazon AMI Linux は未確認
+ * CentOS 6, 7
+ * Ubuntu 14.04, 16.04
 
-32ビット版OSはサポートしていません。64ビット版をお使いください。下記のOSはサポートしていませんが、対応コードらしきものはあるのでがんばれば動作するかもしれません。
-
- * Debian GNU/Linux 6.0
- * Mac OSX
+32ビット版OSはサポートしていません。64ビット版をお使いください。
 
 ## 使い方
 下記の通り実行すれば、ALMiniumのインストーラを実行できます。
