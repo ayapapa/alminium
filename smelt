@@ -316,3 +316,10 @@ if [ "$ALM_ENABLE_AUTO_BACKUP" = "y" ]; then
   source ./inst-script/config-backup
 fi
 
+#
+# 不要なファイルなどを削除
+#
+if [ "$OS" = "ubuntu1604" ]; then
+  rm jenkins/setup/ubuntu1604
+fi
+
