@@ -200,6 +200,41 @@ if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]; then
   read ALM_ENABLE_JENKINS
 fi
 
+# 一時データ保存場所確保
+mkdir -p $ALM_SRC_DIR/cache
+
+# git version確認
+GIT_INSTALL=y
+if [ ! `which git` = "" ]; then
+  GIT_VER=`git --version | cut -c 13-15`
+  if [ `echo "$GIT_VER >= 1.9" | bc` = 1 ]; then
+    GIT_INSTALL=N
+  fi
+fi
+
+GIT_VERSION=2.9.0
+if [ $GIT_INSTALL = 'y' ]; then
+  echo
+  echo
+  echo gitのバージョンが古いためALMiniumが正しく動作しない可能性があります。
+  echo 本ソフトウェアでは version1.9以上を推奨しています。
+  echo gitのバージョンを$GIT_VERSIONにアップグレードしても良い場合は'y'を
+  echo 'N'を選択した場合はご自身でgitのバージョンアップを実施し
+  echo  再度ALMiniumをインストールしてください。
+  echo -n "gitをアップグレードしても良いですか？(y/N):"
+  read GIT_UPGRADE
+fi
+
+if [ $GIT_UPGRADE = 'y'  ]; then
+  pushd $ALM_SRC_DIR/cache
+  wget https://www.kernel.org/pub/software/scm/git/git-$GIT_VERSION.tar.gz
+  tar xzvf git-$GIT_VERSION.tar.gz
+  cd git-$GIT_VERSION
+  make prefix=/usr all
+  make prefix=/usr install
+  git --version
+  popd
+fi
 # update submodules
 if [ $(git config -l | egrep 'submodule.+url=' | wc -l) -ne \
      $(grep submodule .gitmodules | wc -l) ]; then
@@ -248,7 +283,6 @@ done
 #
 mkdir -p $ALM_INSTALL_DIR
 echo "*** install Redmine ***"
-mkdir -p cache
 cd cache
 wget $RM_ARC
 if [ ! -f redmine-$RM_VER ]; then

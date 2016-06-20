@@ -6,7 +6,7 @@ curl-devel
 db4-devel
 gcc-c++
 gdbm-devel
-git
+#git
 glibc-devel
 httpd
 httpd-devel

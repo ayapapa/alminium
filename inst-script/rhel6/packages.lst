@@ -1,5 +1,5 @@
 wget
-git
+#git
 subversion
 mercurial
 unzip
