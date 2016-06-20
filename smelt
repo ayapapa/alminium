@@ -7,6 +7,8 @@ ALM_ETC_DIR=/etc/opt/alminium
 ALM_VAR_DIR=/var/opt/alminium
 ALM_INSTALL_DIR=/opt/alminium
 ALM_ENABLE_AUTO_BACKUP=${ALM_ENABLE_AUTO_BACKUP:-y}
+ALM_GIT_VERSION=${ALM_GIT_VERSION:-2.9.0}
+ALM_GIT_AUTO_UPGRADE=${ALM_GIT_AUTO_UPGRADE:-N}
 
 RAILS_ENV=production
 if [ "$RM_VER" = "" ]; then
@@ -203,39 +205,48 @@ fi
 # 一時データ保存場所確保
 mkdir -p $ALM_SRC_DIR/cache
 
-# git version確認
-GIT_INSTALL=y
-if [ ! `which git` = "" ]; then
+#
+# gitを必要に応じてインストール
+#
+GIT_INSTALL=N
+# git 確認
+if [ "`which git`" = "" ]; then
+  GIT_INSTALL=y
+else
   GIT_VER=`git --version | cut -c 13-15`
-  if [ `echo "$GIT_VER >= 1.9" | bc` = 1 ]; then
-    GIT_INSTALL=N
+  # 古いgitのときはアップグレード
+  if [ `echo "$GIT_VER >= 1.9" | bc` = 0 ]; then
+    if [ ! $ALM_GIT_AUTO_UPGRADE = 'y' ]; then
+      echo
+      echo
+      echo gitのバージョンが古いためALMiniumが正しく動作しない可能性があります。
+      echo 本ソフトウェアでは version1.9以上を推奨しています。
+      echo gitのバージョンを${ALM_GIT_VERSION}にアップグレードしても良い場合は'y'を
+      echo 'N'を選択した場合はご自身でgitのバージョンアップを実施し
+      echo  再度ALMiniumをインストールを開始してください。
+      echo -n "gitをアップグレードしても良いですか？(y/N):"
+      read GIT_INSTALL
+      if [ ! $GIT_INSTALL = 'y' ]; then
+        exit 1
+      fi
+    else
+      GIT_INSTALL=y
+    fi
   fi
 fi
 
-GIT_VERSION=2.9.0
+# gitをインストール
 if [ $GIT_INSTALL = 'y' ]; then
-  echo
-  echo
-  echo gitのバージョンが古いためALMiniumが正しく動作しない可能性があります。
-  echo 本ソフトウェアでは version1.9以上を推奨しています。
-  echo gitのバージョンを$GIT_VERSIONにアップグレードしても良い場合は'y'を
-  echo 'N'を選択した場合はご自身でgitのバージョンアップを実施し
-  echo  再度ALMiniumをインストールしてください。
-  echo -n "gitをアップグレードしても良いですか？(y/N):"
-  read GIT_UPGRADE
-  GIT_UPGRADE=${GIT_UPGRADE:-y}
-fi
-
-if [ $GIT_UPGRADE = 'y'  ]; then
   pushd $ALM_SRC_DIR/cache
-  wget https://www.kernel.org/pub/software/scm/git/git-$GIT_VERSION.tar.gz
-  tar xzvf git-$GIT_VERSION.tar.gz
-  cd git-$GIT_VERSION
+  wget https://www.kernel.org/pub/software/scm/git/git-$ALM_GIT_VERSION.tar.gz
+  tar xzvf git-$ALM_GIT_VERSION.tar.gz
+  cd git-$ALM_GIT_VERSION
   make prefix=/usr all
   make prefix=/usr install
   git --version
   popd
 fi
+
 # update submodules
 if [ $(git config -l | egrep 'submodule.+url=' | wc -l) -ne \
      $(grep submodule .gitmodules | wc -l) ]; then
