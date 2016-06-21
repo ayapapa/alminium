@@ -223,6 +223,7 @@ if [ $GIT_INSTALL = 'y' ]; then
   echo  再度ALMiniumをインストールしてください。
   echo -n "gitをアップグレードしても良いですか？(y/N):"
   read GIT_UPGRADE
+  GIT_UPGRADE=${GIT_UPGRADE:-y}
 fi
 
 if [ $GIT_UPGRADE = 'y'  ]; then
