@@ -15,6 +15,7 @@ fi
 ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
 # install APT packages
+add-apt-repository -y ppa:git-core/ppa
 apt-get -q2 update
 apt-get -y install `grep -v "^#" inst-script/$OS/packages.lst`
 

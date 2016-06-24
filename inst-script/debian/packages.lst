@@ -1,5 +1,6 @@
 apache2
 g++
+git
 imagemagick
 libapache2-mod-auth-mysql
 libapache2-mod-passenger

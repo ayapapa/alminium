@@ -206,45 +206,38 @@ fi
 mkdir -p $ALM_SRC_DIR/cache
 
 #
-# gitを必要に応じてインストール
+# gitコマンドをチェック
 #
-GIT_INSTALL=N
+GIT_UPDATE=N
 # git 確認
 if [ "`which git`" = "" ]; then
-  GIT_INSTALL=y
+  echo 
+  echo gitコマンドがインストールされていません。
+  echo gitコマンドをインストールしてから再度実行してください。
+  echo 処理を終了します。
+  exit 1
 else
   GIT_VER=`git --version | cut -c 13-15`
   # 古いgitのときはアップグレード
   if [ `echo "$GIT_VER >= 1.9" | bc` = 0 ]; then
-    if [ ! $ALM_GIT_AUTO_UPGRADE = 'y' ]; then
+    if [ $ALM_GIT_AUTO_UPGRADE = 'y' ]; then
+      GIT_UPDATE=y
+    else
       echo
       echo
       echo gitのバージョンが古いためALMiniumが正しく動作しない可能性があります。
       echo 本ソフトウェアでは version1.9以上を推奨しています。
       echo gitのバージョンを${ALM_GIT_VERSION}にアップグレードしても良い場合は'y'を
+      echo さもなくば'N'を選択してください。
       echo 'N'を選択した場合はご自身でgitのバージョンアップを実施し
       echo  再度ALMiniumをインストールを開始してください。
       echo -n "gitをアップグレードしても良いですか？(y/N):"
-      read GIT_INSTALL
-      if [ ! $GIT_INSTALL = 'y' ]; then
+      read GIT_UPDATE
+      if [ ! $GIT_UPDATE = 'y' ]; then
         exit 1
       fi
-    else
-      GIT_INSTALL=y
     fi
   fi
-fi
-
-# gitをインストール
-if [ $GIT_INSTALL = 'y' ]; then
-  pushd $ALM_SRC_DIR/cache
-  wget https://www.kernel.org/pub/software/scm/git/git-$ALM_GIT_VERSION.tar.gz
-  tar xzvf git-$ALM_GIT_VERSION.tar.gz
-  cd git-$ALM_GIT_VERSION
-  make prefix=/usr all
-  make prefix=/usr install
-  git --version
-  popd
 fi
 
 # update submodules
