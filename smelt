@@ -208,8 +208,6 @@ mkdir -p $ALM_SRC_DIR/cache
 #
 # gitコマンドをチェック
 #
-GIT_UPDATE=N
-# git 確認
 if [ "`which git`" = "" ]; then
   echo 
   echo gitコマンドがインストールされていません。
@@ -229,13 +227,10 @@ else
       echo 本ソフトウェアでは version1.9以上を推奨しています。
       echo gitのバージョンを${ALM_GIT_VERSION}にアップグレードしても良い場合は'y'を
       echo さもなくば'N'を選択してください。
-      echo 'N'を選択した場合はご自身でgitのバージョンアップを実施し
-      echo  再度ALMiniumをインストールを開始してください。
+      echo 'N'を選択した場合は、ALMiniumインストールした後、
+      echo ご自身でgitのバージョンアップを実施してください。
       echo -n "gitをアップグレードしても良いですか？(y/N):"
       read GIT_UPDATE
-      if [ ! $GIT_UPDATE = 'y' ]; then
-        exit 1
-      fi
     fi
   fi
 fi

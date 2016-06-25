@@ -19,7 +19,9 @@ apt-get install -y --force-yes software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng
 
 # install APT packages
-sudo add-apt-repository -y ppa:git-core/ppa
+if [ "$GIT_UPDATE" = "y" ]; then
+  add-apt-repository -y ppa:git-core/ppa
+fi
 apt-get -q2 update
 apt-get -y install `grep -v "^#" inst-script/$OS/packages.lst`
 
