@@ -1,15 +1,16 @@
-ImageMagick
-ImageMagick-devel
 apr-devel
 byacc
 curl-devel
 db4-devel
+expat-devel
 gcc-c++
 gdbm-devel
-git
+gettext-devel
 glibc-devel
 httpd
 httpd-devel
+ImageMagick
+ImageMagick-devel
 ipa-pgothic-fonts
 libffi-devel
 libical
@@ -30,6 +31,7 @@ openssl-devel
 patch
 perl-Apache-DBI
 perl-Digest-SHA
+perl-ExtUtils-MakeMaker
 python-docutils
 readline-devel
 rpm-build

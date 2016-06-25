@@ -1,5 +1,6 @@
 apache2
 g++
+git
 imagemagick
 libapache2-mod-passenger
 libapache2-mod-perl2
