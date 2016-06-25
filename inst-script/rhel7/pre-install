@@ -33,6 +33,5 @@ systemctl enable mariadb
 # git update
 if [ $GIT_UPDATE = 'y' ]; then
   source inst-script/git_build_install
-popd
 fi
 
