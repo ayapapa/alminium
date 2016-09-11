@@ -3,9 +3,11 @@
 # upgrader for ALMinium.
 ############################################################
 
-ALM_INSTALL_DIR=/opt/alminium
+ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
+ALM_VAR_DIR=/var/opt/alminium
+ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
+
 ALM_CURRENT_DIR=`pwd`
-ALM_ETC_DIR=/etc/opt/alminium
 
 # 実行ユーザーをチェック
 USER=${USER:-`whoami`}
@@ -16,7 +18,7 @@ if [ "$USER" != 'root' ]; then
 fi
 
 # ALMiniumインストール状況をチェック
-if [ ! -d $ALM_INSTALL_DIR ]; then
+if [ ! -e $ALM_INSTALL_DIR ]; then
   echo "ALMiniumインストールディレクトリが見つかりませんでした。処理を中止します"
   exit 1
 fi
@@ -58,7 +60,7 @@ cd $ALM_CURRENT_DIR
 if [ -f $ALM_INSTALL_DIR/subdirname ]; then
   rm -f /var/www/html`cat $ALM_INSTALL_DIR/subdirname`
 fi
-rm -fr $ALM_INSTALL_DIR
+rm -fr $ALM_INSTALL_DIR/* $ALM_INSTALL_DIR/.[^.]*
 rm -fr cache/* *.installed
 rm -fr $ALM_ETC_DIR/passenger.*
 #　install ALMinium by smelt

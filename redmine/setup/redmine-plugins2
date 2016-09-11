@@ -23,7 +23,8 @@ bundle install --path vendor/bundle --without development test
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=redmine_jenkins
 
 # 権限を変更
-chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR
+chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/*
+
 
 # ディレクトリを元に戻す
 popd

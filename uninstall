@@ -2,6 +2,9 @@
 
 GEM=`which gem2.0`
 GEM=${GEM:-gem}
+ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
+ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
+ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
 echo "ALMiniumをアンインストールします。"
 echo ""
@@ -13,7 +16,7 @@ if [ "$YN" = "y" ]; then
     mysql alminium -e "DELETE FROM mysql.user WHERE User LIKE 'alminium'"
     mysql alminium -e "FLUSH PRIVILEGES"
     mysql alminium -e "DROP DATABASE alminium"
-    rm -fr /opt/alminium /var/opt/alminium
+    rm -fr $ALM_INSTALL_DIR/* $ALM_INSTALL_DIR/.[^.]*  $ALM_VAR_DIR/*
 fi
 
 echo ""
@@ -24,7 +27,7 @@ if [ "$YN" = "y" ]; then
     rm -fr /etc/httpd/conf.d/{alminium}.conf
     rm -fr /etc/apache2/conf.d/{alminium}.conf
     rm -fr /etc/apache2/sites-{available,enabled}/alminium.conf
-    rm -fr /etc/opt/alminium
+    rm -fr $ALM_ETC_DIR/*
 fi
 
 

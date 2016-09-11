@@ -268,7 +268,7 @@ if [ "$ALM_UPGRADE" = "" ]; then
 
   # create directory for vcs
   mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
-  chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR
+  chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR/*
 fi
 
 # setup for apache
@@ -318,7 +318,7 @@ if [ "$ALM_SUBDIR" != "" ]; then
   chmod +x $ALM_INSTALL_DIR/bin/alm-sync-scm
 fi
 $CPCMD redmine/hooks $ALM_INSTALL_DIR/
-chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR
+chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/*
 
 # setup for jenkins
 if [ "$ALM_ENABLE_JENKINS" = "y" ]; then
