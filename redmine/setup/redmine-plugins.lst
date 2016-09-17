@@ -24,5 +24,5 @@ open_flash_chart,master,https://github.com/pullmonkey/open_flash_chart.git
 #redmine_charts,master,https://github.com/drakontia/redmine_charts.git
 redmine_local_avatars,master,https://github.com/thorin/redmine_local_avatars.git
 redmine_git_branch_hook,master,https://github.com/mikoto20000/redmine_git_branch_hook.git
-redmine_dmsf,ALMinium-support,https://github.com/ayapapa/redmine_dmsf.git
+redmine_dmsf,master,https://github.com/danmunn/redmine_dmsf.git
 redmine_oauth_provider,master,https://github.com/suer/redmine_oauth_provider.git

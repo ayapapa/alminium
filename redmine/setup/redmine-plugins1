@@ -84,6 +84,12 @@ if [ -f plugins/redmine_hudson/Gemfile ]; then
   mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
 fi
 
+#for DMSF
+# avoid bandle install error because of rubyzip version conflict
+if [ -f $ALM_INSTALL_DIR/plugins/redmine_dmsf/Gemfile ]; then
+  sed -i.org "s/gem 'rubyzip',/gem 'rubyzip'#,/" $ALM_INSTALL_DIR/plugins/redmine_dmsf/Gemfile
+fi
+
 # redmineに必要なgemをインストール
 bundle install --path vendor/bundle --without development test xapian
 
