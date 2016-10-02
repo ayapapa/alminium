@@ -1,0 +1,18 @@
+language: bash
+env:
+  global:
+    DEBIAN_FRONTEND=noninteractive
+    ALM_HOSTNAME="localhost"
+    ALM_ENABLE_SSL="N"
+    ALM_RELATIVE_URL_ROOT=""
+    ALM_ENABLE_JENKINS="N"
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq git
+  
+script:
+  - git clone https://github.com/ayapapa/alminium.git 
+  - cd alminium 
+  - sudo ./smelt
+  
