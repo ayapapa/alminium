@@ -122,7 +122,7 @@ else
       echo "サポートされていないOSです。"
       echo "現在サポートされいているOSは、"
       echo ""
-      echo "  * Ubuntu 14.04"
+      echo "  * Ubuntu 14.04/16.04"
       echo "  * CentOS 6.0/7.0"
       #echo "  * Debian GNU/Linux 6.0"
       #echo "  * RHEL/Oracle EL/CentOS/SL 6.0/6.1"

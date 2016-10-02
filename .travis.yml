@@ -5,10 +5,15 @@ services:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq git
+  - sudo apt-get install -qq git curl
+  - sudo su && curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+  - sudo chmod +x /usr/local/bin/docker-compose
 
 script:
   - git clone https://github.com/ayapapa/docker-alminium.git 
   - cd docker-alminium 
-  - sudo docker build .
+  - sudo docker build -t ayapapa/docker-alminium .
+  - sudo docker-compose up -d
+  - sleep 60 && curl localhost:10080
+
   
