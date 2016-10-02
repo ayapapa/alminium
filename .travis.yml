@@ -6,7 +6,7 @@ services:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq git curl
-  - sudo su && curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+  - sudo curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
   - sudo chmod +x /usr/local/bin/docker-compose
 
 script:
