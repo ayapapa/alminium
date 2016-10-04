@@ -122,11 +122,6 @@ if [ -d plugins/redmine_backlogs ]; then
   fi
 fi
 
-# FIXME: to avoid open_flash_chart assets aren't copied.
-if [ -d plugins/open_flash_chart/assets ]; then
-  cp -fr plugins/open_flash_chart/assets public/plugin_assets/open_flash_chart
-fi
-
 # ディレクトリを元に戻す
 popd
 
