@@ -15,7 +15,7 @@ script:
   - cd docker-alminium
   - sed -i.org "s/ALM_VER=\"v3.3.0a\"/ALM_VER=\"dev\"/" Dockerfile
   - sudo docker build -t ayapapa/docker-alminium .
-  - sudo docker-compose up -d
-  - sleep 60 && curl localhost:10080
+  - sudo docker-compose up
+  #- sleep 60 && curl localhost:10080
 
   
