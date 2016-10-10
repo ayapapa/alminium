@@ -4,7 +4,8 @@
 # 第一引数：バックアップディレクトリ(defaultは/var/opt/alminium-backup)
 ############################################################
 
-ALM_CURRENT_DIR=`pwd`
+ALM_CURRENT_DIR=${ALM_CURRENT_DIR:-`pwd`}
+
 if [ "$1" != "" ]; then
   if [ "`echo $1 | cut -c 1`" = "/" ]; then
     ALM_BACKUP_DIR=$1

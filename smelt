@@ -14,7 +14,6 @@ RAILS_ENV=production
 if [ "$RM_VER" = "" ]; then
   RM_VER="`cat RM_VERSION`"
 fi
-#RM_ARC=http://www.redmine.org/releases/redmine-${RM_VER}.tar.gz
 RM_ARC=https://github.com/redmine/redmine/archive/${RM_VER}.tar.gz
 CPCMD='cp -fr'
 RMCMD='rm -fr'
@@ -46,94 +45,16 @@ fi
 ETH0=eth0
 
 # OSを確認
-if [ -f /etc/redhat-release ]; then
-    APACHE_USER=apache
-    APACHE_CONF_DIR=/etc/httpd/conf.d
-    MYSQLD='/etc/init.d/mysqld'
-    MYSQL='mysql'
-    CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
-    if [ "$CHK" != '' ]; then
-        OS='rhel5'
-        echo "RHEL 5.x / CentOS 5.x / OEL 5.xが検出されました。"
-        echo "RHEL 5.x / CentOS 5.x / OEL 5.xは、サポートされていません。"
-        echo "インストールを中止します。"
-        exit 1
-    fi
-    CHK=`egrep "CentOS Linux release 7" /etc/redhat-release`
-    if [ "$CHK" != '' ]; then
-        OS='rhel7'
-        echo "CentOS 7.x が検出されました。"
-        MYSQLD='service mariadb'
-        ETH0=enp0s3
-    else
-        OS='rhel6'
-        echo "CentOS 6.xが検出されました。"
-        #echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
-    fi
-#elif [ -f /etc/system-release ]; then
-#    APACHE_USER=apache
-#    APACHE_CONF_DIR=/etc/httpd/conf.d
-#    MYSQLD='/etc/init.d/mysqld'
-#    MYSQL='mysql'
-#    CHK=`egrep "Amazon Linux AMI" /etc/system-release`
-#    if [ "$CHK" != '' ]; then
-#        OS='rhel6'
-#        echo "Amazon Linux AMIが検出されました。"
-#    fi
-elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]; then
-    APACHE_USER=www-data
-    APACHE_CONF_DIR=/etc/apache2/conf.d
-    MYSQLD='/etc/init.d/mysql'
-    MYSQL='mysql'
-    OS='debian'
-    echo "Ubuntu 14.04 が検出されました。"
-    #echo "Debian / Ubuntu が検出されました。"
-    #echo "インストールに失敗するかも知れませんが、お許しくださいm(__)m"
-    echo ""
-    echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください。"
-    echo "MySQLのパスワードを設定するとインストールに失敗します。"
-    echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
-elif [ -f /etc/lsb-release -a "`grep 16.04 /etc/lsb-release`" != "" ]; then
-    APACHE_USER=www-data
-    APACHE_CONF_DIR=/etc/apache2/conf.d
-    MYSQLD='/etc/init.d/mysql'
-    MYSQL='mysql'
-    OS='ubuntu1604'
-    ETH0=enp0s3
-    if [ ! -f jenkins/setup/ubuntu1604 ]; then
-      ln -s debian jenkins/setup/ubuntu1604
-    fi
-    echo "Ubuntu 16.04 が検出されました。"
-    echo ""
-    echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください>。"
-    echo "MySQLのパスワードを設定するとインストールに失敗します。"
-    echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
-else
-    #CHK=`sw_vers | awk '$1 = "ProductName"{ _OS = $2 " " $3 " " $4; getline; print _OS,$2; exit }'`
-    #if [ "$CHK" != '' ]; then
-    #  APACHE_USER=www
-    #  APACHE_CONF_DIR=/opt/local/apache2/conf
-    #  MYSQLD=/opt/local/share/mysql55/support-files/mysql.server
-    #  MYSQL=mysql
-    #  OS='mac'
-    #  CPCMD='cp -Rf'
-    #  RMCMD='rm -Rf'
-    #  echo "${CHK}が検出されました。"
-    #else
-      echo "サポートされていないOSです。"
-      echo "現在サポートされいているOSは、"
-      echo ""
-      echo "  * Ubuntu 14.04/16.04"
-      echo "  * CentOS 6.0/7.0"
-      #echo "  * Debian GNU/Linux 6.0"
-      #echo "  * RHEL/Oracle EL/CentOS/SL 6.0/6.1"
-      #echo "  * Amazon Linux AMI"
-      #echo "  * Mac OS X 10.7"
-      echo "です。"
-      exit
-    #fi
-fi
+source ./check-os
 
+# MySQLインストールに関する注意
+echo ""
+echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください。"
+echo "MySQLのパスワードを設定するとインストールに失敗します。"
+echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
+echo ""
+
+# ホスト名設定
 if [ "$ALM_HOSTNAME" = "" ]; then
   echo "*******************************************************"
   echo "  ホスト名の設定"
@@ -147,6 +68,7 @@ if [ "$ALM_HOSTNAME" = "" ]; then
   echo ""
 fi
 
+# SSL設定
 if [ "$ALM_ENABLE_SSL" = "" ]; then
   echo "*******************************************************"
   echo "  SSLのサポート"
@@ -287,7 +209,7 @@ echo "*** install Redmine ***"
 cd cache
 wget $RM_ARC
 if [ ! -f redmine-$RM_VER ]; then
-  tar zxf redmine-$RM_VER.tar.gz
+  tar zxf $RM_VER.tar.gz
 fi
 cd ..
 
@@ -297,7 +219,7 @@ $RMCMD cache/redmine-$RM_VER
 cp     redmine/Gemfile.local   $ALM_INSTALL_DIR/
 $CPCMD redmine/config/*        $ALM_INSTALL_DIR/config/
 $CPCMD redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
-cp ./{backup,restore} ./inst-script/config-backup $ALM_INSTALL_DIR/
+cp ./{backup,restore} ./inst-script/config-backup ./inst-script/$OS/service-restart $ALM_INSTALL_DIR/
 # avoid bandle install error because of nokogiri version conflict
 mv $ALM_INSTALL_DIR/Gemfile $ALM_INSTALL_DIR/Gemfile.org
 sed "s/gem \"nokogiri\", \">= 1.6.7.2\"/gem \"nokogiri\"#, \">= 1.6.7.2\"/" $ALM_INSTALL_DIR/Gemfile.org > $ALM_INSTALL_DIR/Gemfile
