@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/ayapapa/alminium.png?branch=dev)](http://travis-ci.org/ayapapa/alminium)
+[![Build Status](https://secure.travis-ci.org/ayapapa/alminium.png?branch=master)](http://travis-ci.org/ayapapa/alminium)
 [![Issue Count](https://codeclimate.com/github/ayapapa/alminium/badges/issue_count.svg)](https://codeclimate.com/github/ayapapa/alminium)
 
 # ALMinium
