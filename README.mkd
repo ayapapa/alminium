@@ -50,7 +50,7 @@ XLS export     | Excelでチケットを出力
 Git Branch Hook| Gitのブランチでの作業をチケットに連動させます
 DMSF           | 文書管理
 OAuth Provider | OAuthプロバイダー(see https://github.com/suer/redmine_oauth_provider)
-OAuth GitLab   | GitLabアカウントでログイン
+OAuth GitLab   | GitLabアカウントでログイン(see https://github.com/applewu/redmine_omniauth_gitlab)
  
 その他のプラグインついては、<a href="redmine/setup/redmine-plugins.lst">プラグインリストファイル</a>をご覧ください。  
 **インストールするプラグインを除外したい場合は、この[プラグインリストファイル](redmine/setup/redmine-plugins.lst)を編集し、不要なプラグインをコメントアウトしてください。**
