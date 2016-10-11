@@ -4,6 +4,8 @@
 # 第一引数：バックアップファイル名   #
 ######################################
 
+ALM_CURRENT_DIR=${ALM_CURRENT_DIR:-`pwd`}
+
 # 実行ユーザーをチェック
 USER=${USER:-`whoami`}
 if [ "$USER" != 'root' ]; then
@@ -30,7 +32,10 @@ echo "${ALM_BACKUP_NAME}を復元します。"
 cd /tmp
 tar xzf $ALM_BACKUP_NAME
 
-#バックアップの復元
+# OSチェック
+source ./check-os
+
+# バックアップの復元
 echo "***リポジトリーデータを復元しています..."
 cd /var/opt/alminium/ && tar xzf $ALM_REPOS_BACKUP
 echo "***Redmine添付ファイルを復元しています..."
@@ -49,7 +54,14 @@ if [ "$ALM_DB_RESTORE" != "no" ]; then
   echo "データベースのマイグレーションが完了しました。"
 fi
 
-echo "サービスを起動します。"
 cd $ALM_CURRENT_DIR
-source ./inst-script/service-restart
+if [ -f service-restart ]; then
+  echo "サービスを再起動します。"
+  source ./service-restart
+elif [ -f inst-script/service-restart ]; then
+  echo "サービスを再起動します。"
+  source ./inst-script/service-restart
+else
+  echo "サービスを再起動してください。"
+fi
 

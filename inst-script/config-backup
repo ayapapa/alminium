@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# バックアップ設定を行うスクリプト
+#
 ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
 ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
 ALM_BACKUP_DIR=${ALM_BACKUP_DIR:-$ALM_VAR_DIR-backup}
