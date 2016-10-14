@@ -7,8 +7,7 @@
 ALM_CURRENT_DIR=${ALM_CURRENT_DIR:-`pwd`}
 
 # 実行ユーザーをチェック
-USER=${USER:-`whoami`}
-if [ "$USER" != 'root' ]; then
+if [ "`whoami`" != 'root' ]; then
     echo "ALMiniumのインストールはルートユーザで行う必要があります。"
     echo "rootユーザもしくはsudoで実行してください。"
     exit 1
@@ -28,14 +27,12 @@ ALM_BACKUP_NAME=$1
 ALM_DBBACKUP_NAME=/tmp/db.dump
 ALM_FILE_BACKUP=/tmp/files.tar.gz
 ALM_REPOS_BACKUP=/tmp/repo.tar.gz
+
+# バックアップの復元
 echo "${ALM_BACKUP_NAME}を復元します。"
 cd /tmp
 tar xzf $ALM_BACKUP_NAME
 
-# OSチェック
-source ./check-os
-
-# バックアップの復元
 echo "***リポジトリーデータを復元しています..."
 cd /var/opt/alminium/ && tar xzf $ALM_REPOS_BACKUP
 echo "***Redmine添付ファイルを復元しています..."

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# no check if already checked
+if [ "$OS" != "" ]; then
+  exit
+fi
+
 # OSを確認
 if [ -f /etc/redhat-release ]; then
     APACHE_USER=apache
