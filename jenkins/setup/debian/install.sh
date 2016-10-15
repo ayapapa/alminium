@@ -1,7 +1,9 @@
 #!/bin/sh
 
-wget -O cache/jenkins.deb http://pkg.jenkins-ci.org/debian-stable/binary/jenkins_1.651.3_all.deb
-dpkg -i cache/jenkins.deb
-sed -i 's/JENKINS_ARGS="--webroot/JENKINS_ARGS="--prefix=\/jenkins --webroot/' /etc/default/jenkins
+wget -q -O - http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key | sudo apt-key add -
+echo "deb http://pkg.jenkins-ci.org/debian-stable binary/" > /etc/apt/sources.list.d/jenkins.list
+apt-get -q2 update
+apt-get -y install jenkins
+sed -i 's/JENKINS_ARGS="--webroot/JENKINS_ARGS="--prefix=\/jenkins -Dhudson.diyChunking=false --webroot/' /etc/default/jenkins
 
 service jenkins restart
