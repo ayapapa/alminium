@@ -16,5 +16,9 @@ sed -i.org \
     -e "s/ALM_ENABLE_JENKINS=\"N\"/ALM_ENABLE_JENKINS=\"y\"/" \
     -e "s/wget/wget daemon net-tools default-jre-headless/" \
     Dockerfile
+echo >> supervisord.conf
+echo [program:jenkins] >> supervisord.conf
+echo startretries=10 >> supervisord.conf
+echo command=service jenkins start >> supervisord.conf
 docker build -t ayapapa/docker-alminium .
 popd
