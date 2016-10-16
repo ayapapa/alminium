@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source test-prepare
+source test-build
+source test-exec
+source test-cleanup

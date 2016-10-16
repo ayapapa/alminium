@@ -1,0 +1,33 @@
+ALMinium:
+  restart: always
+  image: ayapapa/docker-alminium:latest
+
+  ports:
+    - "10088:80"
+    - "14443:443"
+
+  environment:
+    - ALM_HOSTNAME=localhost
+    - ALM_RELATIVE_URL_ROOT=alminium
+    - ALM_ENABLE_AUTO_BACKUP=y
+    - ALM_BACKUP_MINUTE=0
+    - ALM_BACKUP_HOUR=3
+    - ALM_BACKUP_DAY=*/2
+    - ALM_BACKUP_EXPIRY=14
+    - ALM_ENABLE_SSL=y
+
+    - SMTP_ENABLED=false
+    - SMTP_ENALBLE_STARTTLS_AUTO=true
+    - SMTP_ADDRESS=smtp.gmail.com
+    - SMTP_PORT=587
+    - SMTP_DOMAIN=smtp.gmail.com
+    - SMTP_AUTHENTICATION=:login
+    - SMTP_USER_NAME=example@gmail.com
+    - SMTP_PASS=****
+
+  volumes:
+    - /home/alminium/files:/opt/alminium/files
+    - /home/alminium/db:/var/lib/mysql
+    - /home/alminium/repo:/var/opt/alminium
+
+  command: service jenkins start

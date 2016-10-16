@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# check user
+if [ `whoami` != 'root' ]; then
+    echo "ALMiniumのインストールはルートユーザで行う必要があります。"
+    echo "rootユーザもしくはsudoで実行してください。"
+    exit 1
+fi
+
+# package update and minimum install
+apt-get update -q
+apt-get install -q git curl
+
+# install doccker
+curl -fsSL https://get.docker.com/ | sh
+curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+
+# install docker-alminium
+git clone https://github.com/ayapapa/docker-alminium.git .test
+cd .test && rm -r .git
+BRANCH_NAME="`git branch --contains=HEAD | cut -c3-`"
+sed -i.org \
+    -e "s/ALM_VER=\"master\"/ALM_VER=\"$BRANCH_NAME\"/" \
+    -e "s/ALM_ENABLE_JENKINS=\"N\"/ALM_ENABLE_JENKINS=\"y\"/" \
+    Dockerfile
+docker build -t ayapapa/docker-alminium .
+docker-compose -f ../test-docker-compose.yml up -d
+
+# test
+sleep 90 && curl -k https://localhost:14443/alminium
+curl -k https://localhost:14443/jenkins
+
