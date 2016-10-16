@@ -17,4 +17,4 @@ sed -i.org \
     -e "s/wget/wget daemon net-tools default-jre-headless/" \
     Dockerfile
 docker build -t ayapapa/docker-alminium .
-
+cd ..
