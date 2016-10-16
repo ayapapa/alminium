@@ -43,6 +43,6 @@ if [[ `which ruby` == "" || ! `ruby --version` =~ 2.1. ]]; then
 fi
 
 # git update
-if [ $GIT_UPDATE = 'y' ]; then
+if [ "$GIT_UPDATE" = "y" ]; then
   source inst-script/git_build_install
 fi

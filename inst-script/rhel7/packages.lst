@@ -29,7 +29,7 @@ mod_wsgi
 ncurses-devel
 openssl-devel
 patch
-perl-Apache-DBI
+#perl-Apache-DBI
 perl-Digest-SHA
 perl-ExtUtils-MakeMaker
 python-docutils
