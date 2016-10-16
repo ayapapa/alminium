@@ -9,10 +9,6 @@ fi
 
 # start services
 docker-compose -f ../test-docker-compose.yml up -d
-echo >> supervisord.conf
-echo [program:jenkins] >> supervisord.conf
-echo startretries=10 >> supervisord.conf
-echo command=service jenkins start >> supervisord.conf
 
 # test
 sleep 90 && curl -k https://localhost:14443/alminium/
