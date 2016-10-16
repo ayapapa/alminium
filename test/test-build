@@ -9,7 +9,7 @@ fi
 
 # build docker-alminium
 git clone https://github.com/ayapapa/docker-alminium.git .test
-cd .test && rm -r .git
+pushd .test && rm -r .git
 BRANCH_NAME="`git branch --contains=HEAD | awk '{print $2}'`"
 sed -i.org \
     -e "s/ALM_VER=\"master\"/ALM_VER=\"$BRANCH_NAME\"/" \
@@ -17,4 +17,4 @@ sed -i.org \
     -e "s/wget/wget daemon net-tools default-jre-headless/" \
     Dockerfile
 docker build -t ayapapa/docker-alminium .
-cd ..
+popd
