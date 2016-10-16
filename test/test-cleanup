@@ -8,5 +8,5 @@ if [ `whoami` != 'root' ]; then
 fi
 
 # remove temporary files for the test
-rm -r ./test
+rm -r .test
 
