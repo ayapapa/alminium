@@ -5,6 +5,6 @@ services:
 
 script:
   - cd test
-  - sudo test
+  - sudo ./test
   
   
