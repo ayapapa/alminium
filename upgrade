@@ -7,20 +7,17 @@ ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
 ALM_VAR_DIR=/var/opt/alminium
 ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
-ALM_CURRENT_DIR=`pwd`
-
 # 実行ユーザーをチェック
-if [ "`whoami`" != 'root' ]; then
-    echo "ALMiniumのインストールはルートユーザで行う必要があります。"
-    echo "rootユーザもしくはsudoで実行してください。"
-    exit 1
-fi
+source inst-script/check-user
 
 # ALMiniumインストール状況をチェック
 if [ ! -e $ALM_INSTALL_DIR ]; then
   echo "ALMiniumインストールディレクトリが見つかりませんでした。処理を中止します"
   exit 1
 fi
+
+# OSをチェック
+source inst-script/check-os
 
 # バックアップの確認 
 echo "#####################################################################"
@@ -34,10 +31,25 @@ echo "#####################################################################"
 read DO_CONTINUE
 
 # バックアップ実行
-source ./backup $1 
+source backup $1 
 if [ $? -gt 0 ]; then
   echo "バックアップに失敗したため、処理を中止します"
   exit 1
+fi
+
+# ログをバックアップ
+mkdir -p /tmp/alminium-logs
+if [ -d $ALM_INSTALL_DIR/log ]; then
+  cp -pr $ALM_INSTALL_DIR/log/ /tmp/alminium-logs
+fi
+if [ -d /var/log/mysql ]; then
+  cp -pr /var/log/mysql/ /tmp/alminium-logs
+fi
+if [ -d /var/log/$APACHE_LOG_DIR ]; then
+  cp -pr /var/log/$APACHE_LOG_DIR/ /tmp/alminium-logs
+fi
+if [ -d /var/log/jenkins ]; then
+  cp -pr /var/log/jenkins/ /tmp/alminium-logs
 fi
 
 #バックアップ結果の確認
@@ -55,19 +67,32 @@ echo ""
 echo "ALMiniumのアップグレードを開始・・・"
 
 # アップグレード対象を削除
-cd $ALM_CURRENT_DIR
 if [ -f $ALM_INSTALL_DIR/subdirname ]; then
   rm -f /var/www/html`cat $ALM_INSTALL_DIR/subdirname`
 fi
 rm -fr $ALM_INSTALL_DIR/* $ALM_INSTALL_DIR/.[^.]*
 rm -fr cache/* *.installed
 rm -fr $ALM_ETC_DIR/passenger.*
+
 #　install ALMinium by smelt
 source ./smelt -u
 
 #バックアップの復元
 ALM_DB_RESTORE=no
 source ./restore $ALM_BACKUP_NAME
+
+if [ -d /tmp/alminium-logs/log ]; then
+  cp -pr /tmp/alminium-logs/log/* $ALM_INSTALL_DIR/log/
+fi
+if [ -d /tmp/alminium-logs/mysql ]; then
+  cp -pr /tmp/alminium-logs/mysql/* /var/log/mysql/
+fi
+if [ -d /tmp/alminium-logs/$APACHE_LOG_DIR ]; then
+  cp -pr /tmp/alminium-logs/$APACHE_LOG_DIR/* /var/log/$APACHE_LOG_DIR/
+fi
+if [ -d /tmp/alminium-logs/jenkins ]; then
+  cp -pr /tmp/alminium-logs/jenkins/* /var/log/jenkins/
+fi
 
 echo ""
 echo "以上でアップグレードは終了です。途中にエラーが発生した場合は、元の状態に戻して手動でアップグレードを実施してください。"

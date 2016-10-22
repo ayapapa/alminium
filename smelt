@@ -9,6 +9,8 @@ ALM_INSTALL_DIR=/opt/alminium
 ALM_ENABLE_AUTO_BACKUP=${ALM_ENABLE_AUTO_BACKUP:-y}
 ALM_GIT_VERSION=${ALM_GIT_VERSION:-2.9.0}
 ALM_GIT_AUTO_UPGRADE=${ALM_GIT_AUTO_UPGRADE:-N}
+ALM_LOG_DIR=${ALM_LOG_DIR:-/var/log/alminium}
+
 RAILS_ENV=production
 
 RM_VER=${RM_VER:-`cat RM_VERSION`}
@@ -24,136 +26,26 @@ else
   ALM_UPGRADE=""
 fi
 
-MEM=`free -t | grep Total | awk '{print $2}'`
-if [ $MEM -lt 1000000 ]; then
-  echo "メモリが不足しています。"
-  echo "ALMiniumのインストールは1GB以上のRAMが利用できるマシン及び仮想マシンに"
-  echo "インストールしてください"
-  exit
-fi
+# check memory size
+source inst-script/check-mem
 
-if [ `whoami` != 'root' ]; then
-    echo "ALMiniumのインストールはルートユーザで行う必要があります。"
-    echo "rootユーザもしくはsudoで実行してください。"
-    exit 1
-fi
+# check user
+source inst-script/check-user
 
-# ネットワーク0のデバイス名
-ETH0=eth0
+# check old alminium existance
+source inst-script/check-old-alm
 
 # OSを確認
-source ./check-os
+source inst-script/check-os
 
-# MySQLインストールに関する注意
-echo ""
-echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください。"
-echo "MySQLのパスワードを設定するとインストールに失敗します。"
-echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
-echo ""
+# gitコマンドをチェック
+source inst-script/check-git
 
-# ホスト名設定
-if [ "$ALM_HOSTNAME" = "" ]; then
-  echo "*******************************************************"
-  echo "  ホスト名の設定"
-  echo "*******************************************************"
-  echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
-  echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
-  IP_ADDR="`ip -f inet -o addr show $ETH0 | cut -d\  -f 7 | cut -d/ -f 1`"
-  echo -n "ホスト名[$IP_ADDR]:"
-  read ALM_HOSTNAME
-  ALM_HOSTNAME=${ALM_HOSTNAME:-$IP_ADDR}
-  echo ""
-fi
-
-# SSL設定
-if [ "$ALM_ENABLE_SSL" = "" ]; then
-  echo "*******************************************************"
-  echo "  SSLのサポート"
-  echo "*******************************************************"
-  echo "SSLのサポートを有効にすると、httpsのみの接続を許可します。"
-  echo "httpでのアクセスは、全てhttpsのポートへ転送されるようになります。"
-  echo "SSLの証明書は認証機関により署名されたものではありません。通信の暗号化のみ"
-  echo "に利用します。"
-  echo "gitの利用では、"
-  echo ""
-  echo "  $ git config --global http.sslVerify false"
-  echo ""
-  echo "などのコマンドで、SSLの証明書を無効にする必要があります。"
-  echo ""
-  echo -n "SSL(https)サポートを有効にしますか?(y/N) "
-  read ALM_ENABLE_SSL
-  echo ""
-  echo ""
-fi
-
-#
-# サブディレクトリ指定
-#
-if [ "$ALM_RELATIVE_URL_ROOT" = "" ]; then
-  echo "*****************************"
-  echo "  サブディレクトリ指定  "
-  echo "*****************************"
-  echo "サブディレクトリを指定すると"
-  echo "http[s]://(サーバー名)/(サブディレクトリ)"
-  echo "でアクセスすることができます。"
-  echo "指定しない場合はそのままEnterキーを押下してください"
-  echo -n "サブディレクトリー名："
-  read ALM_SUBDIR
-  echo ""
-  echo ""
-else
-  ALM_SUBDIR="$ALM_RELATIVE_URL_ROOT"
-fi
-
-if [ "$ALM_SUBDIR" != "" ]; then
-  if [ `echo $ALM_SUBDIR | cut -c 1` != '/' ]; then
-    ALM_SUBDIR="/$ALM_SUBDIR"
-  fi
-fi
-
-# source inst-script/config-email.sh
-
-if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]; then
-  echo -n "継続的インテグレーションツールのJenkinsのインストール・設定を"
-  echo -n "行うことができます。デフォルトはインストールしません。"
-  echo -n "よく分からなければNを選択してください。"
-  echo -n ""
-  echo -n "Jenkinsをインストールしますか?(y/N)"
-  read ALM_ENABLE_JENKINS
-fi
+# 各種設定
+source inst-script/config-alminium
 
 # 一時データ保存場所確保
 mkdir -p $ALM_SRC_DIR/cache
-
-#
-# gitコマンドをチェック
-#
-if [ "`which git`" = "" ]; then
-  echo 
-  echo gitコマンドがインストールされていません。
-  echo gitコマンドをインストールしてから再度実行してください。
-  echo 処理を終了します。
-  exit 1
-else
-  GIT_VER=`git --version | cut -c 13-15`
-  # 古いgitのときはアップグレード
-  if [ `echo "$GIT_VER >= 1.9" | bc` = 0 ]; then
-    if [ $ALM_GIT_AUTO_UPGRADE = 'y' ]; then
-      GIT_UPDATE=y
-    else
-      echo
-      echo
-      echo gitのバージョンが古いためALMiniumが正しく動作しない可能性があります。
-      echo 本ソフトウェアでは version1.9以上を推奨しています。
-      echo gitのバージョンを${ALM_GIT_VERSION}にアップグレードしても良い場合は'y'を
-      echo さもなくば'N'を選択してください。
-      echo 'N'を選択した場合は、ALMiniumインストールした後、
-      echo ご自身でgitのバージョンアップを実施してください。
-      echo -n "gitをアップグレードしても良いですか？(y/N):"
-      read GIT_UPDATE
-    fi
-  fi
-fi
 
 # update submodules
 if [ $(git config -l | egrep 'submodule.+url=' | wc -l) -ne \
@@ -163,90 +55,27 @@ fi
 git submodule sync
 git submodule update
 
-# install packages
-if [ ! -f packages.installed ]; then
-  echo "*** run $OS's pre-install script ***"
-  source inst-script/$OS/pre-install
-  touch packages.installed
-fi
+# config log directories
+source inst-script/config-logs
 
-if [ ! -f gems.installed ]; then
-  echo "*** run gems script ***"
-  source inst-script/gems
-  touch gems.installed
-fi
-
-RAKE=`which rake2.0`
-RAKE=${RAKE:-rake}
+# pre install
+source inst-script/pre-install
 
 # setup database
-$MYSQLD start
+source inst-script/config-db
 
-if [ "$ALM_UPGRADE" = "" ]; then
-  # create DB
-  $MYSQL < redmine/setup/createdb.sql
+# setup apache
+source inst-script/config-apache
 
-  # create directory for vcs
-  mkdir -p $ALM_VAR_DIR/{git,svn,hg,maven,github}
-  chown -R $APACHE_USER:$APACHE_USER $ALM_VAR_DIR/*
-fi
-
-# setup for apache
-mkdir -p $ALM_ETC_DIR
-for FILE in $(ls -F -I *.conf etc | grep -v /)
-do
-  cp "etc/$FILE" $ALM_ETC_DIR/
-done
-
-#
 # install Redmine
-#
-mkdir -p $ALM_INSTALL_DIR
-echo "*** install Redmine ***"
-cd cache
-wget $RM_ARC
-if [ ! -f redmine-$RM_VER ]; then
-  tar zxf $RM_VER.tar.gz
-fi
-cd ..
-
-$CPCMD cache/redmine-$RM_VER/* $ALM_INSTALL_DIR/
-$RMCMD cache/redmine-$RM_VER
-
-cp     redmine/Gemfile.local   $ALM_INSTALL_DIR/
-$CPCMD redmine/config/*        $ALM_INSTALL_DIR/config/
-$CPCMD redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
-cp ./{backup,restore} ./inst-script/config-backup ./inst-script/$OS/service-restart $ALM_INSTALL_DIR/
-# avoid bandle install error because of nokogiri version conflict
-mv $ALM_INSTALL_DIR/Gemfile $ALM_INSTALL_DIR/Gemfile.org
-sed "s/gem \"nokogiri\", \">= 1.6.7.2\"/gem \"nokogiri\"#, \">= 1.6.7.2\"/" $ALM_INSTALL_DIR/Gemfile.org > $ALM_INSTALL_DIR/Gemfile
-# install plugins
-echo "*** install plugins ***"
-source redmine/setup/redmine-plugins
-
-if [ "$ALM_UPGRADE" = "" ]; then
-  # Customize
-  echo "*** run initialize SQL ***"
-  $MYSQL alminium < redmine/setup/init.mysql
-fi
-
-# install hooks
-mkdir -p $ALM_INSTALL_DIR/bin
-$CPCMD redmine/bin/* $ALM_INSTALL_DIR/bin/
-if [ "$ALM_SUBDIR" != "" ]; then
-  sed -i "s|localhost|localhost$ALM_SUBDIR|g" $ALM_INSTALL_DIR/bin/alm-sync-scm
-  chmod +x $ALM_INSTALL_DIR/bin/alm-sync-scm
-fi
-$CPCMD redmine/hooks $ALM_INSTALL_DIR/
-chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/*
+source inst-script/install-redmine
 
 # setup for jenkins
 if [ "$ALM_ENABLE_JENKINS" = "y" ]; then
-  echo "*** install Jenkins ***"
-  source jenkins/setup/$OS/install.sh
-  source jenkins/setup/config.sh
+  source inst-script/install-jenkins
 fi
 
+# post install
 echo "*** run post-install script ***"
 source inst-script/post-install
 
@@ -262,17 +91,12 @@ fi
 #  echo "* * * * * /opt/alminium/extra/svn/reposman.rb -g apache -o apache -s /var/opt/alminium/git -u /var/opt/alminium/git -r localhost --scm git" >> /var/spool/cron/root
 #fi
 
-#
 # 定期バックアップ設定
-#
 if [ "$ALM_ENABLE_AUTO_BACKUP" = "y" ]; then
-  cd $ALM_SRC_DIR
-  source ./inst-script/config-backup
+  source inst-script/config-backup
 fi
 
-#
 # 不要なファイルなどを削除
-#
 if [ "$OS" = "ubuntu1604" ]; then
   rm jenkins/setup/ubuntu1604
 fi

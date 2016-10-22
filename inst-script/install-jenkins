@@ -1,0 +1,6 @@
+#!/bin/bash
+# setup for jenkins
+echo "*** install Jenkins ***"
+source jenkins/setup/$OS/install.sh
+source jenkins/setup/config.sh
+

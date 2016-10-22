@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # OSチェック
-source ./check-os
+source ./inst-script/check-os
 
 # restart apache
 source ./inst-script/$OS/service-restart

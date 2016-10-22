@@ -1,10 +1,12 @@
 #!/bin/bash
-
+# ネットワーク0のデバイス名
+ETH0=eth0
 # check OS
 if [ "$OS" = "" ]; then
   if [ -f /etc/redhat-release ]; then
     APACHE_USER=apache
     APACHE_CONF_DIR=/etc/httpd/conf.d
+    APACHE_LOG_DIR=httpd
     MYSQLD='/etc/init.d/mysqld'
     MYSQL='mysql'
     CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
@@ -39,6 +41,7 @@ if [ "$OS" = "" ]; then
   elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]; then
     APACHE_USER=www-data
     APACHE_CONF_DIR=/etc/apache2/conf.d
+    APACHE_LOG_DIR=apache2
     MYSQLD='/etc/init.d/mysql'
     MYSQL='mysql'
     OS='debian'
@@ -46,6 +49,7 @@ if [ "$OS" = "" ]; then
   elif [ -f /etc/lsb-release -a "`grep 16.04 /etc/lsb-release`" != "" ]; then
     APACHE_USER=www-data
     APACHE_CONF_DIR=/etc/apache2/conf.d
+    APACHE_LOG_DIR=apache2
     MYSQLD='/etc/init.d/mysql'
     MYSQL='mysql'
     OS='ubuntu1604'
