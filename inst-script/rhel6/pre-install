@@ -34,9 +34,10 @@ if [ "$ALM_ENABLE_SSL" = "y" ]; then
     yum -y install mod_ssl
 fi
 
+sed -i "s/log-error=\/var\/log/log-error=\/var\/log\/mysql/" /etc/my.cnf
 chkconfig --add mysqld
 chkconfig mysqld on
-service mysqld start
+service mysqld restart
 
 if [[ `which ruby` == "" || ! `ruby --version` =~ 2.1. ]]; then
     rpm -Uvh "https://github.com/hansode/ruby-rpm/blob/master/6/x86_64/ruby-2.1.2-2.el6.x86_64.rpm?raw=true"
