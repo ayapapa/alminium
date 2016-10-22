@@ -1,6 +1,6 @@
 #!/bin/bash
 # ネットワーク0のデバイス名
-ETH0=eth0
+ETH0=${ETH0:-eth0}
 # check OS
 if [ "$OS" = "" ]; then
   if [ -f /etc/redhat-release ]; then
