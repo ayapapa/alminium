@@ -42,8 +42,8 @@ mkdir -p /tmp/alminium-logs
 if [ -d $ALM_INSTALL_DIR/log ]; then
   cp -pr $ALM_INSTALL_DIR/log/ /tmp/alminium-logs
 fi
-if [ -d /var/log/mysql ]; then
-  cp -pr /var/log/mysql/ /tmp/alminium-logs
+if [ -d /var/log/$MYSQL_LOG_DIR ]; then
+  cp -pr /var/log/$MYSQL_LOG_DIR/ /tmp/alminium-logs
 fi
 if [ -d /var/log/$APACHE_LOG_DIR ]; then
   cp -pr /var/log/$APACHE_LOG_DIR/ /tmp/alminium-logs
@@ -84,8 +84,8 @@ source ./restore $ALM_BACKUP_NAME
 if [ -d /tmp/alminium-logs/log ]; then
   cp -pr /tmp/alminium-logs/log/* $ALM_INSTALL_DIR/log/
 fi
-if [ -d /tmp/alminium-logs/mysql ]; then
-  cp -pr /tmp/alminium-logs/mysql/* /var/log/mysql/
+if [ -d /tmp/alminium-logs/$MYSQL_LOG_DIR ]; then
+  cp -pr /tmp/alminium-logs/$MYSQL_LOG_DIR/* /var/log/$MYSQL_LOG_DIR/
 fi
 if [ -d /tmp/alminium-logs/$APACHE_LOG_DIR ]; then
   cp -pr /tmp/alminium-logs/$APACHE_LOG_DIR/* /var/log/$APACHE_LOG_DIR/

@@ -4,7 +4,7 @@
 # make log's directories
 mkdir -p $ALM_LOG_DIR
 mkdir -p $ALM_LOG_DIR/redmine
-mkdir -p $ALM_LOG_DIR/mysql
+mkdir -p $ALM_LOG_DIR/$MYSQL_LOG_DIR
 mkdir -p $ALM_LOG_DIR/$APACHE_LOG_DIR
 mkdir -p $ALM_LOG_DIR/jenkins
 mkdir -p $ALM_INSTALL_DIR
@@ -15,13 +15,13 @@ ln -s $ALM_LOG_DIR/redmine $ALM_INSTALL_DIR/log
 pushd /var/log
 
 # mysql's log
-if [ -d mysql ]; then
-  mkdir -p mysql.backup
-  tar cvfz mysql.backup/"`date +%F-%H-%M-%S`".tar.gz mysql
-  rm -r mysql
+if [ -d $MYSQL_LOG_DIR ]; then
+  mkdir -p $MYSQL_LOG_DIR.backup
+  tar cvfz $MYSQL_LOG_DIR.backup/"`date +%F-%H-%M-%S`".tar.gz $MYSQL_LOG_DIR
+  rm -r $MYSQL_LOG_DIR
 fi
-chown mysql:adm $ALM_LOG_DIR/mysql
-ln -s $ALM_LOG_DIR/mysql .
+chown mysql:adm $ALM_LOG_DIR/$MYSQL_LOG_DIR
+ln -s $ALM_LOG_DIR/$MYSQL_LOG_DIR .
 
 # apache's log
 if [ -d $APACHE_LOG_DIR ]; then
