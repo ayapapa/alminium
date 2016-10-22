@@ -1,5 +1,6 @@
 apr-devel
 byacc
+curl
 curl-devel
 db4-devel
 expat-devel
@@ -24,14 +25,16 @@ mariadb-devel
 mariadb-server
 mercurial
 mod_dav_svn
+mod_passenger
 mod_perl
 mod_wsgi
 ncurses-devel
 openssl-devel
+passenger
 patch
-#perl-Apache-DBI
 perl-Digest-SHA
 perl-ExtUtils-MakeMaker
+pygpgme
 python-docutils
 readline-devel
 rpm-build

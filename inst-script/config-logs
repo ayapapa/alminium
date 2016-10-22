@@ -10,7 +10,7 @@ mkdir -p $ALM_LOG_DIR/jenkins
 mkdir -p $ALM_INSTALL_DIR
 
 # redmine's log
-chown www-data:www-data $ALM_LOG_DIR/redmine
+chown $APACHE_USER:$APACHE_USER $ALM_LOG_DIR/redmine
 ln -s $ALM_LOG_DIR/redmine $ALM_INSTALL_DIR/log
 pushd /var/log
 

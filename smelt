@@ -55,9 +55,6 @@ fi
 git submodule sync
 git submodule update
 
-# config log directories
-source inst-script/config-logs
-
 # pre install
 source inst-script/pre-install
 
@@ -95,6 +92,9 @@ fi
 if [ "$ALM_ENABLE_AUTO_BACKUP" = "y" ]; then
   source inst-script/config-backup
 fi
+
+# config log directories
+source inst-script/config-logs
 
 # 不要なファイルなどを削除
 if [ "$OS" = "ubuntu1604" ]; then

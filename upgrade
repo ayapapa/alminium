@@ -11,7 +11,7 @@ ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 source inst-script/check-user
 
 # ALMiniumインストール状況をチェック
-if [ ! -e $ALM_INSTALL_DIR ]; then
+if [ ! -e $ALM_INSTALL_DIR/app ]; then
   echo "ALMiniumインストールディレクトリが見つかりませんでした。処理を中止します"
   exit 1
 fi
