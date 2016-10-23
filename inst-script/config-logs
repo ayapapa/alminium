@@ -9,10 +9,19 @@ mkdir -p $ALM_LOG_DIR/$APACHE_LOG_DIR
 mkdir -p $ALM_LOG_DIR/jenkins
 mkdir -p $ALM_INSTALL_DIR
 
+#
+# each log's configuration
+#
+pushd /var/log
+
 # redmine's log
 chown $APACHE_USER:$APACHE_USER $ALM_LOG_DIR/redmine
+if [ -d $ALM_INSTALL_DIR/log ]; then
+  mkdir -p $ALM_INSTALL_DIR/log.backup
+  tar cvfz $ALM_INSTALL_DIR/log.backup/"`date +%F-%H-%M-%S`".tar.gz $ALM_INSTALL_DIR/log
+  rm -r $ALM_INSTALL_DIR/log
+fi
 ln -s $ALM_LOG_DIR/redmine $ALM_INSTALL_DIR/log
-pushd /var/log
 
 # mysql's log
 if [ -d $MYSQL_LOG_DIR ]; then
@@ -32,12 +41,15 @@ fi
 ln -s $ALM_LOG_DIR/$APACHE_LOG_DIR .
 
 # jenkins' log
-if [ -d jenkins ]; then
-  mkdir -p jenkins.backup
-  tar cvfz jenkins.backup/"`date +%F-%H-%M-%S`".tar.gz jenkins
-  rm -r jenkins
+if [ "$ALM_ENABLE_JENKINS" = "y" ]; then
+  if [ -d jenkins ]; then
+    mkdir -p jenkins.backup
+    tar cvfz jenkins.backup/"`date +%F-%H-%M-%S`".tar.gz jenkins
+    rm -r jenkins
+  fi
+  chown jenkins:jenkins $ALM_LOG_DIR/jenkins
+  ln -s $ALM_LOG_DIR/jenkins jenkins
 fi
-chown jenkins:jenkins $ALM_LOG_DIR/jenkins
-ln -s $ALM_LOG_DIR/jenkins jenkins
+
 popd
 
