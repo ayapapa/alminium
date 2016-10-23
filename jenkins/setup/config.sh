@@ -10,7 +10,7 @@ sleep 10
 RET=-1
 until  [ "$RET" -eq "0" ]
 do
-  sleep 3
+  sleep 10
   wget --no-proxy -O $ALM_INSTALL_DIR/bin/jenkins-cli.jar http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar
   RET=$?
 done

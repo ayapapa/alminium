@@ -53,7 +53,7 @@ fi
 
 #redmineの添付ファイルをバックアップ
 echo "Redmineの添付ファイルをバックアップします。"
-cd /opt/alminium/files/
+pushd /opt/alminium/files/
 tar czf $ALM_BACKUP_DIR/$ALM_FILE_BACKUP .
 if [ -f $ALM_BACKUP_DIR/$ALM_FILE_BACKUP ]; then
   echo "Redmineの添付ファイルのバックアップが成功しました。"
@@ -61,10 +61,11 @@ else
   echo "Redmineの添付ファイルのバックアップが失敗しました。"
   exit 1
 fi
+popd
 
 #ソースコードリポジトリ
 echo "ソースコードリポジトリをバックアップします。"
-cd /var/opt/alminium/
+pushd /var/opt/alminium/
 tar czf $ALM_BACKUP_DIR/$ALM_REPOS_BACKUP .
 if [ -f $ALM_BACKUP_DIR/$ALM_REPOS_BACKUP ]; then
   echo "ソースコードリポジトリのバックアップが成功しました。"
@@ -72,9 +73,10 @@ else
   echo "ソースコードリポジトリのバックアップが失敗しました。"
   exit 1
 fi
+popd
 
 # バックアップ統合
-cd $ALM_BACKUP_DIR
+pushd $ALM_BACKUP_DIR
 tar czf $ALM_BACKUP_NAME ./$ALM_DBBACKUP_NAME ./$ALM_FILE_BACKUP ./$ALM_REPOS_BACKUP
 
 # バックアップ終了
@@ -85,4 +87,5 @@ if [ "$ALM_BACKUP_EXPIRY" != "" ]; then
   echo "[`date`] : $ALM_BACKUP_EXPIRY日経過したバックアップファイルを削除します。"
   find $ALM_BACKUP_DIR/*.tar.gz -mtime +$ALM_BACKUP_EXPIRY -exec rm -f {} \;
 fi
+popd
 

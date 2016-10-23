@@ -12,16 +12,20 @@ if [ "$USE_DISABLE_SECURITY" = "" ]; then
 fi
 yum update -y ca-certificates
 
+# 古いpassenger設定を削除する
+if [ "`ls /etc/httpd/conf.d/passenger.conf 2>/dev/null`" != "" \
+     -a "`grep snippet /etc/httpd/conf.d/passenger.conf 2>/dev/null`" = "" ]; then
+  rm -f /etc/httpd/conf.d/passenger.conf
+fi
+
 # 必要なパッケージをインストール
-yum -y install epel-release
-yum -y --nogpgcheck install `grep -v "^#" inst-script/$OS/packages.lst`
+yum install -y epel-release yum-utils
+curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
+yum install -y --nogpgcheck `grep -v "^#" inst-script/$OS/packages.lst`
 
-#CHK=`grep Amazon /etc/system-release`
-#if [ "$CHK" != '' ]; then
-#  rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
-#  yum  --enablerepo=remi -y --nogpgcheck install mysqlclient16
-#fi
-
+#  set passenger-package available
+ALM_PASSSENGER_PACKAGE_AVAILABLE=1
+# install ssl module
 if [ "$ALM_ENABLE_SSL" = "y" ]; then
     yum -y install mod_ssl
 fi

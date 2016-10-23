@@ -1,0 +1,43 @@
+#!/bin/bash
+# ALMinium関連のログをまとめて管理する
+
+# make log's directories
+mkdir -p $ALM_LOG_DIR
+mkdir -p $ALM_LOG_DIR/redmine
+mkdir -p $ALM_LOG_DIR/$MYSQL_LOG_DIR
+mkdir -p $ALM_LOG_DIR/$APACHE_LOG_DIR
+mkdir -p $ALM_LOG_DIR/jenkins
+mkdir -p $ALM_INSTALL_DIR
+
+# redmine's log
+chown $APACHE_USER:$APACHE_USER $ALM_LOG_DIR/redmine
+ln -s $ALM_LOG_DIR/redmine $ALM_INSTALL_DIR/log
+pushd /var/log
+
+# mysql's log
+if [ -d $MYSQL_LOG_DIR ]; then
+  mkdir -p $MYSQL_LOG_DIR.backup
+  tar cvfz $MYSQL_LOG_DIR.backup/"`date +%F-%H-%M-%S`".tar.gz $MYSQL_LOG_DIR
+  rm -r $MYSQL_LOG_DIR
+fi
+chown mysql:adm $ALM_LOG_DIR/$MYSQL_LOG_DIR
+ln -s $ALM_LOG_DIR/$MYSQL_LOG_DIR .
+
+# apache's log
+if [ -d $APACHE_LOG_DIR ]; then
+  mkdir -p $APACHE_LOG_DIR.backup
+  tar cvfz $APACHE_LOG_DIR.backup/"`date +%F-%H-%M-%S`".tar.gz $APACHE_LOG_DIR
+  rm -r $APACHE_LOG_DIR
+fi
+ln -s $ALM_LOG_DIR/$APACHE_LOG_DIR .
+
+# jenkins' log
+if [ -d jenkins ]; then
+  mkdir -p jenkins.backup
+  tar cvfz jenkins.backup/"`date +%F-%H-%M-%S`".tar.gz jenkins
+  rm -r jenkins
+fi
+chown jenkins:jenkins $ALM_LOG_DIR/jenkins
+ln -s $ALM_LOG_DIR/jenkins jenkins
+popd
+

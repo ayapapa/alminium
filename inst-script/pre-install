@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# install packages
+if [ ! -f packages.installed ]; then
+  echo "*** run $OS's pre-install script ***"
+  source inst-script/$OS/pre-install
+  touch packages.installed
+fi
+
+# install gems
+if [ ! -f gems.installed ]; then
+  echo "*** run gems script ***"
+  source inst-script/gems
+  touch gems.installed
+fi

@@ -1,0 +1,79 @@
+#!/bin/bash
+# MySQLインストールに関する注意
+echo ""
+echo "途中MySQLのパスワードを聞かれたら空のままエンターキーを押してください。"
+echo "MySQLのパスワードを設定するとインストールに失敗します。"
+echo "パスワードを設定したい場合は、ALMiniumのインストール完了後行ってください"
+echo ""
+
+# ホスト名設定
+if [ "$ALM_HOSTNAME" = "" ]; then
+  echo "*******************************************************"
+  echo "  ホスト名の設定"
+  echo "*******************************************************"
+  echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
+  echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
+  IP_ADDR="`ip -f inet -o addr show $ETH0 | cut -d\  -f 7 | cut -d/ -f 1`"
+  echo -n "ホスト名[$IP_ADDR]:"
+  read ALM_HOSTNAME
+  ALM_HOSTNAME=${ALM_HOSTNAME:-$IP_ADDR}
+  echo ""
+fi
+
+# SSL設定
+if [ "$ALM_ENABLE_SSL" = "" ]; then
+  echo "*******************************************************"
+  echo "  SSLのサポート"
+  echo "*******************************************************"
+  echo "SSLのサポートを有効にすると、httpsのみの接続を許可します。"
+  echo "httpでのアクセスは、全てhttpsのポートへ転送されるようになります。"
+  echo "SSLの証明書は認証機関により署名されたものではありません。通信の暗号化のみ"
+  echo "に利用します。"
+  echo "gitの利用では、"
+  echo ""
+  echo "  $ git config --global http.sslVerify false"
+  echo ""
+  echo "などのコマンドで、SSLの証明書を無効にする必要があります。"
+  echo ""
+  echo -n "SSL(https)サポートを有効にしますか?(y/N) "
+  read ALM_ENABLE_SSL
+  echo ""
+  echo ""
+fi
+
+#
+# サブディレクトリ指定
+#
+if [ "$ALM_RELATIVE_URL_ROOT" = "" ]; then
+  echo "*****************************"
+  echo "  サブディレクトリ指定  "
+  echo "*****************************"
+  echo "サブディレクトリを指定すると"
+  echo "http[s]://(サーバー名)/(サブディレクトリ)"
+  echo "でアクセスすることができます。"
+  echo "指定しない場合はそのままEnterキーを押下してください"
+  echo -n "サブディレクトリー名："
+  read ALM_SUBDIR
+  echo ""
+  echo ""
+else
+  ALM_SUBDIR="$ALM_RELATIVE_URL_ROOT"
+fi
+
+if [ "$ALM_SUBDIR" != "" ]; then
+  if [ `echo $ALM_SUBDIR | cut -c 1` != '/' ]; then
+    ALM_SUBDIR="/$ALM_SUBDIR"
+  fi
+fi
+
+# source inst-script/config-email.sh
+
+if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]; then
+  echo -n "継続的インテグレーションツールのJenkinsのインストール・設定を"
+  echo -n "行うことができます。デフォルトはインストールしません。"
+  echo -n "よく分からなければNを選択してください。"
+  echo -n ""
+  echo -n "Jenkinsをインストールしますか?(y/N)"
+  read ALM_ENABLE_JENKINS
+fi
+

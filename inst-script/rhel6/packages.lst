@@ -1,5 +1,6 @@
-pr-devel
+apr-devel
 byacc
+curl
 curl-devel
 db4-devel
 expat-devel
@@ -30,7 +31,6 @@ mysql-server
 ncurses-devel
 openssl-devel
 patch
-perl-Apache-DBI
 perl-Digest-SHA
 perl-ExtUtils-MakeMaker
 python-docutils
