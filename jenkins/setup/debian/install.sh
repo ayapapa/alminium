@@ -2,11 +2,11 @@
 
 # install depend packages
 if [ "$OS" = "ubuntu1604" ]; then
-  apt-get install openjdk-9-jre-headless
+  apt-get install -y openjdk-9-jre-headless
 else # ubuntu1404 case
-  apt-get install openjdk-7-jre-headless
+  apt-get install -y openjdk-7-jre-headless
 fi
-apt-get install daemon
+apt-get install -y daemon
 
 # download and install jenkins 
 wget -O cache/jenkins.deb http://pkg.jenkins-ci.org/debian-stable/binary/jenkins_1.651.3_all.deb
