@@ -35,6 +35,7 @@ if [ "$ALM_ENABLE_SSL" = "y" ]; then
 fi
 
 sed -i "s/log-error=\/var\/log\/mysqld/log-error=\/var\/log\/mysql\/mysqld/" /etc/my.cnf
+mkdir /var/log/mysql
 chkconfig --add mysqld
 chkconfig mysqld on
 service mysqld restart
