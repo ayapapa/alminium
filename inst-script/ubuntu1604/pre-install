@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# non-interactive mode
+export DEBIAN_FRONTEND=noninteractive
+
+# package list update
 apt-get -qq update
 
 # add passenger to APT repository
