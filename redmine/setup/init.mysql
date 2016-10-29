@@ -41,6 +41,7 @@ REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_backlogs','
 :show_burndown_in_sidebar: enabled
 :points_burn_direction: down
 :wiki_template: \'\'
+:show_redmine_std_header: enabled
 :auto_assign_task: enabled\n',current_date);
 
 /*********************************************************************
