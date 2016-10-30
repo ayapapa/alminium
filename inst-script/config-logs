@@ -7,7 +7,6 @@ mkdir -p $ALM_LOG_DIR/redmine
 mkdir -p $ALM_LOG_DIR/$MYSQL_LOG_DIR
 mkdir -p $ALM_LOG_DIR/$APACHE_LOG_DIR
 mkdir -p $ALM_LOG_DIR/jenkins
-mkdir -p $ALM_INSTALL_DIR
 
 #
 # each log's configuration
@@ -18,8 +17,10 @@ pushd /var/log
 chown $APACHE_USER:$APACHE_USER $ALM_LOG_DIR/redmine
 if [ -d $ALM_INSTALL_DIR/log ]; then
   mkdir -p $ALM_INSTALL_DIR/log.backup
-  tar cvfz $ALM_INSTALL_DIR/log.backup/"`date +%F-%H-%M-%S`".tar.gz $ALM_INSTALL_DIR/log
+  pushd $ALM_INSTALL_DIR
+  tar cvfz $ALM_INSTALL_DIR/log.backup/"`date +%F-%H-%M-%S`".tar.gz log
   rm -r $ALM_INSTALL_DIR/log
+  popd
 fi
 ln -s $ALM_LOG_DIR/redmine $ALM_INSTALL_DIR/log
 

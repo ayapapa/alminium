@@ -81,18 +81,20 @@ source ./smelt -u
 ALM_DB_RESTORE=no
 source ./restore $ALM_BACKUP_NAME
 
-if [ -d /tmp/alminium-logs/log ]; then
-  cp -pr /tmp/alminium-logs/log/* $ALM_INSTALL_DIR/log/
-fi
-if [ -d /tmp/alminium-logs/$MYSQL_LOG_DIR ]; then
-  cp -pr /tmp/alminium-logs/$MYSQL_LOG_DIR/* /var/log/$MYSQL_LOG_DIR/
-fi
-if [ -d /tmp/alminium-logs/$APACHE_LOG_DIR ]; then
-  cp -pr /tmp/alminium-logs/$APACHE_LOG_DIR/* /var/log/$APACHE_LOG_DIR/
-fi
-if [ -d /tmp/alminium-logs/jenkins ]; then
-  cp -pr /tmp/alminium-logs/jenkins/* /var/log/jenkins/
-fi
+# log復元
+restore_log() {
+  local LOG_DIR="/tmp/alminium-logs/$1"
+  local TO_PATH=$2
+  if [ "$TO_PATH" = "" ];then TO_PATH=$1; fi
+  if [ -d $LOG_DIR -a "`ls $LOG_DIR`" != "" ]; then
+    cp -pr $LOG_DIR/* $ALM_LOG_DIR/$TO_PATH/
+  fi
+}
+
+restore_log log redmine
+restore_log $MYSQL_LOG_DIR
+restore_log $APACHE_LOG_DIR
+restore_log jenkins
 
 echo ""
 echo "以上でアップグレードは終了です。途中にエラーが発生した場合は、元の状態に戻して手動でアップグレードを実施してください。"

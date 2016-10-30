@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -f /var/lib/jenkins/plugins ]; then
-  mkdir /var/lib/jenkins/plugins
+  mkdir -p /var/lib/jenkins/plugins
   chown jenkins:jenkins /var/lib/jenkins/plugins
 fi
 
@@ -23,7 +23,7 @@ sed '1d;$d' /tmp/default.js > /tmp/default.json
 # Now push it to the update URL
 #curl --noproxy localhost -X POST -H "Accept: application/json" -d @/tmp/default.json http://localhost:8080/jenkins/updateCenter/byId/default/postBack --verbose
 if [ ! -e /var/lib/jenkins/updates ]; then
-  mkdir /var/lib/jenkins/updates
+  mkdir -p /var/lib/jenkins/updates
 fi
 cp -f /tmp/default.json /var/lib/jenkins/updates/
 
@@ -56,7 +56,7 @@ fi
 
 # プラグインインストール
 sleep 10
-mkdir tmp
+mkdir -p tmp
 pushd tmp
 RET=-1
 until  [ "$RET" -eq "0" ]

@@ -1,6 +1,40 @@
 #!/bin/bash
+###################
+# install Redmine #
+###################
+
 #
-# install Redmine
+# functions
+#
+
+# DBのsettingsテーブルのレコード有無チェック
+exist_record() {
+  echo "SELECT * FROM settings WHERE name = '$1';" | mysql alminium
+}
+
+# DB内のsettingsテーブルの指定レコード$1を指定の値$2に書き換える
+# レコードが存在しない場合は、新たにレコードを挿入する
+update_setting() {
+  if [ "`exist_record $1`" = "" ]; then
+    echo "REPLACE INTO settings(name,value,updated_on) " \
+         "VALUES ('$1','$2', current_date);" | mysql alminium
+  else
+    echo "UPDATE settings SET value = '$2' WHERE name = '$1';" | mysql alminium
+  fi
+}
+
+# protocol
+protocol() {
+  if [ "$ALM_ENABLE_SSL" = "y" ]; then
+    echo "https"
+  else
+    echo "http"
+  fi
+}
+
+
+#
+# scripts
 #
 
 # download and put alminium's home dir
@@ -46,17 +80,7 @@ fi
 cp -fr   redmine/hooks $ALM_INSTALL_DIR/
 chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/*
 
-# config default settings
-# default host_name(hostname and path)
-if [ "$ALM_SUBDIR" = "" ]; then
-  HOST_NAME_AND_PATH=$ALM_HOSTNAME
-else
-  HOST_NAME_AND_PATH=$ALM_HOSTNAME/$ALM_SUBDIR
-fi
-sed -i "s|default: localhost:3000|default: $HOST_NAME_AND_PATH|" \
-       $ALM_INSTALL_DIR/config/settings.yml
-# default protocol
-if [ "$ALM_ENABLE_SSL" = "y" ]; then
-  sed -i "s/default: http/default: https/" $ALM_INSTALL_DIR/config/settings.yml
-fi
+# config settings
+update_setting 'host_name' ${ALM_HOSTNAME}$ALM_SUBDIR
+update_setting 'protocol' `protocol`
 

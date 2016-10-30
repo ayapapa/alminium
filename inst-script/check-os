@@ -28,7 +28,6 @@ if [ "$OS" = "" ]; then
     else
         OS='rhel6'
         echo "CentOS 6.xが検出されました。"
-        #echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
     fi
   elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]; then
     APACHE_USER=www-data
