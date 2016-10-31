@@ -180,5 +180,5 @@ Jenkinsをインストールした場合は、下記のURLからアクセスで�
 
 ',current_date);
 UPDATE users SET language='ja' WHERE login='admin';
-REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_xls_export','---\n- Subversion\n- Mercurial\n- Git\n- Github\n',current_date);
+REPLACE INTO settings(name,value,updated_on) VALUES ('enabled_scm','---\n- Subversion\n- Mercurial\n- Git\n- Github\n',current_date);
 REPLACE INTO settings(name,value,updated_on) VALUES ('new_item_menu_tab','1',current_date);
