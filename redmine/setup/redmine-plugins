@@ -79,6 +79,14 @@ pushd .
 
 cd $INSTALL_DIR
 
+# for scm
+sed -i "s/\"octokit\"/\"octokit\" ,\"<4.0\"/" plugins/redmine_scm/Gemfile
+
+# for dmsf
+sed -i -e "s/'rubyzip'/'rubyzip'#/" \
+       -e "s/'nokogiri'/'nokogiri'#/" \
+        plugins/redmine_dmsf/Gemfile
+
 # for Hudson
 mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
 
