@@ -1,6 +1,25 @@
 #!/bin/bash
 # ALMinium関連のログをまとめて管理する
 
+# backup log and new log's directory setting function
+backup_and_new_logdir() {
+  local parent_dir=$1
+  local old_log_dir=$2
+  local new_log_dir=$3
+  local owner=$4
+  local group=$5
+
+  pushd $parent_dir
+  if [ -d $log_dir ]; then
+    mkdir -p $old_log_dir.backup
+    tar cvfz $old_log_dir.backup/"`date +%F-%H-%M-%S`".tar.gz $old_log_dir
+    rm -r $old_log_dir
+  fi
+  chown $owner:$group $ALM_LOG_DIR/$new_log_dir
+  ln -s $ALM_LOG_DIR/$new_log_dir $parent_dir/$old_log_dir
+  popd
+}
+
 # make log's directories
 mkdir -p $ALM_LOG_DIR
 mkdir -p $ALM_LOG_DIR/redmine
@@ -11,46 +30,14 @@ mkdir -p $ALM_LOG_DIR/jenkins
 #
 # each log's configuration
 #
-pushd /var/log
-
-# redmine's log
-chown $APACHE_USER:$APACHE_USER $ALM_LOG_DIR/redmine
-if [ -d $ALM_INSTALL_DIR/log ]; then
-  mkdir -p $ALM_INSTALL_DIR/log.backup
-  pushd $ALM_INSTALL_DIR
-  tar cvfz $ALM_INSTALL_DIR/log.backup/"`date +%F-%H-%M-%S`".tar.gz log
-  rm -r $ALM_INSTALL_DIR/log
-  popd
-fi
-ln -s $ALM_LOG_DIR/redmine $ALM_INSTALL_DIR/log
-
-# mysql's log
-if [ -d $MYSQL_LOG_DIR ]; then
-  mkdir -p $MYSQL_LOG_DIR.backup
-  tar cvfz $MYSQL_LOG_DIR.backup/"`date +%F-%H-%M-%S`".tar.gz $MYSQL_LOG_DIR
-  rm -r $MYSQL_LOG_DIR
-fi
-chown mysql:adm $ALM_LOG_DIR/$MYSQL_LOG_DIR
-ln -s $ALM_LOG_DIR/$MYSQL_LOG_DIR .
-
-# apache's log
-if [ -d $APACHE_LOG_DIR ]; then
-  mkdir -p $APACHE_LOG_DIR.backup
-  tar cvfz $APACHE_LOG_DIR.backup/"`date +%F-%H-%M-%S`".tar.gz $APACHE_LOG_DIR
-  rm -r $APACHE_LOG_DIR
-fi
-ln -s $ALM_LOG_DIR/$APACHE_LOG_DIR .
-
-# jenkins' log
+backup_and_new_logdir "$ALM_INSTALL_DIR" "log" "redmine" "$APACHE_USER" "$APACHE_USER"
+backup_and_new_logdir "/var/log" "$MYSQL_LOG_DIR" "$MYSQL_LOG_DIR" "mysql" "adm"
+backup_and_new_logdir "/var/log" "$APACHE_LOG_DIR" "$APACHE_LOG_DIR" "root" "root"
 if [ "$ALM_ENABLE_JENKINS" = "y" ]; then
-  if [ -d jenkins ]; then
-    mkdir -p jenkins.backup
-    tar cvfz jenkins.backup/"`date +%F-%H-%M-%S`".tar.gz jenkins
-    rm -r jenkins
-  fi
-  chown jenkins:jenkins $ALM_LOG_DIR/jenkins
-  ln -s $ALM_LOG_DIR/jenkins jenkins
+  backup_and_new_logdir "/var/log" "jenkins" "jenkins" "jenkins" "jenkins"
 fi
 
-popd
-
+# ubuntu1604 apparmor setting
+if [ "$OS" = "ubuntu1604" ]; then
+  sed -i "s|/var/log/mysql/|/var/log/alminium/mysql/|" /etc/apparmor.d/usr.sbin.mysqld
+fi
