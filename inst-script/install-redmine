@@ -1,7 +1,43 @@
 #!/bin/bash
+###################
+# install Redmine #
+###################
+
 #
-# install Redmine
+# functions
 #
+
+# DBのsettingsテーブルのレコード有無チェック
+exist_record() {
+  echo "SELECT * FROM settings WHERE name = '$1';" | mysql alminium
+}
+
+# DB内のsettingsテーブルの指定レコード$1を指定の値$2に書き換える
+# レコードが存在しない場合は、新たにレコードを挿入する
+update_setting() {
+  if [ "`exist_record $1`" = "" ]; then
+    echo "REPLACE INTO settings(name,value,updated_on) " \
+         "VALUES ('$1','$2', current_date);" | mysql alminium
+  else
+    echo "UPDATE settings SET value = '$2' WHERE name = '$1';" | mysql alminium
+  fi
+}
+
+# protocol
+protocol() {
+  if [ "$ALM_ENABLE_SSL" = "y" ]; then
+    echo "https"
+  else
+    echo "http"
+  fi
+}
+
+
+#
+# scripts
+#
+
+# download and put alminium's home dir
 mkdir -p $ALM_INSTALL_DIR
 echo "*** install Redmine ***"
 cd cache
@@ -10,14 +46,15 @@ if [ ! -f redmine-$RM_VER ]; then
   tar zxf $RM_VER.tar.gz
 fi
 cd ..
+cp -fr cache/redmine-$RM_VER/* $ALM_INSTALL_DIR/
+rm -fr cache/redmine-$RM_VER
 
-$CPCMD cache/redmine-$RM_VER/* $ALM_INSTALL_DIR/
-$RMCMD cache/redmine-$RM_VER
-
-cp     redmine/Gemfile.local   $ALM_INSTALL_DIR/
-$CPCMD redmine/config/*        $ALM_INSTALL_DIR/config/
-$CPCMD redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
-cp ./{backup,restore} ./inst-script/config-backup ./inst-script/$OS/service-restart $ALM_INSTALL_DIR/
+# put config files
+cp -f  redmine/Gemfile.local   $ALM_INSTALL_DIR/
+cp -fr redmine/config/*        $ALM_INSTALL_DIR/config/
+cp -fr redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
+cp     ./{backup,restore} ./inst-script/config-backup \
+       ./inst-script/$OS/service-restart $ALM_INSTALL_DIR/
 
 # avoid bandle install error because of nokogiri version conflict
 mv $ALM_INSTALL_DIR/Gemfile $ALM_INSTALL_DIR/Gemfile.org
@@ -35,11 +72,15 @@ fi
 
 # install hooks
 mkdir -p $ALM_INSTALL_DIR/bin
-$CPCMD redmine/bin/* $ALM_INSTALL_DIR/bin/
+cp -fr redmine/bin/* $ALM_INSTALL_DIR/bin/
 if [ "$ALM_SUBDIR" != "" ]; then
   sed -i "s|localhost|localhost$ALM_SUBDIR|g" $ALM_INSTALL_DIR/bin/alm-sync-scm
   chmod +x $ALM_INSTALL_DIR/bin/alm-sync-scm
 fi
-$CPCMD redmine/hooks $ALM_INSTALL_DIR/
+cp -fr   redmine/hooks $ALM_INSTALL_DIR/
 chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/*
+
+# config settings
+update_setting 'host_name' ${ALM_HOSTNAME}$ALM_SUBDIR
+update_setting 'protocol' `protocol`
 

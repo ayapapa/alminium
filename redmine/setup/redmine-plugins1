@@ -22,7 +22,7 @@ do
           wget -P cache ${URL_NAME[$i]}
         fi
         yes | unzip -q cache/$FILE_NAME
-         $RMCMD $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+         rm -fr $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
         mv ${DIR_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
         rm -f $FILE_NAME
         ;;
@@ -32,7 +32,7 @@ do
           wget -P cache ${URL_NAME[$i]}
         fi
         tar zxf cache/$FILE_NAME
-        $RMCMD $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        rm -fr  $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
         mv ${DIR_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
         rm -f $FILE_NAME
         ;;
@@ -44,8 +44,8 @@ do
           cd cache/${DEST_NAME[$i]}
           git checkout ${DIR_NAME[$i]}
           cd ../..
-          $RMCMD $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
-          ${CPCMD}a cache/${DEST_NAME[$i]} $ALM_INSTALL_DIR/plugins/
+          rm -fr  $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+          cp -fra cache/${DEST_NAME[$i]} $ALM_INSTALL_DIR/plugins/
         fi
         ;;
     *)
@@ -64,8 +64,8 @@ do
             fi
           fi
         fi
-        $RMCMD $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        ${CPCMD}a cache/${DEST_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        rm -fr  $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        cp -fra cache/${DEST_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
         ;;
     esac
 done
