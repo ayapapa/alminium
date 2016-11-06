@@ -84,11 +84,29 @@ if [ -f plugins/redmine_hudson/Gemfile ]; then
   mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
 fi
 
-#for DMSF
+# for DMSF
 # avoid bandle install error because of rubyzip version conflict
 if [ -f $ALM_INSTALL_DIR/plugins/redmine_dmsf/Gemfile ]; then
   sed -i.org "s/gem 'rubyzip',/gem 'rubyzip'#,/" $ALM_INSTALL_DIR/plugins/redmine_dmsf/Gemfile
 fi
+
+# for OAuth2認証
+cd ./plugins
+case $ALM_OAUTH2_METHOD in
+google)
+  git clone -b master https://github.com/twinslash/redmine_omniauth_google.git
+  ;;
+github)
+  git clone -b v0.0.3 https://github.com/ares/redmine_omniauth_github.git
+  ;;
+gitlab)
+  git clone -b 0.0.1 https://github.com/ayapapa/redmine_omniauth_gitlab.git
+  ;;
+azure)
+  git clone -b master https://github.com/sohelzerdoumi/redmine_omniauth_azure.git
+  ;;
+esac
+cd ..
 
 # redmineに必要なgemをインストール
 bundle install --path vendor/bundle --without development test xapian
