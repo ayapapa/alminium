@@ -10,12 +10,14 @@ backup_and_new_logdir() {
   local group=$5
 
   pushd $parent_dir
-  if [ -d $log_dir ]; then
+  if [ -d $old_log_dir -a "`ls $old_log_dir`" != "" \
+       -a "`readlink -f $old_log_dir`" != "$ALM_LOG_DIR/$new_log_dir" ]; then
     mkdir -p $old_log_dir.backup
     tar cvfz $old_log_dir.backup/"`date +%F-%H-%M-%S`".tar.gz $old_log_dir
+    cp -p $old_log_dir/* $ALM_LOG_DIR/$new_log_dir/
     rm -r $old_log_dir
   fi
-  chown $owner:$group $ALM_LOG_DIR/$new_log_dir
+  chown -R $owner:$group $ALM_LOG_DIR/$new_log_dir
   ln -s $ALM_LOG_DIR/$new_log_dir $parent_dir/$old_log_dir
   popd
 }
