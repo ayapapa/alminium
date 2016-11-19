@@ -61,7 +61,7 @@ check_backup_result() {
 }
 
 echo "MySQLデータベースをバックアップします。"
-mysqldump `db_option` alminium > $ALM_BACKUP_DIR/$ALM_DBBACKUP_NAME
+mysqldump `db_option` alminium > ${ALM_BACKUP_DIR}/${ALM_DBBACKUP_NAME}
 check_backup_result ${ALM_DBBACKUP_NAME} "データベースバックアップ"
 
 #redmineの添付ファイルをバックアップ

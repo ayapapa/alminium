@@ -1,7 +1,7 @@
 #!/bin/bash
 #########################################
 # restore from ALMinium's backup.       #
-# 第一引数：バックアップファイル名      #
+# 第1引数：バックアップファイル名       #
 # 第2引数：データベースホスト名         #
 # 第3引数：データベース管理者パスワード #
 #########################################
@@ -21,7 +21,7 @@ fi
 
 # バックアップファイルをチェック
 if [ "$1" = "" ]; then
-    echo "第一引数にバックアップファイルを指定してください。"
+    echo "第1引数にバックアップファイルを指定してください。"
     exit 1
 fi
 
@@ -40,15 +40,15 @@ source inst-script/functions
 # バックアップの復元
 echo "${ALM_BACKUP_NAME}を復元します。"
 cd /tmp
-tar xzf $ALM_BACKUP_NAME
+tar xzf ${ALM_BACKUP_NAME}
 
 echo "***リポジトリーデータを復元しています..."
-cd /var/opt/alminium/ && tar xzf $ALM_REPOS_BACKUP
+cd /var/opt/alminium/ && tar xzf ${ALM_REPOS_BACKUP}
 echo "***Redmine添付ファイルを復元しています..."
-cd /opt/alminium/files/ && tar xzf $ALM_FILE_BACKUP
-if [ "$ALM_DB_RESTORE" != "no" ]; then
+cd /opt/alminium/files/ && tar xzf ${ALM_FILE_BACKUP}
+if [ "${ALM_DB_RESTORE}" != "no" ]; then
   echo "***データベースを復元しています..."
-  mysql `db_option` alminium < $ALM_DBBACKUP_NAME
+  mysql `db_option` alminium < ${ALM_DBBACKUP_NAME}
   echo "データ復元が完了しました。"
   #データベースのマイグレーション
   echo "データベースのマイグレーションを実施します。"
@@ -60,7 +60,7 @@ if [ "$ALM_DB_RESTORE" != "no" ]; then
   echo "データベースのマイグレーションが完了しました。"
 fi
 
-cd $ALM_CURRENT_DIR
+cd ${ALM_CURRENT_DIR}
 if [ -f service-restart ]; then
   echo "サービスを再起動します。"
   source ./service-restart

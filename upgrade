@@ -1,6 +1,9 @@
 #!/bin/bash
 ############################################################
 # upgrader for ALMinium.
+# 第1引数：バックアップディレクトリ(defaultは/var/opt/alminium-backup)
+# 第2引数：データベースホスト名
+# 第3引数：データベース管理者パスワード
 ############################################################
 
 ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
@@ -31,7 +34,7 @@ echo "#####################################################################"
 read DO_CONTINUE
 
 # バックアップ実行
-source backup $1 
+source backup $1 $2 $3
 if [ $? -gt 0 ]; then
   echo "バックアップに失敗したため、処理を中止します"
   exit 1
@@ -79,7 +82,7 @@ source ./smelt -u
 
 #バックアップの復元
 ALM_DB_RESTORE=no
-source ./restore ${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME}
+source ./restore ${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME} $2 $3
 
 # log復元
 restore_log() {

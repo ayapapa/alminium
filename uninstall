@@ -25,7 +25,7 @@ read YN
 
 if [ "$YN" = "y" ]; then
     DBCMD="mysql `db_option`"
-    $DBCMD alminium -e "REVOKE ALL ON alminium.* FROM alminium@localhost"
+    $DBCMD alminium -e "REVOKE ALL ON alminium.* FROM alminium@'%'"
     $DBCMD alminium -e "DELETE FROM mysql.user WHERE User LIKE 'alminium'"
     $DBCMD alminium -e "FLUSH PRIVILEGES"
     $DBCMD alminium -e "DROP DATABASE alminium"
