@@ -22,7 +22,6 @@ libyaml-devel
 make
 mariadb
 mariadb-devel
-mariadb-server
 mercurial
 mod_dav_svn
 mod_passenger
