@@ -37,4 +37,9 @@ else
     a2dismod ssl
 fi
 
-service mysql start
+# DB
+if [ "${ALM_DB_HOST}" = "localhost" ]; then
+  apt-get -y install mysql-server
+  service mysql start
+fi
+
