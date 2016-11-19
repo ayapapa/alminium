@@ -25,11 +25,14 @@ read YN
 
 if [ "$YN" = "y" ]; then
     DBCMD="mysql `db_option`"
-    $DBCMD alminium -e "REVOKE ALL ON alminium.* FROM alminium@'%'"
-    $DBCMD alminium -e "DELETE FROM mysql.user WHERE User LIKE 'alminium'"
-    $DBCMD alminium -e "FLUSH PRIVILEGES"
-    $DBCMD alminium -e "DROP DATABASE alminium"
-    rm -fr $ALM_INSTALL_DIR/* $ALM_INSTALL_DIR/.[^.]*  $ALM_VAR_DIR/*
+    ${DBCMD} alminium -e "REVOKE ALL ON alminium.* FROM alminium@%" \
+             2>/dev/null
+    ${DBCMD} alminium -e "REVOKE ALL ON alminium.* FROM alminium@localhost" \
+             2>/dev/null
+    ${DBCMD} alminium -e "DELETE FROM mysql.user WHERE User LIKE 'alminium'"
+    ${DBCMD} alminium -e "FLUSH PRIVILEGES"
+    ${DBCMD} alminium -e "DROP DATABASE alminium"
+    rm -fr ${ALM_INSTALL_DIR}/* ${ALM_INSTALL_DIR}/.[^.]*  ${ALM_VAR_DIR}/*
 fi
 
 # remove apache2 config

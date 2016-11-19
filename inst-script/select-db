@@ -4,10 +4,10 @@
 if [ "${ALM_UPGRADE}" != "y" -a "${ALM_DB_HOST}" = "" ]; then
   echo
   echo -n 既に設置済みのMySQLデータベースサービスを利用しますか？[y/N]
-  read USE_EXISTING_MYSQL;
-  if [ "${USE_EXISTING_MYSQL}" = "y" ]; then
+  read ALM_USE_EXISTING_DB;
+  if [ "${ALM_USE_EXISTING_DB}" = "y" ]; then
     # db client install
-    source inst-script/$OS/install_db
+    source inst-script/$OS/install_db_client
     # DBへのアクセスが成功するまでループしながらチェック
     while [ "${DB_TEST}" = "" ]
     do

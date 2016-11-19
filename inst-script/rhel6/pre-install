@@ -34,12 +34,20 @@ if [ "$ALM_ENABLE_SSL" = "y" ]; then
     yum -y install mod_ssl
 fi
 
-sed -i "s/log-error=\/var\/log\/mysqld/log-error=\/var\/log\/mysql\/mysqld/" /etc/my.cnf
-mkdir -p /var/log/mysql
-chkconfig --add mysqld
-chkconfig mysqld on
-service mysqld restart
+# db
+if [ "${ALM_DB_HOST}" = "localhost" ]; then
+  if [ "${ALM_USE_EXISTING_DB}" != "y" ]; then
+    yum install -y mysql-server
+  fi
+  sed -i "s/log-error=\/var\/log\/mysqld/log-error=\/var\/log\/mysql\/mysqld/" \
+         /etc/my.cnf
+  mkdir -p /var/log/mysql
+  chkconfig --add mysqld
+  chkconfig mysqld on
+  service mysqld restart
+fi
 
+# ruby
 if [[ `which ruby` == "" || ! `ruby --version` =~ 2.1. ]]; then
     rpm -Uvh "https://github.com/hansode/ruby-rpm/blob/master/6/x86_64/ruby-2.1.2-2.el6.x86_64.rpm?raw=true"
 fi
