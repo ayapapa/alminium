@@ -1,0 +1,30 @@
+# select db
+
+# アップグレード時でDBホスト名の指定が無い場合は、ここで指示待ち
+if [ "${ALM_UPGRADE}" != "y" -a "${ALM_DB_HOST}" = "" ]; then
+  echo
+  echo -n 既に設置済みのMySQLデータベースサービスを利用しますか？[y/N]
+  read USE_EXISTING_MYSQL;
+  if [ "${USE_EXISTING_MYSQL}" = "y" ]; then
+    # db client install
+    source inst-script/$OS/install_db
+    # DBへのアクセスが成功するまでループしながらチェック
+    while [ "${DB_TEST}" = "" ]
+    do
+      echo -n データベースサーバー名を入力してください:
+      read ALM_DB_HOST
+      echo -n データベース管理者パスワードを入力してください：
+      read ALM_DB_ROOT_PASS
+      DB_TEST=`db_test`
+      if [ "${DB_TEST}" = "" ]; then
+        echo データベースに接続できませんでした。
+      fi
+    done 
+  else
+    ALM_DB_HOST=localhost
+    ALM_DB_ROOT_PASS=
+  fi
+fi
+
+ALM_DB_HOST=${ALM_DB_HOST:-localhost}
+

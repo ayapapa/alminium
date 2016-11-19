@@ -14,7 +14,7 @@ libsqlite3-dev
 libssl-dev
 make
 mercurial
-mysql-server
+#mysql-server
 ruby-switch
 ruby2.1
 ruby2.1-dev

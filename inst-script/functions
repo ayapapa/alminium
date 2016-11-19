@@ -1,0 +1,36 @@
+
+# DB操作コマンドオプション
+db_option() {
+  local db_host=${ALM_DB_HOST:-localhost}
+  local root_pass=${ALM_DB_ROOT_PASS}
+
+  if [ "${root_pass}" = "" ] ; then
+    echo "-uroot -h${db_host}"
+  else
+    echo "-uroot -h${db_host} -p${root_pass}"
+  fi
+}
+
+# DBのsettingsテーブルのレコード有無チェック
+db_exist_record() {
+  echo "SELECT * FROM settings WHERE name = '$1';" | mysql `db_option` alminium
+}
+
+# DB内のsettingsテーブルの指定レコード$1を指定の値$2に書き換える
+# レコードが存在しない場合は、新たにレコードを挿入する
+db_update_setting() {
+  if [ "`db_exist_record $1`" = "" ]; then
+    echo "REPLACE INTO settings(name,value,updated_on) " \
+         "VALUES ('$1','$2', current_date);" | mysql `db_option` alminium
+  else
+    echo "UPDATE settings SET value = '$2' WHERE name = '$1';" | mysql `db_option` alminium
+  fi
+}
+
+# データベース接続テスト
+# 戻り値が非nullなら接続成功
+db_test() {
+  DBCMD="mysql `db_option`"
+  echo `${DBCMD} -e "select user from user;" mysql 2>/dev/null`
+}
+

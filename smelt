@@ -11,6 +11,9 @@ ALM_GIT_VERSION=${ALM_GIT_VERSION:-2.9.0}
 ALM_GIT_AUTO_UPGRADE=${ALM_GIT_AUTO_UPGRADE:-N}
 ALM_LOG_DIR=${ALM_LOG_DIR:-/var/log/alminium}
 
+ALM_DB_HOST=
+ALM_DB_ROOT_PASS=
+
 RAILS_ENV=production
 
 RM_VER=${RM_VER:-`cat RM_VERSION`}
@@ -23,6 +26,9 @@ if [ "$1" = "-u" ]; then
 else
   ALM_UPGRADE=""
 fi
+
+# include functions
+source inst-script/functions
 
 # check memory size
 source inst-script/check-mem
@@ -52,6 +58,9 @@ if [ $(git config -l | egrep 'submodule.+url=' | wc -l) -ne \
 fi
 git submodule sync
 git submodule update
+
+# select db
+source inst-script/select-db
 
 # pre install
 source inst-script/pre-install

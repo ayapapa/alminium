@@ -20,6 +20,7 @@ do
       -e "s|$REPLACE_JENKINS||" \
       -e "s|#SUBDIR#|$ALM_SUBDIR|" \
       -e "s|#DOCUMENTROOT#|$DOCMENT_ROOT|" \
+      -e "s|#DB_HOST#|$ALM_DB_HOST|" \
       "etc/$FILE" > "$ALM_ETC_DIR/$FILE"
 done
 

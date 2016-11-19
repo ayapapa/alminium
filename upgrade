@@ -79,7 +79,7 @@ source ./smelt -u
 
 #バックアップの復元
 ALM_DB_RESTORE=no
-source ./restore $ALM_BACKUP_NAME
+source ./restore ${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME}
 
 # log復元
 restore_log() {
