@@ -10,8 +10,9 @@ sleep 10
 RET=-1
 until  [ "$RET" -eq "0" ]
 do
+  echo "Jenkinsへの接続を試みます..."
   sleep 10
-  wget --no-proxy -O $ALM_INSTALL_DIR/bin/jenkins-cli.jar http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar
+  wget --no-proxy -O $ALM_INSTALL_DIR/bin/jenkins-cli.jar http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar 2>/dev/null
   RET=$?
 done
 
