@@ -5,12 +5,13 @@
 # 第2引数：データベースホスト名         #
 # 第3引数：データベース管理者パスワード #
 #########################################
+ALM_SRC_DIR=${ALM_SRC_DIR:-$(cd $(dirname $0);pwd)}
+ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
+ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
 ALM_DB_HOST=${ALM_DB_HOST:-$2}
 ALM_DB_HOST=${ALM_DB_HOST:-localhost}
 ALM_DB_ROOT_PASS=${ALM_DB_ROOT_PASS:-$3}
-
-ALM_CURRENT_DIR=${ALM_CURRENT_DIR:-`pwd`}
 
 # 実行ユーザーをチェック
 if [ "`whoami`" != 'root' ]; then
@@ -34,6 +35,9 @@ ALM_DBBACKUP_NAME=/tmp/db.dump
 ALM_FILE_BACKUP=/tmp/files.tar.gz
 ALM_REPOS_BACKUP=/tmp/repo.tar.gz
 
+# move to sources directry
+cd ${ALM_SRC_DIR}
+
 # include functions
 source inst-script/functions
 
@@ -43,16 +47,16 @@ cd /tmp
 tar xzf ${ALM_BACKUP_NAME}
 
 echo "***リポジトリーデータを復元しています..."
-cd /var/opt/alminium/ && tar xzf ${ALM_REPOS_BACKUP}
+cd ${ALM_VAR_DIR} && tar xzf ${ALM_REPOS_BACKUP}
 echo "***Redmine添付ファイルを復元しています..."
-cd /opt/alminium/files/ && tar xzf ${ALM_FILE_BACKUP}
+cd ${ALM_INSTALL_DIR}/files/ && tar xzf ${ALM_FILE_BACKUP}
 if [ "${ALM_DB_RESTORE}" != "no" ]; then
   echo "***データベースを復元しています..."
   mysql `db_option` alminium < ${ALM_DBBACKUP_NAME}
   echo "データ復元が完了しました。"
   #データベースのマイグレーション
   echo "データベースのマイグレーションを実施します。"
-  cd /opt/alminium
+  cd ${ALM_INSTALL_DIR}
   bundle exec rake db:migrate RAILS_ENV=production
   bundle exec rake redmine:plugins:migrate RAILS_ENV=production
   bundle exec rake tmp:cache:clear RAILS_ENV=production
@@ -60,11 +64,8 @@ if [ "${ALM_DB_RESTORE}" != "no" ]; then
   echo "データベースのマイグレーションが完了しました。"
 fi
 
-cd ${ALM_CURRENT_DIR}
-if [ -f service-restart ]; then
-  echo "サービスを再起動します。"
-  source ./service-restart
-elif [ -f inst-script/service-restart ]; then
+cd ${ALM_SRC_DIR}
+if [ -f inst-script/service-restart ]; then
   echo "サービスを再起動します。"
   source ./inst-script/service-restart
 else

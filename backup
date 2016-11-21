@@ -5,12 +5,18 @@
 # 第2引数：データベースホスト名
 # 第3引数：データベース管理者パスワード
 ############################################################
+ALM_SRC_DIR=${ALM_SRC_DIR:-$(cd $(dirname $0);pwd)}
+ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
+ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
-ALM_DB_HOST=${ALM_DB_HOST:-$2}
+ALM_DB_HOST=${2:-${ALM_DB_HOST}}
 ALM_DB_HOST=${ALM_DB_HOST:-localhost}
-ALM_DB_ROOT_PASS=${ALM_DB_ROOT_PASS:-$3}
+ALM_DB_ROOT_PASS=${3:-${ALM_DB_ROOT_PASS}}
 
-ALM_CURRENT_DIR=${ALM_CURRENT_DIR:-`pwd`}
+ALM_CURRENT_DIR=`pwd`
+
+# move to sources directry
+cd ${ALM_SRC_DIR}
 
 # include functions
 source inst-script/functions
@@ -66,14 +72,14 @@ check_backup_result ${ALM_DBBACKUP_NAME} "データベースバックアップ"
 
 #redmineの添付ファイルをバックアップ
 echo "Redmineの添付ファイルをバックアップします。"
-pushd /opt/alminium/files/
+pushd ${ALM_INSTALL_DIR}/files/
 tar czf ${ALM_BACKUP_DIR}/${ALM_FILE_BACKUP} .
 check_backup_result ${ALM_FILE_BACKUP} "添付ファイルバックアップ"
 popd
 
 #ソースコードリポジトリ
 echo "ソースコードリポジトリをバックアップします。"
-pushd /var/opt/alminium/
+pushd ${ALM_VAR_DIR}/
 tar czf ${ALM_BACKUP_DIR}/${ALM_REPOS_BACKUP} .
 check_backup_result ${ALM_REPOS_BACKUP} "ソースコードリポジトリバックアップ"
 popd

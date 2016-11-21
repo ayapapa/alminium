@@ -2,7 +2,7 @@
 
 # アップグレード時以外でDBホスト名の指定が無い場合は、ここで指示待ち
 if [ "${ALM_UPGRADE}" != "y" -a "${ALM_DB_HOST}" = "" ]; then
-  echo
+  echo ""
   echo -n 既に設置済みのMySQLデータベースサービスを利用しますか？[y/N]
   read ALM_USE_EXISTING_DB;
   if [ "${ALM_USE_EXISTING_DB}" = "y" ]; then

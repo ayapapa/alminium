@@ -82,10 +82,6 @@ fi
 # OAuth2認証
 if [ "$ALM_OAUTH2_METHOD" = "" ]; then
   echo "### 本機能は実験中（動作確認が不十分）です ###"
-  echo "OAuth2認証を利用することができます。"
-  echo "現在利用出来るのは、GoogleまたはGitLabです。"
-  echo "google, github, gitlab*, または, N(OAuth2認証を利用しない)を選択してください。"
-  echo "* gitlabサービスはオンプレミスサービスを指定可能"
   echo "OAuth2認証サービスを選択してください:"
   echo "  1: Google"
   echo "  2: GitHub"

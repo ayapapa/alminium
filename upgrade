@@ -5,12 +5,17 @@
 # 第2引数：データベースホスト名
 # 第3引数：データベース管理者パスワード
 ############################################################
-
+ALM_SRC_DIR=$(cd $(dirname $0);pwd)
 ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
 ALM_VAR_DIR=/var/opt/alminium
 ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
-ALM_DB_HOST=$2
-ALM_DB_ROOT_PASS=$3
+
+ALM_DB_HOST=${2:-${ALM_DB_HOST}}
+ALM_DB_HOST=${ALM_DB_HOST:-localhost}
+ALM_DB_ROOT_PASS=${3:-${ALM_DB_ROOT_PASS}}
+
+# move to sources directry
+cd ${ALM_SRC_DIR}
 
 # 実行ユーザーをチェック
 source inst-script/check-user
@@ -91,7 +96,7 @@ restore_log() {
   local LOG_DIR="/tmp/alminium-logs/$1"
   local TO_PATH=$2
   if [ "${TO_PATH}" = "" ];then TO_PATH=$1; fi
-  if [ -d ${LOG_DIR} -a "`ls ${LOG_DIR}`" != "" ]; then
+  if [ -d ${LOG_DIR} -a "`ls ${LOG_DIR} 2>/dev/null`" != "" ]; then
     cp -pr ${LOG_DIR}/* ${ALM_LOG_DIR}/${TO_PATH}/
   fi
 }

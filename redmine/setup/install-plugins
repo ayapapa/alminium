@@ -73,12 +73,6 @@ done
 # ALMiniumインストールディレクトリへ移動
 pushd $ALM_INSTALL_DIR
 
-# passenger package
-if [ "$ALM_PASSSENGER_PACKAGE_AVAILABLE" = "1" ]; then
-  mv Gemfile.local Gemfile.local.org
-  cat Gemfile.local.org | sed "s/gem 'passenger'/#gem 'passenger'/" > Gemfile.local
-fi
-
 # for Hudson
 if [ -f plugins/redmine_hudson/Gemfile ]; then
   mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
@@ -107,38 +101,6 @@ azure)
   ;;
 esac
 cd ..
-
-# redmineに必要なgemをインストール
-bundle install --path vendor/bundle --without development test xapian
-
-# セッションストア秘密鍵を生成
-bundle exec rake generate_secret_token
-
-# データベース上にテーブルを作成
-bundle exec rake db:migrate RAILS_ENV=production
-bundle exec rake redmine:plugins:migrate RAILS_ENV=production
-
-# データベースにデフォルトデータを登録
-echo 'ja' |\
-bundle exec rake redmine:load_default_data RAILS_ENV=production
-
-# キャッシュクリア
-bundle exec rake tmp:cache:clear RAILS_ENV=production
-bundle exec rake tmp:sessions:clear RAILS_ENV=production
-
-# for XLS export
-if [ -d plugins/redmine_xls_export ]; then
-  bundle exec rake redmine:plugins:process_version_change RAILS_ENV=production
-fi
-
-# for backlogs
-if [ -d plugins/redmine_backlogs ]; then
-  if [ "$ALM_UPGRADE" = "y" ]; then
-    bundle exec rake redmine:backlogs:install task_tracker=タスク story_trackers=機能 labels=false RAILS_ENV=production
-  else
-    bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false RAILS_ENV=production
-  fi
-fi
 
 # ディレクトリを元に戻す
 popd

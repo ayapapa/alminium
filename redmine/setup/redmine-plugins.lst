@@ -13,7 +13,7 @@ redmine_importer,master,https://github.com/agileware-jp/redmine_importer.git
 #redmine_code_review,0.7.0,https://bitbucket.org/haru_iida/redmine_code_review
 redmine_code_review,master,https://github.com/ayapapa/redmine_code_review.git
 # jenkins関係をここでインストールすると失敗する（別途インストールするようにした）
-#redmine_bootstrap,0.2.3,https://github.com/jbox-web/redmine_bootstrap_kit.git
+#redmine_bootstrap,0.2.4,https://github.com/jbox-web/redmine_bootstrap_kit.git
 #redmine_jenkins,1.0.1,https://github.com/jbox-web/redmine_jenkins.git
 redmine_backlogs,redmine3,https://github.com/ayapapa/redmine_backlogs.git
 redmine_spent_time_column,backlogs-support,https://github.com/mikoto20000/redmine_spent_time_column.git

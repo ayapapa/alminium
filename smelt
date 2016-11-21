@@ -2,19 +2,24 @@
 ############################################################
 # Smart installer for redmine/chiliproject.
 ############################################################
-ALM_SRC_DIR=$(cd $(dirname $0);pwd)
-ALM_ETC_DIR=/etc/opt/alminium
-ALM_VAR_DIR=/var/opt/alminium
-ALM_INSTALL_DIR=/opt/alminium
+ALM_SRC_DIR=${ALM_SRC_DIR:-$(cd $(dirname $0);pwd)}
+ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
+ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
+ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
+ALM_LOG_DIR=${ALM_LOG_DIR:-/var/log/alminium}
+
 ALM_ENABLE_AUTO_BACKUP=${ALM_ENABLE_AUTO_BACKUP:-y}
 ALM_GIT_VERSION=${ALM_GIT_VERSION:-2.9.0}
 ALM_GIT_AUTO_UPGRADE=${ALM_GIT_AUTO_UPGRADE:-N}
-ALM_LOG_DIR=${ALM_LOG_DIR:-/var/log/alminium}
-
+ALM_SETUP_DB=${ALM_SETUP_DB:-y}
 #ALM_DB_HOST=
 #ALM_DB_ROOT_PASS=
 
 RAILS_ENV=production
+
+
+# move to sources directry
+cd ${ALM_SRC_DIR}
 
 RM_VER=${RM_VER:-`cat RM_VERSION`}
 RM_ARC=https://github.com/redmine/redmine/archive/${RM_VER}.tar.gz
@@ -66,7 +71,7 @@ source inst-script/select-db
 source inst-script/pre-install
 
 # setup database
-source inst-script/config-db
+#source inst-script/config-db
 
 # setup apache
 source inst-script/config-apache

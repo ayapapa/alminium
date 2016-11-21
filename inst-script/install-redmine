@@ -3,66 +3,125 @@
 # install Redmine #
 ###################
 
-# protocol
-protocol() {
-  if [ "$ALM_ENABLE_SSL" = "y" ]; then
-    echo "https"
-  else
-    echo "http"
+
+## functions ##
+
+# download redmine
+download_redmine() {
+  mkdir -p ${ALM_INSTALL_DIR}
+  cd cache
+  wget ${RM_ARC}
+  tar zxf ${RM_VER}.tar.gz
+  cd ..
+  cp -fr cache/redmine-${RM_VER}/* ${ALM_INSTALL_DIR}/
+  rm -fr cache/redmine-${RM_VER}
+}
+
+# setup configurations
+setup_configurations() {
+  # put config files
+  cp -f  redmine/Gemfile.local   ${ALM_INSTALL_DIR}/
+  cp -fr redmine/config/*        ${ALM_INSTALL_DIR}/config/
+  cp -fr redmine/public/themes/* ${ALM_INSTALL_DIR}/public/themes/
+  cp     ./{backup,restore} ${ALM_INSTALL_DIR}/
+  mkdir ${ALM_INSTALL_DIR}/inst-script
+  cp ./inst-script/{config-backup,functions} \
+     ./inst-script/${OS}/service-restart \
+     ${ALM_INSTALL_DIR}/inst-script/
+  ln -s ${ALM_INSTALL_DIR}/inst-script/* ${ALM_INSTALL_DIR}/
+
+  # update db-config
+  sed -i.org "s/localhost/${ALM_DB_HOST}/" \
+             ${ALM_INSTALL_DIR}/config/database.yml
+}
+
+# setup hooks
+setup_hooks() {
+  mkdir -p ${ALM_INSTALL_DIR}/bin
+  cp -fr redmine/bin/* ${ALM_INSTALL_DIR}/bin/
+  if [ "${ALM_SUBDIR}" != "" ]; then
+    sed -i "s|localhost|localhost${ALM_SUBDIR}|g" \
+           ${ALM_INSTALL_DIR}/bin/alm-sync-scm
+    chmod +x ${ALM_INSTALL_DIR}/bin/alm-sync-scm
+  fi
+  cp -fr   redmine/hooks ${ALM_INSTALL_DIR}/
+}
+
+#create repository's directories
+create_repo_dir() {
+  if [ "${ALM_UPGRADE}" != "y" ]; then
+    # create directory for vcs
+    mkdir -p ${ALM_VAR_DIR}/{git,svn,hg,maven,github}
+    chown -R ${APACHE_USER}:${APACHE_USER} ${ALM_VAR_DIR}/*
   fi
 }
 
-#
-# scripts
-#
+# gem packages installation
+install_gems() {
+  pushd ${ALM_INSTALL_DIR}
+  # if no need passenger gem, comment out it on redmine's Gemfile.local
+  if [ "${ALM_PASSSENGER_PACKAGE_AVAILABLE}" = "1" ]; then
+    sed -i.org "s/gem 'passenger'/#gem 'passenger'/" Gemfile.local
+  fi
+
+  # avoid bandle install error because of nokogiri version conflict
+  sed -i.org \
+      "s/gem \"nokogiri\", \">= 1.6.7.2\"/gem \"nokogiri\"#, \">= 1.6.7.2\"/" \
+      Gemfile
+
+  # redmineに必要なgemをインストール
+  bundle install --path vendor/bundle \
+               --without development test postgresql sqlite xapian
+  popd
+}
+
+# create secret token
+create_redmine_token() {
+  pushd ${ALM_INSTALL_DIR}
+  bundle exec rake generate_secret_token
+  popd
+}
+
+# setup DB
+setup_db() {
+  if [ "${ALM_SETUP_DB}" = "y" ]; then
+    source redmine/setup/setup-db
+  fi
+}
+
+## sctips ##
+
+echo "*** install Redmine ***"
 
 # download and put alminium's home dir
-mkdir -p $ALM_INSTALL_DIR
-echo "*** install Redmine ***"
-cd cache
-wget $RM_ARC
-if [ ! -f redmine-$RM_VER ]; then
-  tar zxf $RM_VER.tar.gz
-fi
-cd ..
-cp -fr cache/redmine-$RM_VER/* $ALM_INSTALL_DIR/
-rm -fr cache/redmine-$RM_VER
+download_redmine
 
-# put config files
-cp -f  redmine/Gemfile.local   $ALM_INSTALL_DIR/
-cp -fr redmine/config/*        $ALM_INSTALL_DIR/config/
-cp -fr redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
-cp     ./{backup,restore} ./inst-script/config-backup \
-       ./inst-script/$OS/service-restart $ALM_INSTALL_DIR/
+# setup configurations
+setup_configurations
 
-# update db-config
-sed -i "s/localhost/${ALM_DB_HOST}/" $ALM_INSTALL_DIR/config/database.yml
+# create repositries' directories
+create_repo_dir
 
-# avoid bandle install error because of nokogiri version conflict
-mv $ALM_INSTALL_DIR/Gemfile $ALM_INSTALL_DIR/Gemfile.org
-sed "s/gem \"nokogiri\", \">= 1.6.7.2\"/gem \"nokogiri\"#, \">= 1.6.7.2\"/" $ALM_INSTALL_DIR/Gemfile.org > $ALM_INSTALL_DIR/Gemfile
+# install hooks
+setup_hooks
 
 # install plugins
 echo "*** install plugins ***"
-source redmine/setup/redmine-plugins
+source redmine/setup/install-plugins
 
-if [ "$ALM_UPGRADE" = "" ]; then
-  # Customize
-  echo "*** run initialize SQL ***"
-  mysql `db_option` alminium < redmine/setup/init.mysql
-fi
+# install gems
+install_gems
 
-# install hooks
-mkdir -p $ALM_INSTALL_DIR/bin
-cp -fr redmine/bin/* $ALM_INSTALL_DIR/bin/
-if [ "$ALM_SUBDIR" != "" ]; then
-  sed -i "s|localhost|localhost$ALM_SUBDIR|g" $ALM_INSTALL_DIR/bin/alm-sync-scm
-  chmod +x $ALM_INSTALL_DIR/bin/alm-sync-scm
-fi
-cp -fr   redmine/hooks $ALM_INSTALL_DIR/
-chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/*
+# セッションストア秘密鍵を生成
+create_redmine_token
 
-# config settings
-db_update_setting 'host_name' ${ALM_HOSTNAME}$ALM_SUBDIR
-db_update_setting 'protocol' `protocol`
+# setup redmine db
+setup_db
+
+# jenkins関連プラグイン
+# この位置でインストールしないとエラーになる
+source redmine/setup/install-plugins-jenkins
+
+# 権限設定
+chown -R ${APACHE_USER}:${APACHE_USER} ${ALM_INSTALL_DIR}/*
 
