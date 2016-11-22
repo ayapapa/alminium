@@ -84,7 +84,7 @@ create_redmine_token() {
 
 # setup DB
 setup_db() {
-  if [ "${ALM_SETUP_DB}" = "y" ]; then
+  if [ "${ALM_DB_SETUP}" = "y" ]; then
     source redmine/setup/setup-db
   fi
 }

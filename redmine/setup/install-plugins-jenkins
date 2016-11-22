@@ -3,7 +3,7 @@
 #
 
 # DBセットアップをしない場合は、一時ディレクトリにダウンロードする
-if [ "$ALM_SETUP_DB" = "y" ]; then
+if [ "${ALM_DB_SETUP}" = "y" ]; then
   PLUGINS_DIR=${ALM_INSTALL_DIR}/plugins
 else
   PLUGINS_DIR=${ALM_INSTALL_DIR}/plugins-jenkins
@@ -13,12 +13,12 @@ fi
 pushd ${PLUGINS_DIR}
 
 # install redmine_bootstrap
-git clone -b 0.2.3 https://github.com/jbox-web/redmine_bootstrap_kit.git
+git clone -b 0.2.4 https://github.com/jbox-web/redmine_bootstrap_kit.git
 
 # install redmine_jenkins
 git clone -b 1.0.1 https://github.com/jbox-web/redmine_jenkins.git
 
-if [ "$ALM_SETUP_DB" = "y" ]; then
+if [ "$ALM_DB_SETUP" = "y" ]; then
   # install gems and migrate database
   cd ..
   bundle install --path vendor/bundle \

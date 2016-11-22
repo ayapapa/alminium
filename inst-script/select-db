@@ -11,6 +11,7 @@ if [ "${ALM_UPGRADE}" != "y" -a "${ALM_DB_HOST}" = "" ]; then
     # DBへのアクセスが成功するまでループしながらチェック
     while [ "${DB_TEST}" = "" ]
     do
+      echo ""
       echo -n データベースサーバー名を入力してください:
       read ALM_DB_HOST
       echo -n データベース管理者パスワードを入力してください：
