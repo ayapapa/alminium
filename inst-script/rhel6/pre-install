@@ -35,12 +35,10 @@ if [ "$ALM_ENABLE_SSL" = "y" ]; then
 fi
 
 # db
-if [ "${ALM_DB_HOST}" = "localhost" ]; then
-  if [ "${ALM_USE_EXISTING_DB}" != "y" ]; then
-    yum install -y mysql-server
-  fi
-  sed -i "s/log-error=\/var\/log\/mysqld/log-error=\/var\/log\/mysql\/mysqld/" \
-         /etc/my.cnf
+if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
+  yum install -y mysql-server
+  sed -i "s|log-error=/var/log/mysqld|log-error=/var/log/mysql/mysqld|" \
+      /etc/my.cnf
   mkdir -p /var/log/mysql
   chkconfig --add mysqld
   chkconfig mysqld on

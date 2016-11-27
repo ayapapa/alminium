@@ -31,7 +31,7 @@ if [ "$ALM_ENABLE_SSL" = "y" ]; then
 fi
 
 # データベース起動および自動起動設定
-if [ "${ALM_USE_EXISTING_DB}" != "y" ]; then
+if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
   yum install -y mariadb-server
   service mariadb start
   systemctl enable mariadb

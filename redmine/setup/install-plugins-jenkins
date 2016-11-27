@@ -7,7 +7,7 @@ if [ "${ALM_DB_SETUP}" = "y" ]; then
   PLUGINS_DIR=${ALM_INSTALL_DIR}/plugins
 else
   PLUGINS_DIR=${ALM_INSTALL_DIR}/plugins-jenkins
-  mkdir -p PLUGINS_DIR
+  mkdir -p ${PLUGINS_DIR}
 fi
 # カレントディレクトリを退避
 pushd ${PLUGINS_DIR}

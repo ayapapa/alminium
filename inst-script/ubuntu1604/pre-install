@@ -38,7 +38,7 @@ else
 fi
 
 # DB
-if [ "${ALM_USE_EXISTING_DB}" != "y" ]; then
+if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
   apt-get install -y mysql-server
   service mysql start
 fi

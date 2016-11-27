@@ -44,9 +44,6 @@ if [ "$OS" = "" ]; then
     MYSQLD='/etc/init.d/mysql'
     OS='ubuntu1604'
     ETH0=enp0s3
-    if [ ! -f jenkins/setup/ubuntu1604 ]; then
-      ln -s debian jenkins/setup/ubuntu1604
-    fi
     echo "Ubuntu 16.04 が検出されました。"
   else
     echo "サポートされていないOSです。"

@@ -70,9 +70,6 @@ source inst-script/select-db
 # pre install
 source inst-script/pre-install
 
-# setup database
-#source inst-script/config-db
-
 # setup apache
 source inst-script/config-apache
 
