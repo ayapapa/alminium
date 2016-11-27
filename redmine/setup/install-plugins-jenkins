@@ -16,7 +16,7 @@ pushd ${PLUGINS_DIR}
 git clone -b 0.2.4 https://github.com/jbox-web/redmine_bootstrap_kit.git
 
 # install redmine_jenkins
-git clone -b 1.0.1 https://github.com/jbox-web/redmine_jenkins.git
+git clone -b v1.x https://github.com/ayapapa/redmine_jenkins.git
 
 if [ "$ALM_DB_SETUP" = "y" ]; then
   # install gems and migrate database
