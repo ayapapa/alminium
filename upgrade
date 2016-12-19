@@ -85,7 +85,8 @@ rm -fr cache/* *.installed
 rm -fr ${ALM_ETC_DIR}/passenger.*
 
 #　install ALMinium by smelt
-source ./smelt -u
+ALM_UPGRADE=y
+source ./smelt
 
 #バックアップの復元
 ALM_DB_RESTORE=no
