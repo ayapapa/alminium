@@ -82,7 +82,7 @@ fi
 # OAuth2認証
 if [ "$ALM_OAUTH2_METHOD" = "" ]; then
   echo "### 本機能は実験中（動作確認が不十分）です ###"
-  echo "OAuth2認証サービスを選択してください:"
+  echo "OAuth2認証サービス(プロバイダ)を選択してください:"
   echo "  1: Google"
   echo "  2: GitHub"
   echo "  3: GitLab (オンプレミスサービスも指定可能)"

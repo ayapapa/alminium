@@ -10,10 +10,12 @@ pushd $ALM_INSTALL_DIR
 # create db
 if [ "$ALM_UPGRADE" != "y" ]; then
   # create DB
+echo create DB ...
   mysql `db_option` < ${ALM_SRC_DIR}/redmine/setup/createdb.sql
 fi
 
 # データベースにテーブルを作成
+echo "bundle exec rake db:migrate RAILS_ENV=production"
 bundle exec rake db:migrate RAILS_ENV=production
 
 # データベースにデフォルトデータを登録
