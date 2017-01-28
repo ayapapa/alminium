@@ -10,11 +10,9 @@ pushd ${ALM_INSTALL_DIR}
 # create db
 if [ "${ALM_UPGRADE}" != "y" ]; then
   DB_OPTION="`db_option`"
-  EXIT_ALM_DB="`mysql ${DB_OPTION} -e \"status\" alminium`"
+  EXIT_ALM_DB="`mysql ${DB_OPTION} -e \"status\" alminium  2>/dev/null`"
   if [ "${EXIT_ALM_DB}" = "" ]; then
     DB_OPTION_ROOT="`db_option_root`"
-#    ACCESS_MYSQL="`mysql ${DB_OPTION_ROOT} -e \"status\" mysql`"
-#    if [ "${ACCESS_MYSQL}" != "" ]; then
     if [ "`db_test`" != "" ]; then
       # create DB
       mysql `db_option_root` < ${ALM_SRC_DIR}/redmine/setup/createdb.sql
