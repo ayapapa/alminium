@@ -3,7 +3,7 @@
 # Redmine Perlモジュール（リポジトリ認証連携）設定
 mkdir -p /etc/httpd/Apache/Authn
 rm -f /etc/httpd/Apache/Authn/Redmine.pm
-ln -s $ALM_INSTALL_DIR/extra/svn/Redmine.pm /etc/httpd/Apache/Authn/Redmine.pm
+ln -s ${ALM_INSTALL_DIR}/extra/svn/Redmine.pm /etc/httpd/Apache/Authn/Redmine.pm
 
 #
 # Apache configs
@@ -11,14 +11,14 @@ ln -s $ALM_INSTALL_DIR/extra/svn/Redmine.pm /etc/httpd/Apache/Authn/Redmine.pm
 # passenger check
 passenger-config validate-install --auto --validate-apache2
 #set alminium config
-ln -sf "$ALM_ETC_DIR/alminium.conf"  "$APACHE_CONF_DIR/"
+ln -sf "${ALM_ETC_DIR}/alminium.conf"  "${APACHE_CONF_DIR}/"
 
 # セキュリティ無効化の設定
-if [ ! "$USE_DISABLE_SECURITY" = "n" ]; then
+if [ ! "${USE_DISABLE_SECURITY}" = "n" ]; then
   echo "SELinuxを無効化します"
   setenforce 0
   CHK=`grep SELINUX=enforcing /etc/selinux/config`
-  if [ ! "$CHK" = '' ]; then
+  if [ ! "${CHK}" = '' ]; then
     sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config 
     echo "SELinuxが無効化されました"
   fi
@@ -31,7 +31,7 @@ fi
 
 # MariaDB設定
 CHK=`grep "character-set-server=utf8" /etc/my.cnf`
-if [ "$CHK" = "" ]; then
+if [ "${CHK}" = "" ]; then
   mv /etc/my.cnf /etc/my.cnf.org
   cat /etc/my.cnf.org | sed -e "s/\[mysqld_safe\]/character-set-server=utf8\n\n\[mysqld_safe\]/g" > /etc/my.cnf
   echo -e "\n[mysql]\ndefault-character-set=utf8\n" >> /etc/my.cnf

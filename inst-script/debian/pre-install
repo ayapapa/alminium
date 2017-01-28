@@ -25,18 +25,18 @@ apt-get install -y --force-yes software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng
 
 # install APT packages
-if [ "$GIT_UPDATE" = "y" ]; then
+if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
 fi
 apt-get -qq update
-apt-get -y install `grep -v "^#" inst-script/$OS/packages.lst`
+apt-get -y install `grep -v "^#" inst-script/${OS}/packages.lst`
 
 # switch to ruby2.1
 ruby-switch --set ruby2.1
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 # SSL
-if [ "$ALM_ENABLE_SSL" = "y" ]; then
+if [ "${ALM_ENABLE_SSL}" = "y" ]; then
     apt-get -y install ssl-cert
     a2enmod ssl rewrite
 else

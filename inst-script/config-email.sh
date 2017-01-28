@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$SMTPSET" == "" ]
+if [ "${SMTPSET}" == "" ]
 then
 echo "*******************************************************"
 echo "  メール設定"
@@ -28,13 +28,13 @@ echo ""
 echo ""
 fi
 
-case "$SMTPSET" in
+case "${SMTPSET}" in
 	"0" ) 
 	echo "*******************************************************"
 	echo "  メールサーバー設定"
 	echo "*******************************************************"
 
-	if [ "$SMTPSERVER" == "" ]
+	if [ "${SMTPSERVER}" == "" ]
 	then
 		echo "SMTPサーバー名を入力してください"
 		echo ""
@@ -44,7 +44,7 @@ case "$SMTPSET" in
 		echo ""
 	fi
 
-	if [ "$SMTPTLS" == "" ]
+	if [ "${SMTPTLS}" == "" ]
 	then
 		echo ""
 		echo "暗号化が必要なメールサーバーですか？"
@@ -56,7 +56,7 @@ case "$SMTPSET" in
 		echo ""
 	fi
 	
-	if [ "$SMTPPORT" == "" ]
+	if [ "${SMTPPORT}" == "" ]
 	then
 		echo ""
 		echo "メール送信に使用するポート番号を入力してください。"
@@ -69,7 +69,7 @@ case "$SMTPSET" in
 		echo ""
 	fi	
 	
-	if [ "$SMTPLOGIN" == "" ]
+	if [ "${SMTPLOGIN}" == "" ]
 	then
 		echo ""
 		echo "メール送信時、サーバーで認証(ログイン)する必要はありますか？"
@@ -81,10 +81,10 @@ case "$SMTPSET" in
 		echo ""
 	fi	
 
-	if [ "$SMTPLOGIN" == "Y" ]
+	if [ "${SMTPLOGIN}" == "Y" ]
 	then	
 
-		if [ "$SMTPUser" == "" ]
+		if [ "${SMTPUser}" == "" ]
 		then
 			echo ""
 			echo "SMTPユーザー名を入力してください。"
@@ -95,7 +95,7 @@ case "$SMTPSET" in
 			echo ""
 		fi
 
-		if [ "$SMTPPass" == "" ]
+		if [ "${SMTPPass}" == "" ]
 		then
 			echo ""
 			echo "SMTPパスワードを入力してください。"
@@ -116,7 +116,7 @@ case "$SMTPSET" in
 	echo "  G-Mail/Google Apps設定"
 	echo "*******************************************************"
 	
-	if [ "$SMTPUser" == "" ]
+	if [ "${SMTPUser}" == "" ]
 	then
 		echo "G-Mailのユーザー名を入力してください。"
 		echo ""
@@ -126,7 +126,7 @@ case "$SMTPSET" in
 		echo ""
 	fi
 	
-	if [ "$SMTPPass" == "" ]
+	if [ "${SMTPPass}" == "" ]
 	then
 		echo ""
 		echo "G-Mailのパスワードを入力してください。"
@@ -148,7 +148,7 @@ case "$SMTPSET" in
 	echo "  Windows Live Hotmail設定"
 	echo "*******************************************************"
 	
-	if [ "$SMTPUser" == "" ]
+	if [ "${SMTPUser}" == "" ]
 	then
 		echo "HotmailのMicrosoftアカウントを入力してください。"
 		echo ""
@@ -158,7 +158,7 @@ case "$SMTPSET" in
 		echo ""
 	fi
 	
-	if [ "$SMTPPass" == "" ]
+	if [ "${SMTPPass}" == "" ]
 	then
 		echo ""
 		echo "Hotmailのパスワードを入力してください。"

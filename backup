@@ -1,7 +1,9 @@
 #!/bin/bash
 ############################################################
 # backup for ALMinium.
-# 第1引数：バックアップディレクトリ(defaultは/var/opt/alminium-backup)
+# 第1引数：バックアップディレクトリ
+#  defaultは/var/opt/alminium-backup
+#  "-"を指定したときはdeaultディレクトリを利用
 # 第2引数：データベースホスト名
 # 第3引数：データベース管理者パスワード
 ############################################################
@@ -22,7 +24,7 @@ cd ${ALM_SRC_DIR}
 source inst-script/functions
 
 # backup directry
-if [ "$1" != "" ]; then
+if [ "$1" != "" -a "$1" != "-" ]; then
   if [ "`echo $1 | cut -c 1`" = "/" ]; then
     ALM_BACKUP_DIR=$1
   else

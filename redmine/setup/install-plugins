@@ -16,25 +16,25 @@ for (( i = 0; i < ${#DIR_NAME[@]}; ++i ))
 do
   FILE_NAME=`echo ${URL_NAME[$i]} | sed -e "s/.*\/\(.*$\)/\1/"`
   EXT=`echo ${URL_NAME[$i]} | sed -e "s/.*\.\(.*$\)/\1/"`
-    case $EXT in
+    case ${EXT} in
     zip)
-        if [ ! -f cache/$FILE_NAME ]; then
+        if [ ! -f cache/${FILE_NAME} ]; then
           wget -P cache ${URL_NAME[$i]}
         fi
-        yes | unzip -q cache/$FILE_NAME
-         rm -fr $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        mv ${DIR_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        rm -f $FILE_NAME
+        yes | unzip -q cache/${FILE_NAME}
+         rm -fr ${ALM_INSTALL_DIR}/plugins/${DEST_NAME[$i]}
+        mv ${DIR_NAME[$i]} ${ALM_INSTALL_DIR}/plugins/${DEST_NAME[$i]}
+        rm -f ${FILE_NAME}
         ;;
 
     tgz|gz)
-        if [ ! -f cache/$FILE_NAME ]; then
+        if [ ! -f cache/${FILE_NAME} ]; then
           wget -P cache ${URL_NAME[$i]}
         fi
-        tar zxf cache/$FILE_NAME
-        rm -fr  $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        mv ${DIR_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        rm -f $FILE_NAME
+        tar zxf cache/${FILE_NAME}
+        rm -fr  ${ALM_INSTALL_DIR}/plugins/${DEST_NAME[$i]}
+        mv ${DIR_NAME[$i]} ${ALM_INSTALL_DIR}/plugins/${DEST_NAME[$i]}
+        rm -f ${FILE_NAME}
         ;;
     git)
         if [ ! -d cache/${DEST_NAME[$i]} ]; then
@@ -44,8 +44,8 @@ do
           cd cache/${DEST_NAME[$i]}
           git checkout ${DIR_NAME[$i]}
           cd ../..
-          rm -fr  $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
-          cp -fra cache/${DEST_NAME[$i]} $ALM_INSTALL_DIR/plugins/
+          rm -fr  ${ALM_INSTALL_DIR}/plugins/${DEST_NAME[$i]}
+          cp -fra cache/${DEST_NAME[$i]} ${ALM_INSTALL_DIR}/plugins/
         fi
         ;;
     *)
@@ -64,14 +64,14 @@ do
             fi
           fi
         fi
-        rm -fr  $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
-        cp -fra cache/${DEST_NAME[$i]} $ALM_INSTALL_DIR/plugins/${DEST_NAME[$i]}
+        rm -fr  ${ALM_INSTALL_DIR}/plugins/${DEST_NAME[$i]}
+        cp -fra cache/${DEST_NAME[$i]} ${ALM_INSTALL_DIR}/plugins/${DEST_NAME[$i]}
         ;;
     esac
 done
 
 # ALMiniumインストールディレクトリへ移動
-pushd $ALM_INSTALL_DIR
+pushd ${ALM_INSTALL_DIR}
 
 # for Hudson
 if [ -f plugins/redmine_hudson/Gemfile ]; then
@@ -80,13 +80,13 @@ fi
 
 # for DMSF
 # avoid bandle install error because of rubyzip version conflict
-if [ -f $ALM_INSTALL_DIR/plugins/redmine_dmsf/Gemfile ]; then
-  sed -i.org "s/gem 'rubyzip',/gem 'rubyzip'#,/" $ALM_INSTALL_DIR/plugins/redmine_dmsf/Gemfile
+if [ -f ${ALM_INSTALL_DIR}/plugins/redmine_dmsf/Gemfile ]; then
+  sed -i.org "s/gem 'rubyzip',/gem 'rubyzip'#,/" ${ALM_INSTALL_DIR}/plugins/redmine_dmsf/Gemfile
 fi
 
 # for OAuth2認証
 cd ./plugins
-case $ALM_OAUTH2_METHOD in
+case ${ALM_OAUTH2_METHOD} in
 google)
   git clone -b master https://github.com/twinslash/redmine_omniauth_google.git
   ;;

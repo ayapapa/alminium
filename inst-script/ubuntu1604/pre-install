@@ -21,16 +21,16 @@ fi
 ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
 # install APT packages
-if [ "$GIT_UPDATE" = "y" ]; then
+if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
 fi
 apt-get -qq update
-apt-get -y install `grep -v "^#" inst-script/$OS/packages.lst`
+apt-get -y install `grep -v "^#" inst-script/${OS}/packages.lst`
 
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 # SSL
-if [ "$ALM_ENABLE_SSL" = "y" ]; then
+if [ "${ALM_ENABLE_SSL}" = "y" ]; then
     apt-get -y install ssl-cert
     a2enmod ssl rewrite
 else

@@ -10,37 +10,37 @@ backup_and_new_logdir() {
   local group=$5
 
   pushd $parent_dir
-  if [ -d $old_log_dir -a "`readlink -f $old_log_dir`" != "$ALM_LOG_DIR/$new_log_dir" ]; then
-    if [ "`ls $old_log_dir`" != "" ]; then
-      mkdir -p $old_log_dir.backup
-      tar cvfz $old_log_dir.backup/"`date +%F-%H-%M-%S`".tar.gz $old_log_dir
-      cp -p $old_log_dir/* $ALM_LOG_DIR/$new_log_dir/
+  if [ -d ${old_log_dir} -a "`readlink -f ${old_log_dir}`" != "${ALM_LOG_DIR}/${new_log_dir}" ]; then
+    if [ "`ls ${old_log_dir}`" != "" ]; then
+      mkdir -p ${old_log_dir}.backup
+      tar cvfz ${old_log_dir}.backup/"`date +%F-%H-%M-%S`".tar.gz ${old_log_dir}
+      cp -p ${old_log_dir}/* ${ALM_LOG_DIR}/${new_log_dir}/
     fi
-    rm -r $old_log_dir
-    ln -s $ALM_LOG_DIR/$new_log_dir $parent_dir/$old_log_dir
+    rm -r ${old_log_dir}
+    ln -s ${ALM_LOG_DIR}/${new_log_dir} ${parent_dir}/${old_log_dir}
   fi
-  chown -R $owner:$group $ALM_LOG_DIR/$new_log_dir
+  chown -R ${owner}:${group} ${ALM_LOG_DIR}/${new_log_dir}
   popd
 }
 
 # make log's directories
-mkdir -p $ALM_LOG_DIR
-mkdir -p $ALM_LOG_DIR/redmine
-mkdir -p $ALM_LOG_DIR/$MYSQL_LOG_DIR
-mkdir -p $ALM_LOG_DIR/$APACHE_LOG_DIR
-mkdir -p $ALM_LOG_DIR/jenkins
+mkdir -p ${ALM_LOG_DIR}
+mkdir -p ${ALM_LOG_DIR}/redmine
+mkdir -p ${ALM_LOG_DIR}/${MYSQL_LOG_DIR}
+mkdir -p ${ALM_LOG_DIR}/${APACHE_LOG_DIR}
+mkdir -p ${ALM_LOG_DIR}/jenkins
 
 #
 # each log's configuration
 #
-backup_and_new_logdir "$ALM_INSTALL_DIR" "log" "redmine" "$APACHE_USER" "$APACHE_USER"
-backup_and_new_logdir "/var/log" "$MYSQL_LOG_DIR" "$MYSQL_LOG_DIR" "mysql" "adm"
-backup_and_new_logdir "/var/log" "$APACHE_LOG_DIR" "$APACHE_LOG_DIR" "root" "root"
-if [ "$ALM_ENABLE_JENKINS" = "y" ]; then
+backup_and_new_logdir "${ALM_INSTALL_DIR}" "log" "redmine" "${APACHE_USER}" "${APACHE_USER}"
+backup_and_new_logdir "/var/log" "${MYSQL_LOG_DIR}" "${MYSQL_LOG_DIR}" "mysql" "adm"
+backup_and_new_logdir "/var/log" "${APACHE_LOG_DIR}" "${APACHE_LOG_DIR}" "root" "root"
+if [ "${ALM_ENABLE_JENKINS}" = "y" ]; then
   backup_and_new_logdir "/var/log" "jenkins" "jenkins" "jenkins" "jenkins"
 fi
 
 # ubuntu1604 apparmor setting
-if [ "$OS" = "ubuntu1604" ]; then
+if [ "${OS}" = "ubuntu1604" ]; then
   sed -i "s|/var/log/mysql/|/var/log/alminium/mysql/|" /etc/apparmor.d/usr.sbin.mysqld
 fi

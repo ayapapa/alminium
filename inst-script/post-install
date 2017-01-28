@@ -1,34 +1,34 @@
 #!/bin/bash
 
 # Apache configs
-if [ "$ALM_ENABLE_SSL" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
-if [ "$ALM_ENABLE_JENKINS" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
-if [ "$ALM_SUBDIR" = "" ]; then
+if [ "${ALM_ENABLE_SSL}" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
+if [ "${ALM_ENABLE_JENKINS}" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
+if [ "${ALM_SUBDIR}" = "" ]; then
   DOCMENT_ROOT="/opt/alminium/public"
 else
-  DOCMENT_ROOT="/var/www/html\nRailsBaseURI $ALM_SUBDIR"
+  DOCMENT_ROOT="/var/www/html\nRailsBaseURI ${ALM_SUBDIR}"
 fi
-OS_TYPE=$OS
-if [ "`echo $OS_TYPE | grep ubuntu`" != "" ]; then OS_TYPE=debian
-elif [ "`echo $OS_TYPE | grep rhel`" != "" ]; then OS_TYPE=rhel; fi
+OS_TYPE=${OS}
+if [ "`echo ${OS_TYPE} | grep ubuntu`" != "" ]; then OS_TYPE=debian
+elif [ "`echo ${OS_TYPE} | grep rhel`" != "" ]; then OS_TYPE=rhel; fi
 
 for FILE in $(ls etc/ | grep '.conf$')
 do
-  sed -e "s|#HOSTNAME#|$ALM_HOSTNAME|" \
-      -e "s|#$OS_TYPE# *||" \
-      -e "s|$REPLACE_SSL||" \
-      -e "s|$REPLACE_JENKINS||" \
-      -e "s|#SUBDIR#|$ALM_SUBDIR|" \
-      -e "s|#DOCUMENTROOT#|$DOCMENT_ROOT|" \
-      -e "s|#DB_HOST#|$ALM_DB_HOST|" \
-      "etc/$FILE" > "$ALM_ETC_DIR/$FILE"
+  sed -e "s|#HOSTNAME#|${ALM_HOSTNAME}|" \
+      -e "s|#${OS_TYPE}# *||" \
+      -e "s|${REPLACE_SSL}||" \
+      -e "s|${REPLACE_JENKINS}||" \
+      -e "s|#SUBDIR#|${ALM_SUBDIR}|" \
+      -e "s|#DOCUMENTROOT#|${DOCMENT_ROOT}|" \
+      -e "s|#DB_HOST#|${ALM_DB_HOST}|" \
+      "etc/${FILE}" > "${ALM_ETC_DIR}/${FILE}"
 done
 
 # log rotate
-cp $ALM_ETC_DIR/alminium-logrotate /etc/logrotate.d/alminium
+cp ${ALM_ETC_DIR}/alminium-logrotate /etc/logrotate.d/alminium
 
 # OS depend installing
-source inst-script/$OS/post-install
+source inst-script/${OS}/post-install
 
 # restart service
 source inst-script/service-restart

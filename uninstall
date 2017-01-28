@@ -30,7 +30,7 @@ echo ""
 echo -n "データベース(全てのRedmineの情報)とリポジトリを削除しますか?(y/N)"
 read YN
 if [ "$YN" = "y" ]; then
-    DBCMD="mysql `db_option`"
+    DBCMD="mysql `db_option_root`"
     ${DBCMD} alminium -e "REVOKE ALL ON alminium.* FROM alminium@%" \
              2>/dev/null
     ${DBCMD} alminium -e "REVOKE ALL ON alminium.* FROM alminium@localhost" \

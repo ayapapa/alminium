@@ -7,21 +7,21 @@ echo "パスワードを設定したい場合は、ALMiniumのインストール
 echo ""
 
 # ホスト名設定
-if [ "$ALM_HOSTNAME" = "" ]; then
+if [ "${ALM_HOSTNAME}" = "" ]; then
   echo "*******************************************************"
   echo "  ホスト名の設定"
   echo "*******************************************************"
   echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
   echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
-  IP_ADDR="`ip -f inet -o addr show $ETH0 | cut -d\  -f 7 | cut -d/ -f 1`"
-  echo -n "ホスト名[$IP_ADDR]:"
+  IP_ADDR="`ip -f inet -o addr show ${ETH0} | cut -d\  -f 7 | cut -d/ -f 1`"
+  echo -n "ホスト名[${IP_ADDR}]:"
   read ALM_HOSTNAME
-  ALM_HOSTNAME=${ALM_HOSTNAME:-$IP_ADDR}
+  ALM_HOSTNAME=${ALM_HOSTNAME:-${IP_ADDR}}
   echo ""
 fi
 
 # SSL設定
-if [ "$ALM_ENABLE_SSL" = "" ]; then
+if [ "${ALM_ENABLE_SSL}" = "" ]; then
   echo "*******************************************************"
   echo "  SSLのサポート"
   echo "*******************************************************"
@@ -44,7 +44,7 @@ fi
 #
 # サブディレクトリ指定
 #
-if [ "$ALM_RELATIVE_URL_ROOT" = "" ]; then
+if [ "${ALM_RELATIVE_URL_ROOT}" = "" ]; then
   echo "*****************************"
   echo "  サブディレクトリ指定  "
   echo "*****************************"
@@ -57,19 +57,19 @@ if [ "$ALM_RELATIVE_URL_ROOT" = "" ]; then
   echo ""
   echo ""
 else
-  ALM_SUBDIR="$ALM_RELATIVE_URL_ROOT"
+  ALM_SUBDIR="${ALM_RELATIVE_URL_ROOT}"
 fi
 
-if [ "$ALM_SUBDIR" != "" ]; then
-  if [ `echo $ALM_SUBDIR | cut -c 1` != '/' ]; then
-    ALM_SUBDIR="/$ALM_SUBDIR"
+if [ "${ALM_SUBDIR}" != "" ]; then
+  if [ `echo ${ALM_SUBDIR} | cut -c 1` != '/' ]; then
+    ALM_SUBDIR="/${ALM_SUBDIR}"
   fi
 fi
 
 # source inst-script/config-email.sh
 
 # jenkins
-if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]; then
+if [ -e jenkins/setup/${OS}/install.sh -a "${ALM_ENABLE_JENKINS}" = "" ]; then
   echo -n "継続的インテグレーションツールのJenkinsのインストール・設定を"
   echo -n "行うことができます。デフォルトはインストールしません。"
   echo -n "よく分からなければNを選択してください。"
@@ -80,7 +80,7 @@ if [ -e jenkins/setup/$OS/install.sh -a "$ALM_ENABLE_JENKINS" = "" ]; then
 fi
 
 # OAuth2認証
-if [ "$ALM_OAUTH2_METHOD" = "" ]; then
+if [ "${ALM_OAUTH2_METHOD}" = "" ]; then
   echo "### 本機能は実験中（動作確認が不十分）です ###"
   echo "OAuth2認証サービス(プロバイダ)を選択してください:"
   echo "  1: Google"
@@ -90,11 +90,11 @@ if [ "$ALM_OAUTH2_METHOD" = "" ]; then
   echo "  other: OAuth2認証を利用しない"
   echo -n "利用したいサービスの番号をお選びください: "
   read ALM_OAUTH2_METHOD
-  if [ "$ALM_OAUTH2_METHOD" = "" ] ; then
+  if [ "${ALM_OAUTH2_METHOD}" = "" ] ; then
     ALM_OAUTH2_METHOD="N"
   fi
 fi
-case $ALM_OAUTH2_METHOD in
+case ${ALM_OAUTH2_METHOD} in
 1)
   ALM_OAUTH2_METHOD=google
   ;;

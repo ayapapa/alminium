@@ -5,8 +5,8 @@ echo "*** install Jenkins ***"
 if [ "${OS}" = "ubuntu1604" ]; then
   JENKINS_SYS=debian
 else
-  JENKINS_SYS=$OS
+  JENKINS_SYS=${OS}
 fi
-source jenkins/setup/$OS/install.sh
+source jenkins/setup/${OS}/install.sh
 source jenkins/setup/config.sh
 

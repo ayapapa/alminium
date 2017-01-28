@@ -1,7 +1,9 @@
 #!/bin/bash
 ############################################################
 # upgrader for ALMinium.
-# 第1引数：バックアップディレクトリ(defaultは/var/opt/alminium-backup)
+# 第1引数：バックアップディレクトリ
+#  defaultは/var/opt/alminium-backup
+#  "-"を指定したときはdeaultディレクトリを利用
 # 第2引数：データベースホスト名
 # 第3引数：データベース管理者パスワード
 ############################################################
@@ -10,6 +12,7 @@ ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
 ALM_VAR_DIR=/var/opt/alminium
 ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
+ALM_BACKUP_DIR=$1
 ALM_DB_HOST=${2:-${ALM_DB_HOST}}
 ALM_DB_HOST=${ALM_DB_HOST:-localhost}
 ALM_DB_ROOT_PASS=${3:-${ALM_DB_ROOT_PASS}}
@@ -41,7 +44,7 @@ echo "#####################################################################"
 read DO_CONTINUE
 
 # バックアップ実行
-source backup $1 $2 $3
+source backup ${ALM_BACKUP_DIR} ${ALM_DB_HOST} ${ALM_DB_ROOT_PASS}
 if [ $? -gt 0 ]; then
   echo "バックアップに失敗したため、処理を中止します"
   exit 1
@@ -86,7 +89,7 @@ rm -fr ${ALM_ETC_DIR}/passenger.*
 
 #　install ALMinium by smelt
 ALM_UPGRADE=y
-source ./smelt
+source ./smelt ${ALM_DB_HOST} ${ALM_DB_ROOT_PASS}
 
 #バックアップの復元
 ALM_DB_RESTORE=no

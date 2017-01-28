@@ -2,8 +2,8 @@
 
 # install packages
 if [ ! -f packages.installed ]; then
-  echo "*** run $OS's pre-install script ***"
-  source inst-script/$OS/pre-install
+  echo "*** run ${OS}'s pre-install script ***"
+  source inst-script/${OS}/pre-install
   touch packages.installed
 fi
 

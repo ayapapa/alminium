@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$USE_DISABLE_SECURITY" = "" ]; then
+if [ "${USE_DISABLE_SECURITY}" = "" ]; then
   echo "*******************************************************"
   echo "  セキュリティの設定"
   echo "*******************************************************"
@@ -13,7 +13,7 @@ fi
 yum update -y ca-certificates
 if [ -f /etc/yum.repos.d/epel.repo ]; then
   CHK=`grep "enabled=1" /etc/yum.repos.d/epel.repo`
-  if [ "$CHK" = "" ]; then
+  if [ "${CHK}" = "" ]; then
     sed '1,/enabled=0/s/enabled=0/enabled=1/' /etc/yum.repos.d/epel.repo >/tmp/epel.repo
     mv -f /tmp/epel.repo /etc/yum.repos.d/epel.repo
   fi
@@ -25,12 +25,12 @@ fi
 yum -y --nogpgcheck install `grep -v "^#" inst-script/$OS/packages.lst`
 
 CHK=`grep Amazon /etc/system-release`
-if [ "$CHK" != '' ]; then
+if [ "${CHK}" != '' ]; then
   rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
   yum  --enablerepo=remi -y --nogpgcheck install mysqlclient16
 fi
 
-if [ "$ALM_ENABLE_SSL" = "y" ]; then
+if [ "${ALM_ENABLE_SSL}" = "y" ]; then
     yum -y install mod_ssl
 fi
 
@@ -51,6 +51,6 @@ if [[ `which ruby` == "" || ! `ruby --version` =~ 2.1. ]]; then
 fi
 
 # git update
-if [ "$GIT_UPDATE" = "y" ]; then
+if [ "${GIT_UPDATE}" = "y" ]; then
   source inst-script/git_build_install
 fi

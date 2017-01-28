@@ -1,6 +1,5 @@
-
-# DB操作コマンドオプション
-db_option() {
+# DB操作コマンドオプション(for root)
+db_option_root() {
   local db_host=${ALM_DB_HOST:-localhost}
   local root_pass=${ALM_DB_ROOT_PASS}
 
@@ -9,6 +8,12 @@ db_option() {
   else
     echo "-uroot -h${db_host} -p${root_pass}"
   fi
+}
+
+# DB操作コマンドオプション(for alminium)
+db_option() {
+  local db_host=${ALM_DB_HOST:-localhost}
+  echo "-ualminium -h${db_host} -palminium"
 }
 
 # DBのsettingsテーブルのレコード有無チェック
@@ -30,7 +35,7 @@ db_update_setting() {
 # データベース接続テスト
 # 戻り値が非nullなら接続成功
 db_test() {
-  DBCMD="mysql `db_option`"
+  DBCMD="mysql `db_option_root`"
   echo `${DBCMD} -e "select user from user;" mysql 2>/dev/null`
 }
 

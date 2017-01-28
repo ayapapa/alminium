@@ -91,6 +91,10 @@ setup_db() {
 
 ## sctips ##
 
+
+# create ALMinium DB
+source redmine/setup/create-db
+
 echo "*** install Redmine ***"
 
 # download and put alminium's home dir
