@@ -52,7 +52,7 @@ echo "***Redmine添付ファイルを復元しています..."
 cd ${ALM_INSTALL_DIR}/files/ && tar xzf ${ALM_FILE_BACKUP}
 if [ "${ALM_DB_RESTORE}" != "no" ]; then
   echo "***データベースを復元しています..."
-  mysql `db_option` alminium < ${ALM_DBBACKUP_NAME}
+  mysql `db_option_root` alminium < ${ALM_DBBACKUP_NAME}
   echo "データ復元が完了しました。"
   #データベースのマイグレーション
   echo "データベースのマイグレーションを実施します。"

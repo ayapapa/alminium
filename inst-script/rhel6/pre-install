@@ -19,7 +19,7 @@ if [ -f /etc/yum.repos.d/epel.repo ]; then
   fi
 else
   yum -y --nogpgcheck install wget
-  EPEL_RPM_NAME=`wget -O /dev/stdout http://download.fedoraproject.org/pub/epel/6/x86_64/repoview/epel-release.html | grep -o 'epel-release-[0-9]*-[0-9]*.noarch.rpm'`
+  EPEL_RPM_NAME="epel-release-6-8.noarch.rpm"
   rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/${EPEL_RPM_NAME}
 fi
 yum -y --nogpgcheck install `grep -v "^#" inst-script/$OS/packages.lst`

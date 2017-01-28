@@ -27,12 +27,6 @@ RM_ARC=https://github.com/redmine/redmine/archive/${RM_VER}.tar.gz
 
 PATH=/usr/local/bin:${PATH}
 
-if [ "$1" = "-u" ]; then
-  ALM_UPGRADE=y
-else
-  ALM_UPGRADE=""
-fi
-
 # include functions
 source inst-script/functions
 

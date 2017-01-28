@@ -93,7 +93,7 @@ source ./smelt ${ALM_DB_HOST} ${ALM_DB_ROOT_PASS}
 
 #バックアップの復元
 ALM_DB_RESTORE=no
-source ./restore ${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME} $2 $3
+source ./restore ${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME} ${ALM_DB_HOST} ${ALM_DB_ROOT_PASS}
 
 # log復元
 restore_log() {
