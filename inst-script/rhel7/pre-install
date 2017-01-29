@@ -45,7 +45,7 @@ fi
 #  nokogiri 1.7に対応するためruby2.1を個別インストールするように変更。
 if [[ `which ruby` == "" || ! `ruby --version` =~ 2\.1\. ]]; then
   # remove old packages
-  yum remove ruby ruby-devel rubygem-nokogiri rubygem-rack \
+  yum remove -y ruby ruby-devel rubygem-nokogiri rubygem-rack \
              rubygem-rake rubygem-rake-compiler passenger mod_passenger
   inst-script/${OS}/ruby2.1-install
 fi
