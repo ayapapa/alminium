@@ -20,11 +20,15 @@ fi
 
 # 必要なパッケージをインストール
 yum install -y epel-release yum-utils
-curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
+#curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
+rm -f /etc/yum.repos.d/passenger.repo
 yum install -y --nogpgcheck `grep -v "^#" inst-script/${OS}/packages.lst`
 
-#  set passenger-package available
-ALM_PASSSENGER_PACKAGE_AVAILABLE=1
+# set passenger-package available 
+#  nokogiri 1.7に対応するためruby2.1を個別インストールするように変更(#94対応)。
+#  このためpassengerも個別インストールに戻す(ContOS6と同様)
+#ALM_PASSSENGER_PACKAGE_AVAILABLE=1
+
 # install ssl module
 if [ "${ALM_ENABLE_SSL}" = "y" ]; then
     yum -y install mod_ssl
@@ -35,6 +39,15 @@ if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
   yum install -y mariadb-server
   service mariadb start
   systemctl enable mariadb
+fi
+
+# ruby
+#  nokogiri 1.7に対応するためruby2.1を個別インストールするように変更。
+if [[ `which ruby` == "" || ! `ruby --version` =~ 2\.1\. ]]; then
+  # remove old packages
+  yum remove ruby ruby-devel rubygem-nokogiri rubygem-rack \
+             rubygem-rake rubygem-rake-compiler passenger mod_passenger
+  inst-script/${OS}/ruby2.1-install
 fi
 
 # git update
