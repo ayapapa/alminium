@@ -100,7 +100,7 @@ setup_db() {
 echo "*** install Redmine ***"
 
 # create ALMinium DB
-create-db
+create_db
 
 echo "*** install Redmine ***"
 
