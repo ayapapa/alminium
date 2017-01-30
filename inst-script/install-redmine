@@ -82,6 +82,13 @@ create_redmine_token() {
   popd
 }
 
+# create DB
+create_db() {
+  if [ "${ALM_DB_SETUP}" = "y" ]; then
+    source redmine/setup/create-db
+  fi
+}
+
 # setup DB
 setup_db() {
   if [ "${ALM_DB_SETUP}" = "y" ]; then
@@ -90,10 +97,10 @@ setup_db() {
 }
 
 ## sctips ##
-
+echo "*** install Redmine ***"
 
 # create ALMinium DB
-source redmine/setup/create-db
+create-db
 
 echo "*** install Redmine ***"
 

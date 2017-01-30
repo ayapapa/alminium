@@ -4,9 +4,6 @@
 
 echo "*** create ALMinium DB ***"
 
-# ALMiniumインストールディレクトリへ移動
-pushd ${ALM_INSTALL_DIR}
-
 # create db
 if [ "${ALM_UPGRADE}" != "y" ]; then
   DB_OPTION="`db_option`"
@@ -23,6 +20,3 @@ if [ "${ALM_UPGRADE}" != "y" ]; then
     fi
   fi
 fi
-
-popd
-
