@@ -40,7 +40,9 @@ db_update_setting() {
 # データベース接続テスト
 # 戻り値が非nullなら接続成功
 db_test() {
-  echo `mysql `db_option_root` -e "select user from user" mysql 2>/dev/null`
-  echo `mysql `db_option` -e "show databases" alminium 2>/dev/null`
+  local OPT=`db_option_root`
+  echo `mysql ${OPT} -e "select user from user" mysql 2>/dev/null`
+  OPT=`db_option`
+  echo `mysql ${OPT} -e "show databases" alminium 2>/dev/null`
 }
 
