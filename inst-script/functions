@@ -16,6 +16,11 @@ db_option() {
   echo "-ualminium -h${db_host} -palminium"
 }
 
+# DBにALMinium設定有無チェック
+db_setupped() {
+ echo "SELECT * FROM settings;" | mysql `db_option` alminium
+}
+
 # DBのsettingsテーブルのレコード有無チェック
 db_exist_record() {
   echo "SELECT * FROM settings WHERE name = '$1';" | mysql `db_option` alminium
