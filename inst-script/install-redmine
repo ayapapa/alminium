@@ -83,4 +83,5 @@ chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/*
 # config settings
 update_setting 'host_name' ${ALM_HOSTNAME}$ALM_SUBDIR
 update_setting 'protocol' `protocol`
-
+# 3.3.2へのバージョンアップに向けDBを更新
+mysql -e "GRANT ALL PRIVILEGES ON alminium.* TO 'alminium'@'%' IDENTIFIED BY 'alminium'" mysql 2>/dev/null
