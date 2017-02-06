@@ -36,7 +36,7 @@ bundle exec rake tmp:cache:clear RAILS_ENV=production
 bundle exec rake tmp:sessions:clear RAILS_ENV=production
 
 # DB Customize
-if [ "${ALM_UPGRADE}" != "y" -a ! "`db_setupped`" = "" ]; then
+if [ "${ALM_UPGRADE}" != "y" -a "`db_setupped`" = "" ]; then
   echo "*** run initialize SQL ***"
   mysql `db_option` alminium < ${ALM_SRC_DIR}/redmine/setup/init.mysql
 fi
