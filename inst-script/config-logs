@@ -23,24 +23,25 @@ backup_and_new_logdir() {
   popd
 }
 
-# make log's directories
+# each log's configuration
 mkdir -p ${ALM_LOG_DIR}
 mkdir -p ${ALM_LOG_DIR}/redmine
-mkdir -p ${ALM_LOG_DIR}/${MYSQL_LOG_DIR}
 mkdir -p ${ALM_LOG_DIR}/${APACHE_LOG_DIR}
-mkdir -p ${ALM_LOG_DIR}/jenkins
-
-#
-# each log's configuration
-#
 backup_and_new_logdir "${ALM_INSTALL_DIR}" "log" "redmine" "${APACHE_USER}" "${APACHE_USER}"
-backup_and_new_logdir "/var/log" "${MYSQL_LOG_DIR}" "${MYSQL_LOG_DIR}" "mysql" "adm"
 backup_and_new_logdir "/var/log" "${APACHE_LOG_DIR}" "${APACHE_LOG_DIR}" "root" "root"
+
+# jenkins log configuration
 if [ "${ALM_ENABLE_JENKINS}" = "y" ]; then
+  mkdir -p ${ALM_LOG_DIR}/jenkins
   backup_and_new_logdir "/var/log" "jenkins" "jenkins" "jenkins" "jenkins"
 fi
 
-# ubuntu1604 apparmor setting
-if [ "${OS}" = "ubuntu1604" ]; then
-  sed -i "s|/var/log/mysql/|/var/log/alminium/mysql/|" /etc/apparmor.d/usr.sbin.mysqld
+# db log configuration
+if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
+  mkdir -p ${ALM_LOG_DIR}/${MYSQL_LOG_DIR}
+  backup_and_new_logdir "/var/log" "${MYSQL_LOG_DIR}" "${MYSQL_LOG_DIR}" "mysql" "adm"
+  # ubuntu1604 apparmor setting
+  if [ "${OS}" = "ubuntu1604" ]; then
+    sed -i "s|/var/log/mysql/|/var/log/alminium/mysql/|" /etc/apparmor.d/usr.sbin.mysqld
+  fi
 fi
