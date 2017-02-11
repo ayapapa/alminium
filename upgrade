@@ -12,7 +12,7 @@ ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
 ALM_VAR_DIR=/var/opt/alminium
 ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
-ALM_BACKUP_DIR=$1
+ALM_BACKUP_DIR=${1:--}
 ALM_DB_HOST=${2:-${ALM_DB_HOST}}
 ALM_DB_HOST=${ALM_DB_HOST:-localhost}
 ALM_DB_ROOT_PASS=${3:-${ALM_DB_ROOT_PASS}}
