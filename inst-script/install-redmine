@@ -56,10 +56,6 @@ cp -fr redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
 cp     ./{backup,restore} ./inst-script/config-backup \
        ./inst-script/$OS/service-restart $ALM_INSTALL_DIR/
 
-# avoid bandle install error because of nokogiri version conflict
-mv $ALM_INSTALL_DIR/Gemfile $ALM_INSTALL_DIR/Gemfile.org
-sed "s/gem \"nokogiri\", \">= 1.6.7.2\"/gem \"nokogiri\"#, \">= 1.6.7.2\"/" $ALM_INSTALL_DIR/Gemfile.org > $ALM_INSTALL_DIR/Gemfile
-
 # install plugins
 echo "*** install plugins ***"
 source redmine/setup/redmine-plugins
