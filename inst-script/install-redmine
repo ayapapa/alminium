@@ -64,11 +64,6 @@ install_gems() {
     sed -i.org "s/gem 'passenger'/#gem 'passenger'/" Gemfile.local
   fi
 
-  # avoid bandle install error because of nokogiri version conflict
-  sed -i.org \
-      "s/gem \"nokogiri\", \">= 1.6.7.2\"/gem \"nokogiri\"#, \">= 1.6.7.2\"/" \
-      Gemfile
-
   # redmineに必要なgemをインストール
   bundle install --path vendor/bundle \
                --without development test postgresql sqlite xapian
