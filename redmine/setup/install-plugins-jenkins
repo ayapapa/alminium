@@ -19,6 +19,9 @@ git clone -b 0.2.4 https://github.com/jbox-web/redmine_bootstrap_kit.git
 git clone -b v1.x https://github.com/ayapapa/redmine_jenkins.git
 
 if [ "${ALM_DB_SETUP}" = "y" ]; then
+  # avoid gems' version mismatch
+  rm $ALM_INSTALL_DIR/Gemfile.lock
+
   # install gems and migrate database
   cd ..
   bundle install --path vendor/bundle \
