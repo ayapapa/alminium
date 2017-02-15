@@ -27,7 +27,6 @@ mod_perl
 mod_wsgi
 mysql
 mysql-devel
-mysql-server
 ncurses-devel
 openssl-devel
 patch

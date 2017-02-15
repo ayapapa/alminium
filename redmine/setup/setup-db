@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+#
+
+echo "*** run initialize DB ***"
+
+# ALMiniumインストールディレクトリへ移動
+pushd ${ALM_INSTALL_DIR}
+
+# データベースにテーブルを作成
+bundle exec rake db:migrate RAILS_ENV=production
+
+# データベースにデフォルトデータを登録
+echo 'ja' |\
+bundle exec rake redmine:load_default_data RAILS_ENV=production
+
+# プラグインをデータベースに登録
+bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+
+# for XLS export
+if [ -d plugins/redmine_xls_export ]; then
+  bundle exec rake redmine:plugins:process_version_change RAILS_ENV=production
+fi
+
+# for backlogs
+if [ -d plugins/redmine_backlogs ]; then
+  if [ "${ALM_UPGRADE}" = "y" ]; then
+    bundle exec rake redmine:backlogs:install task_tracker=タスク story_trackers=機能 labels=false RAILS_ENV=production
+  else
+    bundle exec rake redmine:backlogs:install task_tracker=サポート story_trackers=機能 labels=false RAILS_ENV=production
+  fi
+fi
+
+# キャッシュクリア
+bundle exec rake tmp:cache:clear RAILS_ENV=production
+bundle exec rake tmp:sessions:clear RAILS_ENV=production
+
+# DB Customize
+if [ "${ALM_UPGRADE}" != "y" -a "`db_setupped`" = "" ]; then
+  echo "*** run initialize SQL ***"
+  mysql `db_option` alminium < ${ALM_SRC_DIR}/redmine/setup/init.mysql
+fi
+
+# config settings
+# protocol
+protocol() {
+  if [ "${ALM_ENABLE_SSL}" = "y" ]; then
+    echo "https"
+  else
+    echo "http"
+  fi
+}
+
+db_update_setting 'host_name' ${ALM_HOSTNAME}${ALM_SUBDIR}
+db_update_setting 'protocol' `protocol`
+
+# ディレクトリを元に戻す
+popd
+

@@ -15,7 +15,7 @@ libsqlite3-dev
 libssl-dev
 make
 mercurial
-mysql-server
+mysql-client
 php-mysql
 ruby
 ruby-dev

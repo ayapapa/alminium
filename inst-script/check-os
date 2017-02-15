@@ -2,16 +2,15 @@
 # ネットワーク0のデバイス名
 ETH0=${ETH0:-eth0}
 # check OS
-if [ "$OS" = "" ]; then
+if [ "${OS}" = "" ]; then
   if [ -f /etc/redhat-release ]; then
     APACHE_USER=apache
     APACHE_CONF_DIR=/etc/httpd/conf.d
     APACHE_LOG_DIR=httpd
     MYSQL_LOG_DIR=mysql
     MYSQLD='/etc/init.d/mysqld'
-    MYSQL='mysql'
     CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
-    if [ "$CHK" != '' ]; then
+    if [ "${CHK}" != '' ]; then
         OS='rhel5'
         echo "RHEL 5.x / CentOS 5.x / OEL 5.xが検出されました。"
         echo "RHEL 5.x / CentOS 5.x / OEL 5.xは、サポートされていません。"
@@ -19,7 +18,7 @@ if [ "$OS" = "" ]; then
         exit 1
     fi
     CHK=`egrep "CentOS Linux release 7" /etc/redhat-release`
-    if [ "$CHK" != '' ]; then
+    if [ "${CHK}" != '' ]; then
         OS='rhel7'
         echo "CentOS 7.x が検出されました。"
         MYSQL_LOG_DIR=mariadb
@@ -35,7 +34,6 @@ if [ "$OS" = "" ]; then
     APACHE_LOG_DIR=apache2
     MYSQL_LOG_DIR=mysql
     MYSQLD='/etc/init.d/mysql'
-    MYSQL='mysql'
     OS='debian'
     echo "Ubuntu 14.04 が検出されました。"
   elif [ -f /etc/lsb-release -a "`grep 16.04 /etc/lsb-release`" != "" ]; then
@@ -44,12 +42,8 @@ if [ "$OS" = "" ]; then
     APACHE_LOG_DIR=apache2
     MYSQL_LOG_DIR=mysql
     MYSQLD='/etc/init.d/mysql'
-    MYSQL='mysql'
     OS='ubuntu1604'
     ETH0=enp0s3
-    if [ ! -f jenkins/setup/ubuntu1604 ]; then
-      ln -s debian jenkins/setup/ubuntu1604
-    fi
     echo "Ubuntu 16.04 が検出されました。"
   else
     echo "サポートされていないOSです。"

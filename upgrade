@@ -1,17 +1,30 @@
 #!/bin/bash
 ############################################################
 # upgrader for ALMinium.
+# 第1引数：バックアップディレクトリ
+#  defaultは/var/opt/alminium-backup
+#  "-"を指定したときはdeaultディレクトリを利用
+# 第2引数：データベースホスト名
+# 第3引数：データベース管理者パスワード
 ############################################################
-
+ALM_SRC_DIR=$(cd $(dirname $0);pwd)
 ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
 ALM_VAR_DIR=/var/opt/alminium
 ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
+
+ALM_BACKUP_DIR=${1:--}
+ALM_DB_HOST=${2:-${ALM_DB_HOST}}
+ALM_DB_HOST=${ALM_DB_HOST:-localhost}
+ALM_DB_ROOT_PASS=${3:-${ALM_DB_ROOT_PASS}}
+
+# move to sources directry
+cd ${ALM_SRC_DIR}
 
 # 実行ユーザーをチェック
 source inst-script/check-user
 
 # ALMiniumインストール状況をチェック
-if [ ! -e $ALM_INSTALL_DIR/app ]; then
+if [ ! -e ${ALM_INSTALL_DIR}/app ]; then
   echo "ALMiniumインストールディレクトリが見つかりませんでした。処理を中止します"
   exit 1
 fi
@@ -31,7 +44,7 @@ echo "#####################################################################"
 read DO_CONTINUE
 
 # バックアップ実行
-source backup $1 
+source backup ${ALM_BACKUP_DIR} ${ALM_DB_HOST} ${ALM_DB_ROOT_PASS}
 if [ $? -gt 0 ]; then
   echo "バックアップに失敗したため、処理を中止します"
   exit 1
@@ -39,14 +52,14 @@ fi
 
 # ログをバックアップ
 mkdir -p /tmp/alminium-logs
-if [ -d $ALM_INSTALL_DIR/log ]; then
-  cp -pr $ALM_INSTALL_DIR/log/ /tmp/alminium-logs
+if [ -d ${ALM_INSTALL_DIR}/log ]; then
+  cp -pr ${ALM_INSTALL_DIR}/log/ /tmp/alminium-logs
 fi
-if [ -d /var/log/$MYSQL_LOG_DIR ]; then
-  cp -pr /var/log/$MYSQL_LOG_DIR/ /tmp/alminium-logs
+if [ -d /var/log/${MYSQL_LOG_DIR} ]; then
+  cp -pr /var/log/${MYSQL_LOG_DIR}/ /tmp/alminium-logs
 fi
-if [ -d /var/log/$APACHE_LOG_DIR ]; then
-  cp -pr /var/log/$APACHE_LOG_DIR/ /tmp/alminium-logs
+if [ -d /var/log/${APACHE_LOG_DIR} ]; then
+  cp -pr /var/log/${APACHE_LOG_DIR}/ /tmp/alminium-logs
 fi
 if [ -d /var/log/jenkins ]; then
   cp -pr /var/log/jenkins/ /tmp/alminium-logs
@@ -67,33 +80,34 @@ echo ""
 echo "ALMiniumのアップグレードを開始・・・"
 
 # アップグレード対象を削除
-if [ -f $ALM_INSTALL_DIR/subdirname ]; then
-  rm -f /var/www/html`cat $ALM_INSTALL_DIR/subdirname`
+if [ -f ${ALM_INSTALL_DIR}/subdirname ]; then
+  rm -f /var/www/html`cat ${ALM_INSTALL_DIR}/subdirname`
 fi
-rm -fr $ALM_INSTALL_DIR/* $ALM_INSTALL_DIR/.[^.]*
+rm -fr ${ALM_INSTALL_DIR}/* ${ALM_INSTALL_DIR}/.[^.]*
 rm -fr cache/* *.installed
-rm -fr $ALM_ETC_DIR/passenger.*
+rm -fr ${ALM_ETC_DIR}/passenger.*
 
 #　install ALMinium by smelt
-source ./smelt -u
+ALM_UPGRADE=y
+source ./smelt ${ALM_DB_HOST} ${ALM_DB_ROOT_PASS}
 
 #バックアップの復元
 ALM_DB_RESTORE=no
-source ./restore $ALM_BACKUP_NAME
+source ./restore ${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME} ${ALM_DB_HOST} ${ALM_DB_ROOT_PASS}
 
 # log復元
 restore_log() {
   local LOG_DIR="/tmp/alminium-logs/$1"
   local TO_PATH=$2
-  if [ "$TO_PATH" = "" ];then TO_PATH=$1; fi
-  if [ -d $LOG_DIR -a "`ls $LOG_DIR`" != "" ]; then
-    cp -pr $LOG_DIR/* $ALM_LOG_DIR/$TO_PATH/
+  if [ "${TO_PATH}" = "" ];then TO_PATH=$1; fi
+  if [ -d ${LOG_DIR} -a "`ls ${LOG_DIR} 2>/dev/null`" != "" ]; then
+    cp -pr ${LOG_DIR}/* ${ALM_LOG_DIR}/${TO_PATH}/
   fi
 }
 
 restore_log log redmine
-restore_log $MYSQL_LOG_DIR
-restore_log $APACHE_LOG_DIR
+restore_log ${MYSQL_LOG_DIR}
+restore_log ${APACHE_LOG_DIR}
 restore_log jenkins
 
 echo ""

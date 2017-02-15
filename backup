@@ -1,16 +1,34 @@
 #!/bin/bash
 ############################################################
 # backup for ALMinium.
-# 第一引数：バックアップディレクトリ(defaultは/var/opt/alminium-backup)
+# 第1引数：バックアップディレクトリ
+#  defaultは/var/opt/alminium-backup
+#  "-"を指定したときはdeaultディレクトリを利用
+# 第2引数：データベースホスト名
+# 第3引数：データベース管理者パスワード
 ############################################################
+ALM_SRC_DIR=${ALM_SRC_DIR:-$(cd $(dirname $0);pwd)}
+ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
+ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
-ALM_CURRENT_DIR=${ALM_CURRENT_DIR:-`pwd`}
+ALM_DB_HOST=${2:-${ALM_DB_HOST}}
+ALM_DB_HOST=${ALM_DB_HOST:-localhost}
+ALM_DB_ROOT_PASS=${3:-${ALM_DB_ROOT_PASS}}
 
-if [ "$1" != "" ]; then
+ALM_CURRENT_DIR=`pwd`
+
+# move to sources directry
+cd ${ALM_SRC_DIR}
+
+# include functions
+source inst-script/functions
+
+# backup directry
+if [ "$1" != "" -a "$1" != "-" ]; then
   if [ "`echo $1 | cut -c 1`" = "/" ]; then
     ALM_BACKUP_DIR=$1
   else
-    ALM_BACKUP_DIR=$ALM_CURRENT_DIR/$1
+    ALM_BACKUP_DIR=${ALM_CURRENT_DIR}/$1
   fi
 else
   # デフォルトバックアップディレクトリを設定
@@ -25,10 +43,8 @@ if [ "`whoami`" != 'root' ]; then
 fi
 
 #バックアップディレクトリのチェック
-if [ ! -d $ALM_BACKUP_DIR ]; then
-  mkdir -p $ALM_BACKUP_DIR
-  #echo "バックアップディレクトリが見つかりませんでした。処理を中止します"
-  #exit 1
+if [ ! -d ${ALM_BACKUP_DIR} ]; then
+  mkdir -p ${ALM_BACKUP_DIR}
 fi
 
 # バックアップファイル名決定
@@ -36,56 +52,56 @@ ALM_BACKUP_ID=`date +"%Y-%m-%d-%H-%M-%S"`
 ALM_DBBACKUP_NAME=db.dump
 ALM_FILE_BACKUP=files.tar.gz
 ALM_REPOS_BACKUP=repo.tar.gz
-ALM_BACKUP_NAME=$ALM_BACKUP_DIR/${ALM_BACKUP_ID}-alm-backup.tar.gz
+ALM_BACKUP_NAME=${ALM_BACKUP_ID}-alm-backup.tar.gz
 
 # バックアップ開始
-echo "[`date`] : ALMiniumのデータの($ALM_BACKUP_NAME)へのバックアップを開始します。"
+echo "[`date`] ALMiniumのデータのバックアップを開始します。"
+echo "バックアップファイル名 : ${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME}"
 
-#データベースをバックアップ
+# バックアップ結果チェック
+check_backup_result() {
+  if [ -f ${ALM_BACKUP_DIR}/$1 -a -s ${ALM_BACKUP_DIR}/$1 ]; then
+    echo "$2(${ALM_BACKUP_DIR}/$1)が成功しました。"
+  else
+    echo "$2(${ALM_BACKUP_DIR}/$1)が失敗しました。"
+    exit 1
+  fi
+}
+
 echo "MySQLデータベースをバックアップします。"
-mysqldump -uroot alminium > $ALM_BACKUP_DIR/$ALM_DBBACKUP_NAME
-if [ -f $ALM_BACKUP_DIR/$ALM_DBBACKUP_NAME ]; then
-  echo "MySQLデータベースのバックアップが成功しました。"
-else
-  echo "MySQLデータベースのバックアップが失敗しました。"
-  exit 1
-fi
+mysqldump `db_option` alminium > ${ALM_BACKUP_DIR}/${ALM_DBBACKUP_NAME}
+check_backup_result ${ALM_DBBACKUP_NAME} "データベースバックアップ"
 
 #redmineの添付ファイルをバックアップ
 echo "Redmineの添付ファイルをバックアップします。"
-pushd /opt/alminium/files/
-tar czf $ALM_BACKUP_DIR/$ALM_FILE_BACKUP .
-if [ -f $ALM_BACKUP_DIR/$ALM_FILE_BACKUP ]; then
-  echo "Redmineの添付ファイルのバックアップが成功しました。"
-else
-  echo "Redmineの添付ファイルのバックアップが失敗しました。"
-  exit 1
-fi
+pushd ${ALM_INSTALL_DIR}/files/
+tar czf ${ALM_BACKUP_DIR}/${ALM_FILE_BACKUP} .
+check_backup_result ${ALM_FILE_BACKUP} "添付ファイルバックアップ"
 popd
 
 #ソースコードリポジトリ
 echo "ソースコードリポジトリをバックアップします。"
-pushd /var/opt/alminium/
-tar czf $ALM_BACKUP_DIR/$ALM_REPOS_BACKUP .
-if [ -f $ALM_BACKUP_DIR/$ALM_REPOS_BACKUP ]; then
-  echo "ソースコードリポジトリのバックアップが成功しました。"
-else
-  echo "ソースコードリポジトリのバックアップが失敗しました。"
-  exit 1
-fi
+pushd ${ALM_VAR_DIR}/
+tar czf ${ALM_BACKUP_DIR}/${ALM_REPOS_BACKUP} .
+check_backup_result ${ALM_REPOS_BACKUP} "ソースコードリポジトリバックアップ"
 popd
 
 # バックアップ統合
-pushd $ALM_BACKUP_DIR
-tar czf $ALM_BACKUP_NAME ./$ALM_DBBACKUP_NAME ./$ALM_FILE_BACKUP ./$ALM_REPOS_BACKUP
+pushd ${ALM_BACKUP_DIR}
+tar czf ./${ALM_BACKUP_NAME} \
+    ./${ALM_DBBACKUP_NAME} ./${ALM_FILE_BACKUP} ./${ALM_REPOS_BACKUP}
+check_backup_result ${ALM_BACKUP_NAME} "バックアップファイル統合"
 
 # バックアップ終了
-echo "[`date`] : ALMiniumのデータの($ALM_BACKUP_NAME)へのバックアップが終了しました。"
+echo "[`date`]  ALMiniumのデータのバックアップが終了しました。"
+echo "バックアップファイル名：${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME}"
 
 # 古いバックアップファイルを削除
-if [ "$ALM_BACKUP_EXPIRY" != "" ]; then
-  echo "[`date`] : $ALM_BACKUP_EXPIRY日経過したバックアップファイルを削除します。"
-  find $ALM_BACKUP_DIR/*.tar.gz -mtime +$ALM_BACKUP_EXPIRY -exec rm -f {} \;
+if [ "${ALM_BACKUP_EXPIRY}" != "" ]; then
+  echo -n "[`date`]  ${ALM_BACKUP_EXPIRY}日経過した"
+  echo    "バックアップファイルを削除します。"
+  find ${ALM_BACKUP_DIR}/*.tar.gz \
+       -mtime +${ALM_BACKUP_EXPIRY} -exec rm -f {} \;
 fi
 popd
 
