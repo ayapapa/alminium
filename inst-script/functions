@@ -18,7 +18,8 @@ db_option() {
 
 # DBにALMinium設定有無チェック
 db_setupped() {
- echo "SELECT * FROM settings;" | mysql `db_option` alminium
+  mysql `db_option` -e "SELECT name FROM settings;" \
+	 alminium | grep welcome_text
 }
 
 # DBのsettingsテーブルのレコード有無チェック
