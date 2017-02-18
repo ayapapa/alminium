@@ -3,81 +3,129 @@
 # install Redmine #
 ###################
 
-#
-# functions
-#
 
-# DBのsettingsテーブルのレコード有無チェック
-exist_record() {
-  echo "SELECT * FROM settings WHERE name = '$1';" | mysql alminium
+## functions ##
+
+# download redmine
+download_redmine() {
+  mkdir -p ${ALM_INSTALL_DIR}
+  cd cache
+  wget ${RM_ARC}
+  tar zxf ${RM_VER}.tar.gz
+  cd ..
+  cp -fr cache/redmine-${RM_VER}/* ${ALM_INSTALL_DIR}/
+  rm -fr cache/redmine-${RM_VER}
 }
 
-# DB内のsettingsテーブルの指定レコード$1を指定の値$2に書き換える
-# レコードが存在しない場合は、新たにレコードを挿入する
-update_setting() {
-  if [ "`exist_record $1`" = "" ]; then
-    echo "REPLACE INTO settings(name,value,updated_on) " \
-         "VALUES ('$1','$2', current_date);" | mysql alminium
-  else
-    echo "UPDATE settings SET value = '$2' WHERE name = '$1';" | mysql alminium
+# setup configurations
+setup_configurations() {
+  # put config files
+  cp -f  redmine/Gemfile.local   ${ALM_INSTALL_DIR}/
+  cp -fr redmine/config/*        ${ALM_INSTALL_DIR}/config/
+  cp -fr redmine/public/themes/* ${ALM_INSTALL_DIR}/public/themes/
+  cp     ./{backup,restore} ${ALM_INSTALL_DIR}/
+  mkdir ${ALM_INSTALL_DIR}/inst-script
+  cp ./inst-script/{config-backup,functions} \
+     ./inst-script/${OS}/service-restart \
+     ${ALM_INSTALL_DIR}/inst-script/
+  ln -s ${ALM_INSTALL_DIR}/inst-script/* ${ALM_INSTALL_DIR}/
+
+  # update db-config
+  sed -i.org "s/localhost/${ALM_DB_HOST}/" \
+             ${ALM_INSTALL_DIR}/config/database.yml
+}
+
+# setup hooks
+setup_hooks() {
+  mkdir -p ${ALM_INSTALL_DIR}/bin
+  cp -fr redmine/bin/* ${ALM_INSTALL_DIR}/bin/
+  if [ "${ALM_SUBDIR}" != "" ]; then
+    sed -i "s|localhost|localhost${ALM_SUBDIR}|g" \
+           ${ALM_INSTALL_DIR}/bin/alm-sync-scm
+    chmod +x ${ALM_INSTALL_DIR}/bin/alm-sync-scm
+  fi
+  cp -fr   redmine/hooks ${ALM_INSTALL_DIR}/
+}
+
+#create repository's directories
+create_repo_dir() {
+  if [ "${ALM_UPGRADE}" != "y" ]; then
+    # create directory for vcs
+    mkdir -p ${ALM_VAR_DIR}/{git,svn,hg,maven,github}
+    chown -R ${APACHE_USER}:${APACHE_USER} ${ALM_VAR_DIR}/*
   fi
 }
 
-# protocol
-protocol() {
-  if [ "$ALM_ENABLE_SSL" = "y" ]; then
-    echo "https"
-  else
-    echo "http"
+# gem packages installation
+install_gems() {
+  pushd ${ALM_INSTALL_DIR}
+  # if no need passenger gem, comment out it on redmine's Gemfile.local
+  if [ "${ALM_PASSSENGER_PACKAGE_AVAILABLE}" = "1" ]; then
+    sed -i.org "s/gem 'passenger'/#gem 'passenger'/" Gemfile.local
+  fi
+
+  # redmineに必要なgemをインストール
+  bundle install --path vendor/bundle \
+               --without development test postgresql sqlite xapian
+  popd
+}
+
+# create secret token
+create_redmine_token() {
+  pushd ${ALM_INSTALL_DIR}
+  bundle exec rake generate_secret_token
+  popd
+}
+
+# create DB
+create_db() {
+  if [ "${ALM_DB_SETUP}" = "y" ]; then
+    source redmine/setup/create-db
   fi
 }
 
+# setup DB
+setup_db() {
+  if [ "${ALM_DB_SETUP}" = "y" ]; then
+    source redmine/setup/setup-db
+  fi
+}
 
-#
-# scripts
-#
-
-# download and put alminium's home dir
-mkdir -p $ALM_INSTALL_DIR
+## sctips ##
 echo "*** install Redmine ***"
-cd cache
-wget $RM_ARC
-if [ ! -f redmine-$RM_VER ]; then
-  tar zxf $RM_VER.tar.gz
-fi
-cd ..
-cp -fr cache/redmine-$RM_VER/* $ALM_INSTALL_DIR/
-rm -fr cache/redmine-$RM_VER
 
-# put config files
-cp -f  redmine/Gemfile.local   $ALM_INSTALL_DIR/
-cp -fr redmine/config/*        $ALM_INSTALL_DIR/config/
-cp -fr redmine/public/themes/* $ALM_INSTALL_DIR/public/themes/
-cp     ./{backup,restore} ./inst-script/config-backup \
-       ./inst-script/$OS/service-restart $ALM_INSTALL_DIR/
+# create ALMinium DB
+create_db
+
+echo "*** install Redmine ***"
+# download and put alminium's home dir
+download_redmine
+
+# setup configurations
+setup_configurations
+
+# create repositries' directories
+create_repo_dir
+
+# install hooks
+setup_hooks
 
 # install plugins
 echo "*** install plugins ***"
-source redmine/setup/redmine-plugins
+source redmine/setup/install-plugins
 
-if [ "$ALM_UPGRADE" = "" ]; then
-  # Customize
-  echo "*** run initialize SQL ***"
-  $MYSQL alminium < redmine/setup/init.mysql
-fi
+# install gems
+install_gems
 
-# install hooks
-mkdir -p $ALM_INSTALL_DIR/bin
-cp -fr redmine/bin/* $ALM_INSTALL_DIR/bin/
-if [ "$ALM_SUBDIR" != "" ]; then
-  sed -i "s|localhost|localhost$ALM_SUBDIR|g" $ALM_INSTALL_DIR/bin/alm-sync-scm
-  chmod +x $ALM_INSTALL_DIR/bin/alm-sync-scm
-fi
-cp -fr   redmine/hooks $ALM_INSTALL_DIR/
-chown -R $APACHE_USER:$APACHE_USER $ALM_INSTALL_DIR/*
+# セッションストア秘密鍵を生成
+create_redmine_token
 
-# config settings
-update_setting 'host_name' ${ALM_HOSTNAME}$ALM_SUBDIR
-update_setting 'protocol' `protocol`
-# 3.3.2へのバージョンアップに向けDBを更新
-mysql -e "GRANT ALL PRIVILEGES ON alminium.* TO 'alminium'@'%' IDENTIFIED BY 'alminium'" mysql 2>/dev/null
+# setup redmine db
+setup_db
+
+# jenkins関連プラグイン
+# この位置でインストールしないとエラーになる
+source redmine/setup/install-plugins-jenkins
+
+# 権限設定
+chown -R ${APACHE_USER}:${APACHE_USER} ${ALM_INSTALL_DIR}/*

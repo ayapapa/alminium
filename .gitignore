@@ -5,3 +5,4 @@ gems.installed
 packages.installed
 vendor/bundler/
 test/.test
+*.swp

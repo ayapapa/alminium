@@ -1,28 +1,34 @@
 #!/bin/bash
 ############################################################
-# Smart installer for redmine/chiliproject.
+# Smart installer for ALMinium.
+# 第1引数：データベースホスト名
+# 第2引数：データベース管理者パスワード
 ############################################################
-ALM_SRC_DIR=$(cd $(dirname $0);pwd)
-ALM_ETC_DIR=/etc/opt/alminium
-ALM_VAR_DIR=/var/opt/alminium
-ALM_INSTALL_DIR=/opt/alminium
+ALM_SRC_DIR=${ALM_SRC_DIR:-$(cd $(dirname $0);pwd)}
+ALM_ETC_DIR=${ALM_ETC_DIR:-/etc/opt/alminium}
+ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
+ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
+ALM_LOG_DIR=${ALM_LOG_DIR:-/var/log/alminium}
+
 ALM_ENABLE_AUTO_BACKUP=${ALM_ENABLE_AUTO_BACKUP:-y}
 ALM_GIT_VERSION=${ALM_GIT_VERSION:-2.9.0}
 ALM_GIT_AUTO_UPGRADE=${ALM_GIT_AUTO_UPGRADE:-N}
-ALM_LOG_DIR=${ALM_LOG_DIR:-/var/log/alminium}
+ALM_DB_SETUP=${ALM_DB_SETUP:-y}
+ALM_DB_HOST=${1:-$ALM_DB_HOST}
+ALM_DB_ROOT_PASS=${2:-$ALM_DB_ROOT_PASS}
 
 RAILS_ENV=production
+
+# move to sources directry
+cd ${ALM_SRC_DIR}
 
 RM_VER=${RM_VER:-`cat RM_VERSION`}
 RM_ARC=https://github.com/redmine/redmine/archive/${RM_VER}.tar.gz
 
 PATH=/usr/local/bin:${PATH}
 
-if [ "$1" = "-u" ]; then
-  ALM_UPGRADE=y
-else
-  ALM_UPGRADE=""
-fi
+# include functions
+source inst-script/functions
 
 # check memory size
 source inst-script/check-mem
@@ -43,7 +49,7 @@ source inst-script/check-git
 source inst-script/config-alminium
 
 # 一時データ保存場所確保
-mkdir -p $ALM_SRC_DIR/cache
+mkdir -p ${ALM_SRC_DIR}/cache
 
 # update submodules
 if [ $(git config -l | egrep 'submodule.+url=' | wc -l) -ne \
@@ -53,11 +59,11 @@ fi
 git submodule sync
 git submodule update
 
+# select db
+source inst-script/select-db
+
 # pre install
 source inst-script/pre-install
-
-# setup database
-source inst-script/config-db
 
 # setup apache
 source inst-script/config-apache
@@ -66,7 +72,7 @@ source inst-script/config-apache
 source inst-script/install-redmine
 
 # setup for jenkins
-if [ "$ALM_ENABLE_JENKINS" = "y" ]; then
+if [ "${ALM_ENABLE_JENKINS}" = "y" ]; then
   source inst-script/install-jenkins
 fi
 
@@ -75,9 +81,9 @@ echo "*** run post-install script ***"
 source inst-script/post-install
 
 # setup for SUBDIRECTORY
-if [ "$ALM_SUBDIR" != "" ]; then
-  ln -sf $ALM_INSTALL_DIR/public /var/www/html$ALM_SUBDIR
-  echo $ALM_SUBDIR > $ALM_INSTALL_DIR/subdirname
+if [ "${ALM_SUBDIR}" != "" ]; then
+  ln -sf ${ALM_INSTALL_DIR}/public /var/www/html${ALM_SUBDIR}
+  echo ${ALM_SUBDIR} > ${ALM_INSTALL_DIR}/subdirname
 fi
 
 # プロジェクト作成時に自動的にリポジトリを作成するときに利用
@@ -87,15 +93,10 @@ fi
 #fi
 
 # 定期バックアップ設定
-if [ "$ALM_ENABLE_AUTO_BACKUP" = "y" ]; then
+if [ "${ALM_ENABLE_AUTO_BACKUP}" = "y" ]; then
   source inst-script/config-backup
 fi
 
 # config log directories
 source inst-script/config-logs
-
-# 不要なファイルなどを削除
-if [ "$OS" = "ubuntu1604" ]; then
-  rm jenkins/setup/ubuntu1604
-fi
 

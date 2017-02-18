@@ -4,5 +4,5 @@
 source ./inst-script/check-os
 
 # restart apache
-source ./inst-script/$OS/service-restart
+source ./inst-script/${OS}/service-restart
 

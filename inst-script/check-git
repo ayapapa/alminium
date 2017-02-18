@@ -11,8 +11,8 @@ if [ "`which git`" = "" ]; then
 else
   GIT_VER=`git --version | cut -c 13-15`
   # 古いgitのときはアップグレード
-  if [ `echo "$GIT_VER >= 1.9" | bc` = 0 ]; then
-    if [ $ALM_GIT_AUTO_UPGRADE = 'y' ]; then
+  if [ `echo "${GIT_VER} >= 1.9" | bc` = 0 ]; then
+    if [ ${ALM_GIT_AUTO_UPGRADE} = 'y' ]; then
       GIT_UPDATE=y
     else
       echo

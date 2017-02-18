@@ -4,7 +4,7 @@ CHKRUBY=`rpm -qa|grep ^ruby-2.1`
 
 RET=-1
 
-if [ "$CHKRUBY" = "" ]
+if [ "${CHKRUBY}" = "" ]
 then
   pushd .
 
@@ -14,7 +14,7 @@ then
   # wget's bug, certificate Server Common Name
   curl -k -L -O https://raw.github.com/hansode/ruby-2.1.x-rpm/master/ruby21x.spec
   RET=$?
-  if [ "$RET" -ne "0" ]
+  if [ "${RET}" -ne "0" ]
   then
     echo "download error. 'ruby21x.spec'"
     exit 1

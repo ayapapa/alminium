@@ -3,7 +3,7 @@
 
 GEM=`which gem2.0`
 
-if [ "$GEM" = "" ]
+if [ "${GEM}" = "" ]
 then
   GEM=gem
 fi
@@ -16,10 +16,10 @@ for (( i = 0; i < ${#NAME[@]}; ++i ))
 do
   NAME=${NAME[$i]}
   VER=${VER[$i]}
-  if [ "$VER" = "-" ]
+  if [ "${VER}" = "-" ]
   then
-    $GEM install -f $NAME --no-rdoc --no-ri
+    ${GEM} install -f ${NAME} --no-rdoc --no-ri
   else
-    $GEM install -f $NAME -v=$VER --no-rdoc --no-ri
+    ${GEM} install -f ${NAME} -v=${VER} --no-rdoc --no-ri
   fi
 done
