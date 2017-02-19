@@ -1,12 +1,23 @@
 #!/bin/bash
 
-if [ ! -f /var/lib/jenkins/plugins ]
+JENKINS_PLUGIN_DIR=/var/lib/jenkins/plugins
+
+if [ ! -d ${JENKINS_PLUGIN_DIR} ]
 then
-  mkdir /var/lib/jenkins/plugins
-  chown jenkins:jenkins /var/lib/jenkins/plugins
+  mkdir ${JENKINS_PLUGIN_DIR}
+  chown jenkins:jenkins ${JENKINS_PLUGIN_DIR}
 fi
 
 # download jenkins-cli.jar
+echo "## Jenkinsの設定を継続するため以下を実施してください"
+echo "## 1. ブラウザでhttp://${ALM_HOSTNAME}:8080/jenkinsを表示"
+echo "## 2. 指示に従い初期設定を実施"
+echo "## 3. Jenkinsの管理において、「グローバルセキュリティの設定」をクリック"
+echo "## 4. アクセス制御→権限管理で「全員に許可」を選択"
+echo "## 5. 「保存ボタン」を押下"
+echo "## 以上を実施後、何らかのキーを押下してください。"
+read PROCEED
+
 RET=-1
 until  [ "$RET" -eq "0" ]
 do
@@ -61,18 +72,30 @@ fi
 # プラグインインストール
 mkdir tmp
 pushd tmp
-RET=-1
-until  [ "$RET" -eq "0" ]
-do
-  sleep 3
-  java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin reverse-proxy-auth-plugin
-  RET=$?
-done
 
-java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin persona
-java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin git
-java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin redmine
-java -jar $INSTALL_DIR/bin/jenkins-cli.jar -s http://localhost:8080/jenkins/ install-plugin dashboard-view
+install_jenkins_plugins() {
+  local plugin_name=${1}
+  if [ ! -d ${JENKINS_PLUGIN_DIR}/${plugin_name} ]; then
+    local resalt=-1
+    until  [ "${resalt}" -eq "0" ]; do
+      sleep 3
+      java -jar $INSTALL_DIR/bin/jenkins-cli.jar \
+	   -s http://localhost:8080/jenkins/ install-plugin ${plugin_name}
+      resalt=$?
+      if [ "${resalt}" != "0" ]; then
+        echo "### プラグインインストール中にエラーが発生しました。"
+        echo "### 再度、プラグインのインストールを試みます。"
+      fi
+    done
+  fi
+}
+
+install_jenkins_plugins reverse-proxy-auth-plugin
+install_jenkins_plugins persona
+install_jenkins_plugins git
+install_jenkins_plugins redmine
+install_jenkins_plugins dashboard-view
+
 popd
 rm -rf tmp
 
@@ -91,3 +114,11 @@ fi
 
 chown -R jenkins:jenkins /var/lib/jenkins/
 service jenkins restart
+
+echo "## Jenkinsの設定が終わりました。"
+echo "## RedmineユーザーでJeninsへログインできるようにする場合は、以下を実施してください"
+echo "## 1. Jenkinsの管理→グローバルセキュリティーの設定→アクセス制御で「Redmineユーザー認証」を選択"
+echo "## 2. データベース名、DBユーザー、DBパスワードにalminiumと記載"
+echo "## 3. Redmineバージョンで「1.2.0以上」を選択"
+echo "## インストール処理を継続するには、何らかのキーを押下してください。"
+read PROCEED
