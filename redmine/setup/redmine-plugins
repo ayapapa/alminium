@@ -80,15 +80,23 @@ pushd .
 cd $INSTALL_DIR
 
 # for scm
-sed -i "s/\"octokit\"/\"octokit\" ,\"<4.0\"/" plugins/redmine_scm/Gemfile
+sed -i.org "s/\"octokit\"/\"octokit\" ,\"<4.0\"/" plugins/redmine_scm/Gemfile
 
 # for dmsf
-sed -i -e "s/'rubyzip'/'rubyzip'#/" \
-       -e "s/'nokogiri'/'nokogiri'#/" \
+sed -i.org -e "s/'rubyzip'/'rubyzip'#/" \
+       -e "s/gem 'nokogiri'/#gem 'nokogiri'/" \
         plugins/redmine_dmsf/Gemfile
 
 # for Hudson
 mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
+
+# redmine_xls_export
+sed -i.org -e 's/gem "nokogiri/#gem "nokogiri/' \
+        plugins/redmine_xls_export/Gemfile
+
+# redmine_backlogs
+sed -i.org -e 's/gem "nokogiri"$/gem "nokogiri", "~> 1.6.0"/' \
+        plugins/redmine_backlogs/Gemfile
 
 # redmineに必要なgemをインストール
 bundle install --path vendor/bundle --without development test xapian RAILS_ENV=production
