@@ -73,11 +73,6 @@ done
 # ALMiniumインストールディレクトリへ移動
 pushd ${ALM_INSTALL_DIR}
 
-# for Hudson
-if [ -f plugins/redmine_hudson/Gemfile ]; then
-  mv plugins/redmine_hudson/Gemfile plugins/redmine_hudson/Gemfile.org
-fi
-
 # for DMSF
 # avoid bandle install error because of rubyzip version conflict
 if [ -f ${ALM_INSTALL_DIR}/plugins/redmine_dmsf/Gemfile ]; then
