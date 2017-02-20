@@ -73,11 +73,23 @@ done
 # ALMiniumインストールディレクトリへ移動
 pushd ${ALM_INSTALL_DIR}
 
+#
+# for gem(rubyzip, nokogiri) version mismatch
+# NOTE: use nokogiri 1.6.x because of jenkins_api_alient v1.3.0 
+#       which is used by redmine_jenkins, and use rubyzip latest
 # for DMSF
-# avoid bandle install error because of rubyzip version conflict
-if [ -f ${ALM_INSTALL_DIR}/plugins/redmine_dmsf/Gemfile ]; then
-  sed -i.org "s/gem 'rubyzip',/gem 'rubyzip'#,/" ${ALM_INSTALL_DIR}/plugins/redmine_dmsf/Gemfile
-fi
+sed -i.org -e "s/gem 'rubyzip',/gem 'rubyzip'#,/" \
+           -e "s/gem 'nokogiri'/#gem 'nokogiri'/" \
+    plugins/redmine_dmsf/Gemfile
+# redmine_xls_export
+sed -i.org -e 's/gem "nokogiri/#gem "nokogiri/' \
+    plugins/redmine_xls_export/Gemfile
+# redmine_backlogs
+sed -i.org -e 's/gem "nokogiri"/gem "nokogiri", "~> 1.6.0" #/' \
+    plugins/redmine_backlogs/Gemfile
+# redmine
+sed -i.org -e 's/gem "nokogiri"/gem "nokogiri", "~> 1.6.0" #/' \
+    Gemfile
 
 # for OAuth2認証
 cd ./plugins
