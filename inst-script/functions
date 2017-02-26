@@ -41,9 +41,13 @@ db_update_setting() {
 # データベース接続テスト
 # 戻り値が非nullなら接続成功
 db_test() {
-  local OPT=`db_option_root`
-  echo `mysql ${OPT} -e "select user from user" mysql 2>/dev/null`
-  OPT=`db_option`
-  echo `mysql ${OPT} -e "show databases" alminium 2>/dev/null`
+  if [ ${1} = "alminium" ]; then
+    OPT=`db_option`
+    DB_NAME=alminium
+  else
+    OPT=`db_option_root`
+    DB_NAME=mysql
+  fi
+  echo `mysql ${OPT} -e "status" ${DB_NAME} 2>/dev/null`
 }
 
