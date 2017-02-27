@@ -41,7 +41,7 @@ db_update_setting() {
 # データベース接続テスト
 # 戻り値が非nullなら接続成功
 db_test() {
-  if [ ${1} = "alminium" ]; then
+  if [ "${1}" = "alminium" ]; then
     OPT=`db_option`
     DB_NAME=alminium
   else
