@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # install depend packages
-if [ "$OS" = "ubuntu1604" ]; then
+if [ "${JENKINS_SYS}" = "ubuntu1604" ]; then
   apt-get install -y openjdk-9-jre-headless
 else # ubuntu1404 case
   apt-get install -y openjdk-7-jre-headless
