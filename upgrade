@@ -87,6 +87,11 @@ rm -fr ${ALM_INSTALL_DIR}/* ${ALM_INSTALL_DIR}/.[^.]*
 rm -fr cache/* *.installed
 rm -fr ${ALM_ETC_DIR}/passenger.*
 
+# Jenkinsが設置されているか否か
+if [ "$(grep \"JENKINS\" /etc/opt/alminium/alminium.conf)" = "" ]; then
+  JENKINS_INSTALLED=y
+fi
+
 #　install ALMinium by smelt
 ALM_UPGRADE=y
 source ./smelt ${ALM_DB_HOST} ${ALM_DB_ROOT_PASS}
