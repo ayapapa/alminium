@@ -71,11 +71,6 @@ source inst-script/config-apache
 # install Redmine
 source inst-script/install-redmine
 
-# setup for jenkins
-if [ "${ALM_ENABLE_JENKINS}" = "y" ]; then
-  source inst-script/install-jenkins
-fi
-
 # post install
 echo "*** run post-install script ***"
 source inst-script/post-install
@@ -95,6 +90,11 @@ fi
 # 定期バックアップ設定
 if [ "${ALM_ENABLE_AUTO_BACKUP}" = "y" ]; then
   source inst-script/config-backup
+fi
+
+# setup for jenkins
+if [ "${ALM_ENABLE_JENKINS}" = "y" ]; then
+  source inst-script/install-jenkins
 fi
 
 # config log directories
