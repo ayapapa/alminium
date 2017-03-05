@@ -54,5 +54,5 @@ fi
 if [ "${GIT_UPDATE}" = "y" ]; then
   yum remove -y git
   curl -s https://setup.ius.io/ | bash
-  yum install git2u
+  yum install -y git2u
 fi
