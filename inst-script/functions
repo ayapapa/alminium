@@ -32,7 +32,7 @@ db_exist_record() {
 db_update_setting() {
   if [ "`db_exist_record $1`" = "" ]; then
     echo "REPLACE INTO settings(name,value,updated_on) " \
-         "VALUES ('$1','$2', current_date);" | mysql `db_option` alminium
+         "VALUES ('$1','$2', now());" | mysql `db_option` alminium
   else
     echo "UPDATE settings SET value = '$2' WHERE name = '$1';" | mysql `db_option` alminium
   fi
