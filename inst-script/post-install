@@ -2,7 +2,9 @@
 
 # Apache configs
 if [ "${ALM_ENABLE_SSL}" = "y" ]; then REPLACE_SSL="#SSL# *"; fi
-if [ "${ALM_ENABLE_JENKINS}" = "y" ]; then REPLACE_JENKINS="#JENKINS# *"; fi
+if [ "${ALM_ENABLE_JENKINS}" = "y" -o "${JENKINS_INSTALLED}" = "y" ]; then
+  REPLACE_JENKINS="#JENKINS# *"
+fi
 if [ "${ALM_SUBDIR}" = "" ]; then
   DOCMENT_ROOT="/opt/alminium/public"
 else

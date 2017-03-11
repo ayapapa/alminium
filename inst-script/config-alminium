@@ -69,7 +69,7 @@ fi
 # source inst-script/config-email.sh
 
 # jenkins
-if [ -e jenkins/setup/${OS}/install.sh -a "${ALM_ENABLE_JENKINS}" = "" ]; then
+if [ "${ALM_UPGRADE}" != "y" -a "${ALM_ENABLE_JENKINS}" = "" ]; then
   echo -n "継続的インテグレーションツールのJenkinsのインストール・設定を"
   echo -n "行うことができます。デフォルトはインストールしません。"
   echo -n "よく分からなければNを選択してください。"

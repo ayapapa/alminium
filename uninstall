@@ -54,7 +54,7 @@ fi
 
 # uninstall jenkins
 echo ""
-echo -n "Jenkisとその設定を削除しますか?(y/N)"
+echo -n "Jenkinsとその設定を削除しますか?(y/N)"
 read YN
 if [ "$YN" = "y" ]; then
     source jenkins/setup/uninstall.sh

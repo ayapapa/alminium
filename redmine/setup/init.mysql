@@ -42,7 +42,7 @@ REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_backlogs','
 :points_burn_direction: down
 :wiki_template: \'\'
 :show_redmine_std_header: enabled
-:auto_assign_task: enabled\n',current_date);
+:auto_assign_task: enabled\n',now());
 
 /*********************************************************************
  * Backlogsプラグインの設定が重複する問題に対応
@@ -97,26 +97,26 @@ UPDATE roles SET roles.permissions=concat(roles.permissions,'- :reset_sprint
 /*********************************************************************
  * Redmineの初期設定
  ********************************************************************/
-REPLACE INTO settings(name,value,updated_on) VALUES ('ui_theme','gitmike',current_date); 
-REPLACE INTO settings(name,value,updated_on) VALUES ('app_title','ALMinium',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('default_language','ja',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('gravatar_enabled',1,current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('gravatar_default','retro',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('sys_api_enabled',1,current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('sys_api_key','',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('default_projects_modules','--- \n- issue_tracking\n- news\n- wiki\n- repository\n',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('new_project_user_role_id',3,current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('text_formatting','markdown',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('cache_formatted_text',1,current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('user_format','lastname_firstname',current_date);     
-REPLACE INTO settings(name,value,updated_on) VALUES ('commit_logtime_enabled',1,current_date);     
-REPLACE INTO settings(name,value,updated_on) VALUES ('commit_logtime_activity_id',0,current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_spent_time_column','--- !map:HashWithIndifferentAccess\nshow_bottom_summary_line_spent_hours: "1"\nshow_bottom_summary_line_estimated_hours: "1"\nshow_bottom_summary_line_on_issuelists: "1"\nenable_spent_hours_column: "1"\nshow_bottom_summary_line_backlogs_remaining_hours: "1"',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('issue_done_ratio','issue_status',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('commit_fix_done_ratio','100',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('commit_fix_status_id','5',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('commit_fix_keywords','fixes,closes',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_xls_export','--- !map:HashWithIndifferentAccess \nissues_limit: "0"\ndate_format: YYYYMMDD\nexport_name: export_name\n',current_date);
+REPLACE INTO settings(name,value,updated_on) VALUES ('ui_theme','gitmike',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('app_title','ALMinium',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('default_language','ja',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('gravatar_enabled',1,now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('gravatar_default','retro',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('sys_api_enabled',1,now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('sys_api_key','',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('default_projects_modules','--- \n- issue_tracking\n- news\n- wiki\n- repository\n',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('new_project_user_role_id',3,now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('text_formatting','markdown',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('cache_formatted_text',1,now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('user_format','lastname_firstname',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('commit_logtime_enabled',1,now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('commit_logtime_activity_id',0,now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_spent_time_column','--- !map:HashWithIndifferentAccess\nshow_bottom_summary_line_spent_hours: "1"\nshow_bottom_summary_line_estimated_hours: "1"\nshow_bottom_summary_line_on_issuelists: "1"\nenable_spent_hours_column: "1"\nshow_bottom_summary_line_backlogs_remaining_hours: "1"',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('issue_done_ratio','issue_status',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('commit_fix_done_ratio','100',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('commit_fix_status_id','5',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('commit_fix_keywords','fixes,closes',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('plugin_redmine_xls_export','--- !map:HashWithIndifferentAccess \nissues_limit: "0"\ndate_format: YYYYMMDD\nexport_name: export_name\n',now());
 UPDATE enumerations SET is_default = 1 WHERE name = '開発作業';
 REPLACE INTO settings(name,value,updated_on) VALUES ('welcome_text','
 ALMinium
@@ -178,7 +178,7 @@ Jenkinsをインストールした場合は、下記のURLからアクセスで�
 
 ユーザ名、パスワードはRedmineに登録したユーザ名、アカウントを利用してログインしてください(初期状態ではユーザ名admin、パスワードadmin)。
 
-',current_date);
+',now());
 UPDATE users SET language='ja' WHERE login='admin';
-REPLACE INTO settings(name,value,updated_on) VALUES ('enabled_scm','---\n- Subversion\n- Mercurial\n- Git\n- Github\n',current_date);
-REPLACE INTO settings(name,value,updated_on) VALUES ('new_item_menu_tab','1',current_date);
+REPLACE INTO settings(name,value,updated_on) VALUES ('enabled_scm','---\n- Subversion\n- Mercurial\n- Git\n- Github\n',now());
+REPLACE INTO settings(name,value,updated_on) VALUES ('new_item_menu_tab','1',now());

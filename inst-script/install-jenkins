@@ -7,6 +7,6 @@ if [ "${OS}" = "ubuntu1604" ]; then
 else
   JENKINS_SYS=${OS}
 fi
-source jenkins/setup/${OS}/install.sh
+source jenkins/setup/${JENKINS_SYS}/install.sh
 source jenkins/setup/config.sh
 

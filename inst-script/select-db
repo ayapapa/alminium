@@ -18,14 +18,15 @@ if [ "${ALM_DB_SETUP}" = "y" ]; then
         # db client install
         source inst-script/${OS}/install_db_client
         # DBへのアクセスが成功するまでループしながらチェック
-        while [ "${DB_TEST}" = "" ]; do
+        CHK_DB=
+        while [ "${CHK_DB}" = "" ]; do
           echo ""
           echo -n データベースサーバー名を入力してください:
           read ALM_DB_HOST
           echo -n データベース管理者パスワードを入力してください：
           read ALM_DB_ROOT_PASS
-          DB_TEST=`db_test`
-          if [ "${DB_TEST}" = "" ]; then
+          CHK_DB=$(db_test)
+          if [ "${CHK_DB}" = "" ]; then
             echo データベースに接続できませんでした。
           fi
         done
