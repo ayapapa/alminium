@@ -12,5 +12,4 @@ docker-compose -f ./test-docker-compose.yml up -d
 
 # test
 sleep 90 && curl -k https://localhost:14443/alminium/
-curl -k https://localhost:14443/jenkins/
 
