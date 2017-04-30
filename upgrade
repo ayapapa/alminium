@@ -51,19 +51,18 @@ if [ $? -gt 0 ]; then
 fi
 
 # ログをバックアップ
+backup_log() {
+  local log_dir=$1;
+  local backup_dir=$2;
+  if [ -d ${log_dir} ]; then
+    cp -pr ${log_dir}/ ${backup_dir}
+  fi
+}
 mkdir -p /tmp/alminium-logs
-if [ -d ${ALM_INSTALL_DIR}/log ]; then
-  cp -pr ${ALM_INSTALL_DIR}/log/ /tmp/alminium-logs
-fi
-if [ -d /var/log/${MYSQL_LOG_DIR} ]; then
-  cp -pr /var/log/${MYSQL_LOG_DIR}/ /tmp/alminium-logs
-fi
-if [ -d /var/log/${APACHE_LOG_DIR} ]; then
-  cp -pr /var/log/${APACHE_LOG_DIR}/ /tmp/alminium-logs
-fi
-if [ -d /var/log/jenkins ]; then
-  cp -pr /var/log/jenkins/ /tmp/alminium-logs
-fi
+backup_log ${ALM_INSTALL_DIR}/log /tmp/alminium-logs
+backup_log /var/log/${MYSQL_LOG_DIR} /tmp/alminium-logs
+backup_log /var/log/${APACHE_LOG_DIR} /tmp/alminium-logs
+backup_log /var/log/jenkins /tmp/alminium-logs
 
 #バックアップ結果の確認
 echo ""
