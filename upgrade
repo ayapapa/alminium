@@ -52,21 +52,40 @@ fi
 
 # ログをバックアップ
 backup_log() {
-  local log_dir=$1;
-  local backup_dir=$2;
+  local log_dir=$1
+  local backup_dir=$2
   if [ -d ${log_dir} ]; then
     cp -pr ${log_dir}/ ${backup_dir}
   fi
 }
+
 mkdir -p /tmp/alminium-logs
 backup_log ${ALM_INSTALL_DIR}/log /tmp/alminium-logs
 backup_log /var/log/${MYSQL_LOG_DIR} /tmp/alminium-logs
 backup_log /var/log/${APACHE_LOG_DIR} /tmp/alminium-logs
 backup_log /var/log/jenkins /tmp/alminium-logs
 
+# 設定ファイルのバックアップ
+backup_conf() {
+  local conf_dir=$1
+  local conf_name=$2
+  local backup_dir=$3
+  mkdir ${backup_dir}/${conf_name}
+  cp -pr ${conf_dir}/* ${backup_dir}/${conf_name}
+  echo "these were stored in ${conf_dir}." > ${backup_dir}/${conf_name}/README.txt
+}
+
+ALM_CONFIGS_BACKUP_DIR=${ALM_BACKUP_DIR}/configs-${ALM_BACKUP_ID}
+mkdir ${ALM_CONFIGS_BACKUP_DIR}
+backup_conf ${ALM_ETC_DIR} apache_conf ${ALM_CONFIGS_BACKUP_DIR}
+backup_conf ${ALM_INSTALL_DIR}/config alminium_config ${ALM_CONFIGS_BACKUP_DIR}
+backup_conf ${ALM_INSTALL_DIR}/hooks alminium_hooks ${ALM_CONFIGS_BACKUP_DIR}
+echo
+echo "ApacheおよびRedmine関連の設定ファイルを${ALM_CONFIGS_BACKUP_DIR}にバックアップしました。ご自身で加えた変更を反映する場合にご利用ください。"
+
 #バックアップ結果の確認
 echo ""
-echo "ディレクトリにバックアップファイル($ALM_BACKUP_NAME)が作成されていることを確認してください。問題がなければEnterキーを押下してください。中止する場合はCtrl+C。"
+echo "ディレクトリ${ALM_BACKUP_DIR}にバックアップファイル($ALM_BACKUP_NAME)が作成されていることを確認してください。問題がなければEnterキーを押下してください。中止する場合はCtrl+C。"
 echo "#### 何らかのエラーがコンソールに出力されている場合はバックアップに失敗している可能性がありますので、中止(Ctrl+C)してください。"
 echo "#### エラー発生等により中止した場合は、upgradeファイルを参考に手動によりアップグレードを実行することをお勧めします。"
 read DO_CONTINUE
