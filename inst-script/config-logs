@@ -9,8 +9,10 @@ backup_and_new_logdir() {
   local owner=$4
   local group=$5
 
-  pushd $parent_dir
-  if [ -d ${old_log_dir} -a "`readlink -f ${old_log_dir}`" != "${ALM_LOG_DIR}/${new_log_dir}" ]; then
+  pushd ${parent_dir}
+  # ログディレクトリが規定の場所に実態として存在する場合に
+  # log/alminium配下に移動する
+  if [ -d ${old_log_dir} -a ! -L ${old_log_dir} ]; then
     if [ "`ls ${old_log_dir}`" != "" ]; then
       mkdir -p ${old_log_dir}.backup
       tar cvfz ${old_log_dir}.backup/"`date +%F-%H-%M-%S`".tar.gz ${old_log_dir}
