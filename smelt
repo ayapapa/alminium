@@ -100,3 +100,11 @@ fi
 # config log directories
 source inst-script/config-logs
 
+# smelt completed
+if [ "${ALM_UPGRADE}" != "y" ]; then
+  echo ""
+  echo "ALMiniumのインストールが終了しました。ブラウザーで、"
+  echo "http://${ALM_HOSTNAME}${ALM_SUBDIR}"
+  echo "をアクセスしてください。"
+  echo "10秒程度の初期化が行われた後、最初の画面が表示されます。"
+fi
