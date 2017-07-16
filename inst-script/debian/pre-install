@@ -8,8 +8,8 @@ apt-get -qq update
 
 # add passenger to APT repository
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
-apt-get install -y ca-certificates
-apt-get install -y --force-yes apt-transport-https
+apt-get install -y --no-install-recommends ca-certificates
+apt-get install -y --no-install-recommends --force-yes apt-transport-https
 echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list
 chown root: /etc/apt/sources.list.d/passenger.list
 # remove old passenger's info 
@@ -21,15 +21,14 @@ fi
 ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
 # add ruby2.1's APT repository
-apt-get install -y --force-yes software-properties-common
+apt-get install -y --no-install-recommends --force-yes software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng
 
 # install APT packages
 if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
 fi
-apt-get -qq update
-apt-get -y install `grep -v "^#" inst-script/${OS}/packages.lst`
+apt-get install -y --no-install-recommends `grep -v "^#" inst-script/${OS}/packages.lst`
 
 # switch to ruby2.1
 ruby-switch --set ruby2.1
@@ -37,7 +36,7 @@ REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 # SSL
 if [ "${ALM_ENABLE_SSL}" = "y" ]; then
-    apt-get -y install ssl-cert
+    apt-get install -y --no-install-recommends ssl-cert
     a2enmod ssl rewrite
 else
     a2dismod ssl
@@ -45,6 +44,6 @@ fi
 
 # DB
 if [  "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
-  apt-get install -y mysql-server
+  apt-get install -y --no-install-recommends mysql-server
   service mysql start
 fi
