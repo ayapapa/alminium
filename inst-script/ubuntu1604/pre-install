@@ -4,7 +4,7 @@
 export DEBIAN_FRONTEND=noninteractive
 
 # package list update
-apt-get -qq update
+apt-get -qq update && apt-get install -y --no-install-recommends apt-utils
 
 # add passenger to APT repository
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
@@ -24,7 +24,6 @@ ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
 fi
-apt-get -qq update
 apt-get install -y --no-install-recommends `grep -v "^#" inst-script/${OS}/packages.lst`
 
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
