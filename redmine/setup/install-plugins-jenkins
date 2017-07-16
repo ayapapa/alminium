@@ -13,7 +13,7 @@ fi
 pushd ${PLUGINS_DIR}
 
 # install redmine_bootstrap
-git clone -b devel https://github.com/jbox-web/redmine_bootstrap_kit.git
+git clone -b 0.2.5 https://github.com/jbox-web/redmine_bootstrap_kit.git
 
 # install redmine_jenkins
 git clone -b v1.x https://github.com/ayapapa/redmine_jenkins.git
