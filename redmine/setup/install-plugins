@@ -86,6 +86,7 @@ sed -i.org -e 's/gem "nokogiri/#gem "nokogiri/' \
     plugins/redmine_xls_export/Gemfile
 # redmine_backlogs
 sed -i.org -e 's/gem "nokogiri"/gem "nokogiri", "~> 1.6.0" #/' \
+           -e 's/gem "prawn"/gem "prawn", "~>2.0.0"/' \
     plugins/redmine_backlogs/Gemfile
 # redmine
 sed -i.org -e 's/gem "nokogiri"/gem "nokogiri", "~> 1.6.0" #/' \

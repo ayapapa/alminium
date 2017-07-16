@@ -38,6 +38,11 @@ if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
   systemctl enable mariadb
 fi
 
+# ruby
+#if [[ `which ruby` == "" || ! `ruby --version` =~  2\.1\. ]]; then
+#    rpm -Uvh "https://github.com/hansode/ruby-rpm/blob/master/6/x86_64/ruby-2.1.2-2.el6.x86_64.rpm?raw=true"
+#fi
+
 # git update
 if [ "${GIT_UPDATE}" = "y" ]; then
   yum remove -y git
