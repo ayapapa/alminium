@@ -8,8 +8,8 @@ apt-get -qq update
 
 # add passenger to APT repository
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
-apt-get install -y ca-certificates
-apt-get install -y --force-yes apt-transport-https
+apt-get install -y ca-certificates --no-install-recommends apt-utils
+apt-get install -y --force-yes apt-transport-https --no-install-recommends apt-utils
 echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list
 chown root: /etc/apt/sources.list.d/passenger.list
 # remove old passenger's info 
@@ -25,13 +25,13 @@ if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
 fi
 apt-get -qq update
-apt-get -y install `grep -v "^#" inst-script/${OS}/packages.lst`
+apt-get -y install `grep -v "^#" inst-script/${OS}/packages.lst` --no-install-recommends apt-utils
 
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 # SSL
 if [ "${ALM_ENABLE_SSL}" = "y" ]; then
-    apt-get -y install ssl-cert
+    apt-get -y install ssl-cert --no-install-recommends apt-utils
     a2enmod ssl rewrite
 else
     a2dismod ssl
@@ -39,7 +39,7 @@ fi
 
 # DB
 if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
-  apt-get install -y mysql-server
+  apt-get install -y mysql-server --no-install-recommends apt-utils
   service mysql start
 fi
 
