@@ -91,6 +91,8 @@ sed -i.org -e 's/gem "nokogiri"/gem "nokogiri", "~> 1.6.0" #/' \
 # redmine
 sed -i.org -e 's/gem "nokogiri"/gem "nokogiri", "~> 1.6.0" #/' \
     Gemfile
+# code_review
+sed -i.org 's/textile.js/markdown.js/' plugins/redmine_code_review/app/views/code_review/_html_header.html.erb
 
 # for OAuth2認証
 cd ./plugins

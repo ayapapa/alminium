@@ -16,8 +16,8 @@ make
 mercurial
 mysql-client
 ruby-switch
-ruby2.1
-ruby2.1-dev
+ruby2.3
+ruby2.3-dev
 subversion
 unzip
 wget
