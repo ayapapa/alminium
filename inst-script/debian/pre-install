@@ -28,6 +28,7 @@ add-apt-repository -y ppa:brightbox/ruby-ng
 if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
 fi
+apt-get -qq update
 apt-get install -y --no-install-recommends `grep -v "^#" inst-script/${OS}/packages.lst`
 
 # switch to ruby2.1
