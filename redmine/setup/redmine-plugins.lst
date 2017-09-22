@@ -5,7 +5,7 @@
 #
 # プラグインディレクトリ名はvendor/pluginsに置くプラグインの名前
 # アーカイブディレクトリ名はtgz/zipファイルを展開したときのディレクト名
-redmine_wiki_extensions,0.8.0,https://github.com/haru/redmine_wiki_extensions.git
+redmine_wiki_extensions,0.8.1,https://github.com/haru/redmine_wiki_extensions.git
 redmine_xls_export,ALMinium,https://github.com/ayapapa/redmine_xls_export.git
 redmine_plugin_views_revisions,redmine_plugin_views_revisions,http://www.redmine.org/attachments/download/7705/redmine_plugin_views_revisions_v001.zip
 #redmine_importer,master,https://github.com/zh/redmine_importer.git
