@@ -17,6 +17,7 @@ redmine_code_review,0.9.0,https://github.com/haru/redmine_code_review.git
 #redmine_jenkins,1.0.1,https://github.com/jbox-web/redmine_jenkins.git
 #redmine_jenkins,v1.x,https://github.com/ayapapa/redmine_jenkins.git
 redmine_backlogs,redmine3,https://github.com/ayapapa/redmine_backlogs.git
+#redmine_backlogs,develop,https://github.com/TheMagician1/redmine_backlogs.git
 redmine_spent_time_column,backlogs-support,https://github.com/mikoto20000/redmine_spent_time_column.git
 redmine_scm,master,https://github.com/ayapapa/redmine_scm.git
 redmine_drafts,alm,https://github.com/alminium/redmine_drafts.git
