@@ -28,10 +28,13 @@ add-apt-repository -y ppa:brightbox/ruby-ng
 if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
 fi
+apt-get -qq update
 apt-get install -y --no-install-recommends `grep -v "^#" inst-script/${OS}/packages.lst`
 
-# switch to ruby2.1
-ruby-switch --set ruby2.1
+# install ruby
+RUBYNAME=ruby2.3
+apt-get install -y ${RUBYNAME} ${RUBYNAME}-dev
+ruby-switch --set ${RUBYNAME}
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
 
 # SSL

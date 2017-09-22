@@ -24,6 +24,7 @@ ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
 fi
+apt-get -qq update
 apt-get install -y --no-install-recommends `grep -v "^#" inst-script/${OS}/packages.lst`
 
 REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
