@@ -26,6 +26,6 @@ open_flash_chart,master,https://github.com/drakontia/redmine_open_flash_chart.gi
 #redmine_charts,master,https://github.com/drakontia/redmine_charts.git
 redmine_local_avatars,master,https://github.com/thorin/redmine_local_avatars.git
 redmine_git_branch_hook,master,https://github.com/mikoto20000/redmine_git_branch_hook.git
-redmine_dmsf,master,https://github.com/danmunn/redmine_dmsf.git
+redmine_dmsf,v1.5.9,https://github.com/danmunn/redmine_dmsf.git
 #redmine_oauth_provider,master,https://github.com/suer/redmine_oauth_provider.git
 redmine_oauth_provider,master,https://github.com/ipcross/redmine_oauth_provider.git
