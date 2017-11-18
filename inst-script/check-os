@@ -36,15 +36,26 @@ if [ "${OS}" = "" ]; then
     MYSQLD='/etc/init.d/mysql'
     OS='debian'
     echo "Ubuntu 14.04 が検出されました。"
-  elif [ -f /etc/lsb-release -a "`grep 16.04 /etc/lsb-release`" != "" ]; then
-    APACHE_USER=www-data
-    APACHE_CONF_DIR=/etc/apache2/conf.d
-    APACHE_LOG_DIR=apache2
-    MYSQL_LOG_DIR=mysql
-    MYSQLD='/etc/init.d/mysql'
-    OS='ubuntu1604'
-    ETH0=enp0s3
-    echo "Ubuntu 16.04 が検出されました。"
+  elif [ -f /etc/lsb-release ]; then
+    if [ "`grep 16.04 /etc/lsb-release`" != "" ]; then
+      APACHE_USER=www-data
+      APACHE_CONF_DIR=/etc/apache2/conf.d
+      APACHE_LOG_DIR=apache2
+      MYSQL_LOG_DIR=mysql
+      MYSQLD='/etc/init.d/mysql'
+      OS='ubuntu1604'
+      ETH0=enp0s3
+      echo "Ubuntu 16.04 が検出されました。"
+    elif [ "`grep 17.10 /etc/lsb-release`" != "" ]; then
+      APACHE_USER=www-data
+      APACHE_CONF_DIR=/etc/apache2/conf.d
+      APACHE_LOG_DIR=apache2
+      MYSQL_LOG_DIR=mysql
+      MYSQLD='/etc/init.d/mysql'
+      OS='ubuntu1710'
+      ETH0=enp0s3
+      echo "17.10 が検出されました。"
+    fi
   else
     echo "サポートされていないOSです。"
     echo "現在サポートされいているOSは、"
