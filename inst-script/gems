@@ -8,6 +8,14 @@ then
   GEM=gem
 fi
 
+# gemの不具合(https://github.com/rubygems/rubygems/issues/2180#issuecomment-367147394)対応
+# rubygem v2.7.7を待つ必要あるのでそれまでの暫定措置
+GEM_VER=`gem env version`
+if [ "${GEM_VER}" = "2.7.5" -o "${GEM_VER}" = "2.7.6" ]
+then
+  gem update --system  2.7.4
+fi
+
 # インストールするディレクトリ名
 NAME=(`grep -v "^#" inst-script/rubygems.lst | awk -F, '{print $1}'`)
 VER=(`grep -v "^#" inst-script/rubygems.lst | awk -F, '{print $2}'`)

@@ -94,38 +94,41 @@ setup_db() {
 ## sctips ##
 echo "*** install Redmine ***"
 
-# create ALMinium DB
+echo "** create redmine database **"
 create_db
 
-echo "*** install Redmine ***"
+echo "** download Redmine **"
 # download and put alminium's home dir
 download_redmine
 
-# setup configurations
+echo "** setup configurations **"
 setup_configurations
 
-# create repositries' directories
+echo "** create repositries' directories **"
 create_repo_dir
 
-# install hooks
+echo "** install hooks **"
 setup_hooks
 
 # install plugins
-echo "*** install plugins ***"
+echo "** install redmine plugins **"
 source redmine/setup/install-plugins
 
-# install gems
+echo "** install gems **"
 install_gems
 
+echo "** create redmone token **"
 # セッションストア秘密鍵を生成
 create_redmine_token
 
-# setup redmine db
+echo "** setup redmine db **"
 setup_db
 
+echo "instll redmine pluguins for jenkins **"
 # jenkins関連プラグイン
 # この位置でインストールしないとエラーになる
 source redmine/setup/install-plugins-jenkins
 
+echo "** set authorities **"
 # 権限設定
 chown -R ${APACHE_USER}:${APACHE_USER} ${ALM_INSTALL_DIR}/*
