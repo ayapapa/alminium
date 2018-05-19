@@ -13,18 +13,18 @@ fi
 yum update -y ca-certificates
 
 # 古いpassenger設定を削除する
-if [ "`ls /etc/httpd/conf.d/passenger.conf 2>/dev/null`" != "" \
-     -a "`grep snippet /etc/httpd/conf.d/passenger.conf 2>/dev/null`" = "" ]; then
-  rm -f /etc/httpd/conf.d/passenger.conf
-fi
+#if [ "`ls /etc/httpd/conf.d/passenger.conf 2>/dev/null`" != "" \
+#     -a "`grep snippet /etc/httpd/conf.d/passenger.conf 2>/dev/null`" = "" ]; then
+#  rm -f /etc/httpd/conf.d/passenger.conf
+#fi
 
 # 必要なパッケージをインストール
 yum install -y epel-release yum-utils
-curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
+#curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
 yum install -y --nogpgcheck `grep -v "^#" inst-script/${OS}/packages.lst`
 
 # set passenger-package available 
-ALM_PASSSENGER_PACKAGE_AVAILABLE=1
+#ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
 # install ssl module
 if [ "${ALM_ENABLE_SSL}" = "y" ]; then
@@ -39,9 +39,10 @@ if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
 fi
 
 # ruby
-#if [[ `which ruby` == "" || ! `ruby --version` =~  2\.1\. ]]; then
+if [[ `which ruby` == "" || ! `ruby --version` ==  2\.0\. ]]; then
 #    rpm -Uvh "https://github.com/hansode/ruby-rpm/blob/master/6/x86_64/ruby-2.1.2-2.el6.x86_64.rpm?raw=true"
-#fi
+  inst-script/${OS}/install-ruby
+fi
 
 # git update
 if [ "${GIT_UPDATE}" = "y" ]; then
