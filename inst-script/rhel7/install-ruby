@@ -12,15 +12,19 @@ if [ "`which ruby`" != "" -a "`ruby -v | grep 2.0.`" != "" ]; then
   gem uninstall bundler
   yum -y remove ruby ruby-devel rubygem-nokogiri rubygem-rack rubygem-rake rubygem-rake-compiler
 fi
- 
+
 # clone and install rbenv environment
 if [ "`which rbenv`" = "" ]; then
   git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
   git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+  echo export PATH=/root/.rbenv/shims:'$PATH' >> /etc/profile
   echo 'export PATH="${HOME}/.rbenv/bin:$PATH"' >> ~/.bash_profile
   echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
   # re-init bash
   source ~/.bash_profile
+  # add permission for execution
+  chmod o+x /root
+  chmod o+x /root/.rbenv
 fi
 
 # install latest ruby
@@ -30,7 +34,6 @@ rbenv rehash
 
 #sets the default ruby version that the shell will use
 rbenv global ${RBVER}
-ln -f -s /root/.rbenv/shims/* /usr/bin/
 
 # to disable generating of documents as that would take so much time
 echo "gem: --no-document" > ~/.gemrc

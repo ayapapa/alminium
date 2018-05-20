@@ -41,7 +41,7 @@ fi
 # ruby
 if [[ `which ruby` == "" || ! `ruby --version` ==  2\.0\. ]]; then
 #    rpm -Uvh "https://github.com/hansode/ruby-rpm/blob/master/6/x86_64/ruby-2.1.2-2.el6.x86_64.rpm?raw=true"
-  inst-script/${OS}/install-ruby
+  source inst-script/${OS}/install-ruby
 fi
 
 # git update
