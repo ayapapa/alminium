@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # install depend packages
-if [ "${JENKINS_SYS}" = "ubuntu1604" ]; then
-  apt-get install -y openjdk-9-jre-headless
-else # ubuntu1404 case
+if [ "${JENKINS_SYS}" = "debian" ]; then
   apt-get install -y openjdk-7-jre-headless
+else # ubuntu1404より新しいDebian系OS
+  apt-get install -y openjdk-9-jre-headless
 fi
 
 # download and install jenkins 

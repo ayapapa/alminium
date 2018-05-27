@@ -31,7 +31,7 @@ cp ${ALM_ETC_DIR}/alminium-logrotate /etc/logrotate.d/alminium
 
 # apaches's conf
 ## passenger
-if [ ${ALM_PASSSENGER_PACKAGE_AVAILABLE} = 1 ]; then
+if [ "${ALM_PASSSENGER_PACKAGE_AVAILABLE}" = "1" ]; then
   # installed from os's packaged. so configure with passenger-config
   passenger-config validate-install --auto --validate-apache2
 else

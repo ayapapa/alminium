@@ -36,7 +36,8 @@ if [ "${OS}" = "" ]; then
     fi
   elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]; then
     APACHE_USER=www-data
-    APACHE_CONF_DIR=/etc/apache2/mods-available
+    APACHE_CONF_DIR=/etc/apache2/mods-enabled
+    APACHE_SITE_CONF_DIR=/etc/apache2/sites-available
     APACHE_LOG_DIR=apache2
     MYSQL_LOG_DIR=mysql
     MYSQLD='/etc/init.d/mysql'
@@ -44,7 +45,7 @@ if [ "${OS}" = "" ]; then
     echo "Ubuntu 14.04 が検出されました。"
   elif [ -f /etc/lsb-release ]; then
     APACHE_USER=www-data
-    PACHE_CONF_DIR=/etc/apache2/mods-available
+    APACHE_CONF_DIR=/etc/apache2/mods-enabled
     APACHE_SITE_CONF_DIR=/etc/apache2/sites-available
     APACHE_LOG_DIR=apache2
     MYSQL_LOG_DIR=mysql
