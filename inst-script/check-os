@@ -1,11 +1,17 @@
 #!/bin/bash
 # ネットワーク0のデバイス名
+
+echo オペレーティングシステムをチェックします。
+
+#IPアドレス確認用文字列
 ETH0=${ETH0:-eth0}
+
 # check OS
 if [ "${OS}" = "" ]; then
   if [ -f /etc/redhat-release ]; then
     APACHE_USER=apache
     APACHE_CONF_DIR=/etc/httpd/conf.d
+    APACHE_SITE_CONF_DIR=${APACHE_CONF_DIR}
     APACHE_LOG_DIR=httpd
     MYSQL_LOG_DIR=mysql
     MYSQLD='/etc/init.d/mysqld'
@@ -30,40 +36,38 @@ if [ "${OS}" = "" ]; then
     fi
   elif [ -f /etc/debian_version -a "`grep 14.04 /etc/issue`" != "" ]; then
     APACHE_USER=www-data
-    APACHE_CONF_DIR=/etc/apache2/conf.d
+    APACHE_CONF_DIR=/etc/apache2/mods-available
     APACHE_LOG_DIR=apache2
     MYSQL_LOG_DIR=mysql
     MYSQLD='/etc/init.d/mysql'
     OS='debian'
     echo "Ubuntu 14.04 が検出されました。"
   elif [ -f /etc/lsb-release ]; then
+    APACHE_USER=www-data
+    PACHE_CONF_DIR=/etc/apache2/mods-available
+    APACHE_SITE_CONF_DIR=/etc/apache2/sites-available
+    APACHE_LOG_DIR=apache2
+    MYSQL_LOG_DIR=mysql
+    MYSQLD='/etc/init.d/mysql'
+    ETH0=enp0s3
     if [ "`grep 16.04 /etc/lsb-release`" != "" ]; then
-      APACHE_USER=www-data
-      APACHE_CONF_DIR=/etc/apache2/conf.d
-      APACHE_LOG_DIR=apache2
-      MYSQL_LOG_DIR=mysql
-      MYSQLD='/etc/init.d/mysql'
       OS='ubuntu1604'
-      ETH0=enp0s3
       echo "Ubuntu 16.04 が検出されました。"
     elif [ "`grep 17.10 /etc/lsb-release`" != "" ]; then
-      APACHE_USER=www-data
-      APACHE_CONF_DIR=/etc/apache2/conf.d
-      APACHE_LOG_DIR=apache2
-      MYSQL_LOG_DIR=mysql
-      MYSQLD='/etc/init.d/mysql'
       OS='ubuntu1710'
-      ETH0=enp0s3
       echo "17.10 が検出されました。"
+    elif [ "`grep 18.04 /etc/lsb-release`" != "" ]; then
+      OS='ubuntu1804'
+      echo "18.04 が検出されました。"
     fi
-  else
-    echo "サポートされていないOSです。"
-    echo "現在サポートされいているOSは、"
-    echo ""
-    echo "  * Ubuntu 14.04/16.04"
-    echo "  * CentOS 6.0/7.0"
-    echo "です。"
-    exit
   fi
+fi
+if [ "${OS}" = "" ]; then
+  echo "サポートされていないOSです。"
+  echo "現在サポートされいているOSは、"
+  echo "  * Ubuntu 14.04/16.04/17.10/18.04"
+  echo "  * CentOS 6.0/7.0"
+  echo "です。処理を中止します。"
+  exit 1
 fi
 
