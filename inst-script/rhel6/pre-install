@@ -22,7 +22,10 @@ else
   EPEL_RPM_NAME="epel-release-6-8.noarch.rpm"
   rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/${EPEL_RPM_NAME}
 fi
-yum -y --nogpgcheck install `grep -v "^#" inst-script/$OS/packages.lst`
+yum -y --nogpgcheck install `grep -v "^#" inst-script/${OS}/packages.lst`
+
+# for Jenkins installation
+JENKINS_SYS=${OS}
 
 CHK=`grep Amazon /etc/system-release`
 if [ "${CHK}" != '' ]; then

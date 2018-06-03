@@ -20,6 +20,9 @@ fi
 #  set passenger-package available
 ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
+# for Jenkins installation
+JENKINS_SYS=debian
+
 # add ruby2.1's APT repository
 apt-get install -y --no-install-recommends --force-yes software-properties-common
 add-apt-repository -y ppa:brightbox/ruby-ng

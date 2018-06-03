@@ -20,8 +20,11 @@ apt-get install -y --allow-change-held-packages --no-install-recommends apt-tran
 #  set passenger-package available
 #ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
-# ubuntu1604 use apparmor
+# ubuntu1804 use apparmor
 APPARMOR_ENABLED=1
+
+# for Jenkins installation
+JENKINS_SYS=debian
 
 # install APT packages
 if [ "${GIT_UPDATE}" = "y" ]; then

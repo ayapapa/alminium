@@ -1,8 +1,12 @@
 #!/bin/sh
 
 # install depend packages
-if [ "${JENKINS_SYS}" = "debian" ]; then
-  apt-get install -y openjdk-7-jre-headless
+if [ "${JENKINS_SYS}" = "debian" -a "${OS}" = "debian" ]; then
+# 7はサポートされなくなっていた（2018/6/3時点） 
+#  apt-get install -y openjdk-7-jre-headless
+  add-apt-repository ppa:webupd8team/java -y
+  apt-get update
+  apt-get install oracle-java8-installer -y
 else # ubuntu1404より新しいDebian系OS
   apt-get install -y openjdk-9-jre-headless
 fi

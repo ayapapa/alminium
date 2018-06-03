@@ -20,6 +20,12 @@ fi
 #  set passenger-package available
 ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
+# for apparmor
+APPARMOR_ENABLED=1
+
+# for Jenkins installation
+JENKINS_SYS=debian
+
 # install APT packages
 if [ "${GIT_UPDATE}" = "y" ]; then
   add-apt-repository -y ppa:git-core/ppa
