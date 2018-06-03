@@ -4,9 +4,13 @@
 if [ "${JENKINS_SYS}" = "debian" -a "${OS}" = "debian" ]; then
 # 7はサポートされなくなっていた（2018/6/3時点） 
 #  apt-get install -y openjdk-7-jre-headless
-  add-apt-repository ppa:webupd8team/java -y
+  if [ "`which java`" != "" ]; then
+    apt-get remove -y openjdk-7-jre-headless
+  fi
+  apt-get install -y python-software-properties debconf-utils
+  add-apt-repository -y ppa:webupd8team/java
   apt-get update
-  apt-get install oracle-java8-installer -y
+  apt-get install -y oracle-java8-installer
 else # ubuntu1404より新しいDebian系OS
   apt-get install -y openjdk-9-jre-headless
 fi
