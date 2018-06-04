@@ -13,7 +13,9 @@ if [ "${JENKINS_SYS}" = "debian" -a "${OS}" = "debian" ]; then
   echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections
   apt-get install -y oracle-java8-installer
 else # ubuntu1404より新しいDebian系OS
-  apt-get install -y openjdk-9-jre-headless
+  if [ "`which java`" = "" ]; then
+    apt-get install -y openjdk-8-jre-headless
+  fi
 fi
 
 # download and install jenkins 
