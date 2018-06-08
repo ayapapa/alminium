@@ -11,15 +11,15 @@ ln -s ${ALM_INSTALL_DIR}/extra/svn/Redmine.pm /etc/httpd/Apache/Authn/Redmine.pm
 # passenger check
 #passenger-config validate-install --auto --validate-apache2
 # mod_passenger
-pushd ${ALM_INSTALL_DIR}
-bundle exec passenger-install-apache2-module --snippet > ${ALM_ETC_DIR}/passenger.conf
-bundle exec passenger-install-apache2-module --auto --apxs2-path='/usr/bin/apxs'
+#pushd ${ALM_INSTALL_DIR}
+#bundle exec passenger-install-apache2-module --snippet > ${ALM_ETC_DIR}/passenger.conf
+#bundle exec passenger-install-apache2-module --auto --apxs2-path='/usr/bin/apxs'
 #ruby ${ALM_INSTALL_DIR}/vendor/bundle/ruby/2.5.0/gems/passenger-5.3.1/bin/passenger-install-apache2-module --apxs2-path='/usr/bin/apxs'
-popd
-ln -sf "${ALM_ETC_DIR}/passenger.conf" "${APACHE_CONF_DIR}/"
+#popd
+#ln -sf "${ALM_ETC_DIR}/passenger.conf" "${APACHE_CONF_DIR}/"
 
-#set alminium config
-ln -sf "${ALM_ETC_DIR}/alminium.conf"  "${APACHE_CONF_DIR}/"
+##set alminium config
+#ln -sf "${ALM_ETC_DIR}/alminium.conf"  "${APACHE_CONF_DIR}/"
 
 # セキュリティ無効化の設定
 if [ ! "${USE_DISABLE_SECURITY}" = "n" ]; then
