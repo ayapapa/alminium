@@ -2,13 +2,8 @@
 # setup for jenkins
 
 echo "*** install Jenkins ***"
-#if [ "${OS}" = "debian" -o "${OS}" = "ubuntu1604" -o "${OS}" = "ubuntu1710" ]; then
-#  JENKINS_SYS=debian
-#else
-#  JENKINS_SYS=${OS}
-#fi
 
-echo ${JENKINS_SYS}
+echo "setup jenkins for ${OS}..."
 source jenkins/setup/${JENKINS_SYS}/install.sh
 source jenkins/setup/config.sh
 

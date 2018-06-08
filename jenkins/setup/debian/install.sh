@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # install depend packages
-if [ "${JENKINS_SYS}" = "debian" -a "${OS}" = "debian" ]; then
+if [ "${OS}" = "debian" ]; then
 # 7はサポートされなくなっていた（2018/6/3時点） 
 #  apt-get install -y openjdk-7-jre-headless
   if [ "`which java`" != "" ]; then
@@ -12,7 +12,7 @@ if [ "${JENKINS_SYS}" = "debian" -a "${OS}" = "debian" ]; then
   apt-get update
   echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections
   apt-get install -y oracle-java8-installer
-else # ubuntu1404より新しいDebian系OS
+else # ubuntu1404より新しいUbuntu
   if [ "`which java`" = "" ]; then
     apt-get install -y openjdk-8-jre-headless
   fi
