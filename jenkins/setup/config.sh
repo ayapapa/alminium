@@ -12,8 +12,8 @@ fi
 curl localhost:8080/jenkins 2>/dev/null
 
 # セキュリティ解除
-sed -i.org "s/<useSecurity>true/<useSecurity>false/" /var/lib/jenkins/config.xml
-service jenkins restart
+#sed -i.org "s/<useSecurity>true/<useSecurity>false/" /var/lib/jenkins/config.xml
+#service jenkins restart
 
 # Jenkinsの設定を自動で進めるために初期ログインとアクセス権設定を手動で実施
 #echo "## Jenkinsの設定を継続するため以下を実施してください"
@@ -73,6 +73,10 @@ if [ x"$http_proxy" != x"" ]; then
   fi
   #service jenkins restart
 fi
+
+echo セキュリティ解除
+sed -i.org "s/<useSecurity>true/<useSecurity>false/" /var/lib/jenkins/config.xml
+service jenkins restart
 
 # プラグインインストール
 sleep 10
