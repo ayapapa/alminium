@@ -1,10 +1,21 @@
 #!/bin/sh
 
 # install depend packages
-if [ "${JENKINS_SYS}" = "ubuntu1604" ]; then
-  apt-get install -y openjdk-9-jre-headless
-else # ubuntu1404 case
-  apt-get install -y openjdk-7-jre-headless
+if [ "${OS}" = "debian" ]; then
+# 7はサポートされなくなっていた（2018/6/3時点） 
+#  apt-get install -y openjdk-7-jre-headless
+  if [ "`which java`" != "" ]; then
+    apt-get remove -y openjdk-7-jre-headless
+  fi
+  apt-get install -y python-software-properties debconf-utils
+  add-apt-repository -y ppa:webupd8team/java
+  apt-get update
+  echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections
+  apt-get install -y oracle-java8-installer
+else # ubuntu1404より新しいUbuntu
+  if [ "`which java`" = "" ]; then
+    apt-get install -y openjdk-8-jre-headless
+  fi
 fi
 
 # download and install jenkins 

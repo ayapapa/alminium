@@ -22,7 +22,10 @@ else
   EPEL_RPM_NAME="epel-release-6-8.noarch.rpm"
   rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/${EPEL_RPM_NAME}
 fi
-yum -y --nogpgcheck install `grep -v "^#" inst-script/$OS/packages.lst`
+yum -y --nogpgcheck install `grep -v "^#" inst-script/${OS}/packages.lst`
+
+# for Jenkins installation
+JENKINS_SYS=${OS}
 
 CHK=`grep Amazon /etc/system-release`
 if [ "${CHK}" != '' ]; then
@@ -46,9 +49,10 @@ if [ "${ALM_DB_SETUP}" = "y" -a "${ALM_USE_EXISTING_DB}" != "y" ]; then
 fi
 
 # ruby
-if [[ `which ruby` == "" || ! `ruby --version` =~  2\.1\. ]]; then
-    rpm -Uvh "https://github.com/hansode/ruby-rpm/blob/master/6/x86_64/ruby-2.1.2-2.el6.x86_64.rpm?raw=true"
-fi
+#if [[ `which ruby` == "" || ! `ruby --version` =~  2\.1\. ]]; then
+#    rpm -Uvh "https://github.com/hansode/ruby-rpm/blob/master/6/x86_64/ruby-2.1.2-2.el6.x86_64.rpm?raw=true"
+#fi
+source inst-script/${OS}/install-ruby 
 
 # git update
 if [ "${GIT_UPDATE}" = "y" ]; then

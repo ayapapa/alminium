@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# apache confis
+# apache confs
 ## set Redmine.pm
 mkdir -p /etc/perl/Apache/Authn
 rm -f /etc/perl/Apache/Authn/Redmine.pm
@@ -9,7 +9,6 @@ ln -s ${ALM_INSTALL_DIR}/extra/svn/Redmine.pm /etc/perl/Apache/Authn/Redmine.pm
 ## modules
 a2enmod expires
 a2enmod dav_fs
-a2enmod auth_mysql
 a2enmod authz_svn
 a2enmod proxy_http
 a2enmod headers

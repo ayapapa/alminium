@@ -11,15 +11,19 @@ fi
 # try connect to jenkins service up
 curl localhost:8080/jenkins 2>/dev/null
 
+# セキュリティ解除
+#sed -i.org "s/<useSecurity>true/<useSecurity>false/" /var/lib/jenkins/config.xml
+#service jenkins restart
+
 # Jenkinsの設定を自動で進めるために初期ログインとアクセス権設定を手動で実施
-echo "## Jenkinsの設定を継続するため以下を実施してください"
-echo "## 1. ブラウザでhttp://${ALM_HOSTNAME}/jenkinsを表示"
-echo "## 2. 指示に従い初期設定を実施"
-echo "## 3. Jenkinsの管理において、「グローバルセキュリティの設定」をクリック"
-echo "## 4. アクセス制御→権限管理で「全員に許可」を選択"
-echo "## 5. 「保存」ボタンを押下"
-echo "## 以上を実施後、何らかのキーを押下してください。"
-read PROCEED
+#echo "## Jenkinsの設定を継続するため以下を実施してください"
+#echo "## 1. ブラウザでhttp://${ALM_HOSTNAME}/jenkinsを表示"
+#echo "## 2. 指示に従い初期設定を実施"
+#echo "## 3. Jenkinsの管理において、「グローバルセキュリティの設定」をクリック"
+#echo "## 4. アクセス制御→権限管理で「全員に許可」を選択"
+#echo "## 5. 「保存」ボタンを押下"
+#echo "## 以上を実施後、何らかのキーを押下してください。"
+#read PROCEED
 
 # download jenkins-cli.jar
 RET=-1
@@ -70,6 +74,10 @@ if [ x"$http_proxy" != x"" ]; then
   #service jenkins restart
 fi
 
+echo セキュリティ解除
+sed -i.org "s/<useSecurity>true/<useSecurity>false/" /var/lib/jenkins/config.xml
+service jenkins restart
+
 # プラグインインストール
 sleep 10
 mkdir -p tmp
@@ -117,16 +125,20 @@ service jenkins restart
 
 # 初期化時間を見越して少し待つ
 echo "Jenkins初期化中..."
-sleep 60
+sleep 30
 
 # Redmineログイン連携設定（手動）
 echo "## Jenkinsの設定が終わりました。"
 echo "## RedmineユーザーでJenkinsへログインできるようにする場合は、以下を実施してください。"
 echo "## ※ブラウザで表示エラーになる場合は、しばらく待ってから以下を実施してください。"
-echo "## 1. Jenkinsの管理→グローバルセキュリティーの設定→アクセス制御で「Redmineユーザー認証」を選択"
-echo "## 2. データベース名、DBユーザー、DBパスワードにalminiumと記載"
-echo "## 3. Redmineバージョンで「1.2.0以上」を選択"
-echo "## 4. 「保存」ボタンを押下"
-echo "## インストール処理を継続するには、何らかのキーを押下してください。"
+echo "## 1. ブラウザでhttp://${ALM_HOSTNAME}/jenkinsを表示"
+echo "## 2. 指示に従い初期設定を実施"
+echo "## 3. 「Jenkinsの管理」→「グローバルセキュリティーの設定」を選択"
+echo "## 4. 「セキュリティを有効化」をチェック"
+echo "## 5. アクセス制御で「Redmineユーザー認証」を選択"
+echo "## 6. 「データベース名」、「DBユーザー」、「DBパスワード」にalminiumと記載"
+echo "## 7. Redmineバージョンで「1.2.0以上」を選択"
+echo "## 8. 「保存」ボタンを押下"
+echo "## インストール処理を継続するために、何らかのキーを押下してください。"
 read PROCEED
 

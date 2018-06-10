@@ -26,6 +26,9 @@ yum install -y --nogpgcheck `grep -v "^#" inst-script/${OS}/packages.lst`
 # set passenger-package available 
 #ALM_PASSSENGER_PACKAGE_AVAILABLE=1
 
+# for Jenkins installation
+JENKINS_SYS=${OS}
+
 # install ssl module
 if [ "${ALM_ENABLE_SSL}" = "y" ]; then
     yum -y install mod_ssl
