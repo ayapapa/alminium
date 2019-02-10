@@ -38,11 +38,11 @@ else
   # installed from gem. so configure with bundle exec i
   # passenger-install-apache2-module
   pushd ${ALM_INSTALL_DIR}
-  bundle exec passenger-install-apache2-module --snippet > ${ALM_ETC_DIR}/passenger.conf
+  ${BUNDLER} exec passenger-install-apache2-module --snippet > ${ALM_ETC_DIR}/passenger.conf
   if [ `echo ${OS} | grep rhel` != "" ]; then
-    bundle exec passenger-install-apache2-module --auto
+    ${BUNDLER} exec passenger-install-apache2-module --auto
   else
-    bundle exec passenger-install-apache2-module --auto --apxs2-path='/usr/bin/apxs'
+    ${BUNDLER} exec passenger-install-apache2-module --auto --apxs2-path='/usr/bin/apxs'
   fi
   popd
   ln -sf "${ALM_ETC_DIR}/passenger.conf" "${APACHE_CONF_DIR}/"

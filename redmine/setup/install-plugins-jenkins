@@ -24,9 +24,9 @@ if [ "${ALM_DB_SETUP}" = "y" ]; then
 
   # install gems and migrate database
   cd ..
-  bundle install --path vendor/bundle \
+  ${BUNDLER} install --path vendor/bundle \
                  --without development test postgresql sqlite xapian
-  bundle exec rake redmine:plugins:migrate \
+  ${BUNDLER} exec rake redmine:plugins:migrate \
        RAILS_ENV=production NAME=redmine_jenkins
 fi
 
