@@ -39,7 +39,7 @@ else
   # passenger-install-apache2-module
   pushd ${ALM_INSTALL_DIR}
   ${BUNDLER} exec passenger-install-apache2-module --snippet > ${ALM_ETC_DIR}/passenger.conf
-  if [ `echo ${OS} | grep rhel` != "" ]; then
+  if [ "`echo ${OS} | grep rhel`" != "" ]; then
     ${BUNDLER} exec passenger-install-apache2-module --auto
   else
     ${BUNDLER} exec passenger-install-apache2-module --auto --apxs2-path='/usr/bin/apxs'
