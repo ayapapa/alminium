@@ -8,34 +8,34 @@ echo "*** run initialize DB ***"
 pushd ${ALM_INSTALL_DIR}
 
 # データベースにテーブルを作成
-bundle exec rake db:migrate RAILS_ENV=production
+${BUNDLER} exec rake db:migrate RAILS_ENV=production
 
 # データベースにデフォルトデータを登録
 echo 'ja' |\
-bundle exec rake redmine:load_default_data RAILS_ENV=production
+${BUNDLER} exec rake redmine:load_default_data RAILS_ENV=production
 
 # プラグインをデータベースに登録
-bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+${BUNDLER} exec rake redmine:plugins:migrate RAILS_ENV=production
 
 # for XLS export
 if [ -d plugins/redmine_xls_export ]; then
-  bundle exec rake redmine:plugins:process_version_change RAILS_ENV=production
+  ${BUNDLER} exec rake redmine:plugins:process_version_change RAILS_ENV=production
 fi
 
 # for backlogs
 if [ -d plugins/redmine_backlogs ]; then
   if [ "$(db_setupped)" = "" ]; then
-    bundle exec rake redmine:backlogs:install task_tracker=サポート \
+    ${BUNDLER} exec rake redmine:backlogs:install task_tracker=サポート \
 		story_trackers=機能 labels=false RAILS_ENV=production
   else
-    bundle exec rake redmine:backlogs:install task_tracker=タスク \
+    ${BUNDLER} exec rake redmine:backlogs:install task_tracker=タスク \
 		story_trackers=機能 labels=false RAILS_ENV=production
   fi
 fi
 
 # キャッシュクリア
-bundle exec rake tmp:cache:clear RAILS_ENV=production
-bundle exec rake tmp:sessions:clear RAILS_ENV=production
+${BUNDLER} exec rake tmp:cache:clear RAILS_ENV=production
+${BUNDLER} exec rake tmp:sessions:clear RAILS_ENV=production
 
 # DB Customize
 if [ "$(db_setupped)" = "" ]; then

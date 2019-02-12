@@ -65,7 +65,7 @@ install_gems() {
   fi
 
   # redmineに必要なgemをインストール
-  bundle install --path vendor/bundle \
+  ${BUNDLER} install --path vendor/bundle \
                --without development test postgresql sqlite xapian
   popd
 }
@@ -73,7 +73,7 @@ install_gems() {
 # create secret token
 create_redmine_token() {
   pushd ${ALM_INSTALL_DIR}
-  bundle exec rake generate_secret_token
+  ${BUNDLER} exec rake generate_secret_token
   popd
 }
 

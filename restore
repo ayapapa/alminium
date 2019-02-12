@@ -57,10 +57,10 @@ if [ "${ALM_DB_RESTORE}" != "no" ]; then
   #データベースのマイグレーション
   echo "データベースのマイグレーションを実施します。"
   cd ${ALM_INSTALL_DIR}
-  bundle exec rake db:migrate RAILS_ENV=production
-  bundle exec rake redmine:plugins:migrate RAILS_ENV=production
-  bundle exec rake tmp:cache:clear RAILS_ENV=production
-  bundle exec rake tmp:sessions:clear RAILS_ENV=production
+  ${BUNDLER} exec rake db:migrate RAILS_ENV=production
+  ${BUNDLER} exec rake redmine:plugins:migrate RAILS_ENV=production
+  ${BUNDLER} exec rake tmp:cache:clear RAILS_ENV=production
+  ${BUNDLER} exec rake tmp:sessions:clear RAILS_ENV=production
   echo "データベースのマイグレーションが完了しました。"
 fi
 
