@@ -13,10 +13,12 @@ fi
 pushd ${PLUGINS_DIR}
 
 # install redmine_bootstrap
-git clone -b 0.2.5 https://github.com/jbox-web/redmine_bootstrap_kit.git
+#git clone -b 0.2.5 https://github.com/jbox-web/redmine_bootstrap_kit.git
+git clone -b redmine4 https://github.com/ayapapa/redmine_bootstrap_kit.git
 
 # install redmine_jenkins
-git clone -b v1.x https://github.com/ayapapa/redmine_jenkins.git
+#git clone -b v1.x https://github.com/ayapapa/redmine_jenkins.git
+git clone -b redmine4 https://github.com/ayapapa/redmine_jenkins.git
 
 if [ "${ALM_DB_SETUP}" = "y" ]; then
   # avoid gems' version mismatch
