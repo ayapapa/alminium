@@ -39,4 +39,4 @@ redmine_local_avatars,master,https://github.com/thorin/redmine_local_avatars.git
 redmine_dmsf,v2.0.0,https://github.com/danmunn/redmine_dmsf.git
 #redmine_oauth_provider,master,https://github.com/suer/redmine_oauth_provider.git
 #redmine_oauth_provider,master,https://github.com/ipcross/redmine_oauth_provider.git
-redmine_oauth_provider,redmine-4,https://github.com/fishbone1/redmine_oauth_provider.git
+redmine_oauth_provider,redmine-4,https://github.com/ayapapa/redmine_oauth_provider.git
