@@ -85,15 +85,22 @@ pushd tmp
 
 install_jenkins_plugins() {
   local plugin_name=${1}
+  if [ "${proxyserver}" != "" ]; then
+    proxy_opt=`echo -Dhttp.proxyHost=${proxyserver} -Dhttps.proxyHost=${proxyserver} -Dhttp.nonProxyHosts="localhost|127.0.0.1"`
+    if [ "${proxyport}" != "" ]; then
+      proxy_opt=`echo ${proxy_opt} -Dhttp.proxyPort=${proxyport} -Dhttps.proxyPort=${proxyport}`
+    fi
+  fi
+  echo "** java proxy options = ${proxy_opt}"
   if [ ! -d ${JENKINS_PLUGIN_DIR}/${plugin_name} ]; then
-    local resalt=-1
-    until  [ "${resalt}" -eq "0" ]; do
+    local result=-1
+    until  [ "${result}" -eq "0" ]; do
       sleep 3
-      java -jar ${ALM_INSTALL_DIR}/bin/jenkins-cli.jar \
+      java ${proxy_opt} -jar ${ALM_INSTALL_DIR}/bin/jenkins-cli.jar \
 	   -s http://localhost:8080/jenkins/ install-plugin ${plugin_name}
-      resalt=$?
-      if [ "${resalt}" != "0" ]; then
-        echo "### プラグインインストール中にエラーが発生しました。"
+      result=$?
+      if [ "${result}" != "0" ]; then
+        echo "### Jenkinsプラグインのインストール中にエラーが発生しました。"
         echo "### 再度、プラグインのインストールを試みます。"
       fi
     done
@@ -129,7 +136,8 @@ sleep 30
 
 # Redmineログイン連携設定（手動）
 echo "## Jenkinsの設定が終わりました。"
-echo "## RedmineユーザーでJenkinsへログインできるようにする場合は、以下を実施してください。"
+echo "## 初期化処理を以下の手順で実施してください。"
+echo "## RedmineユーザーでJenkinsへログインできるようにしない場合は、3～7の代わりにお好みの設定をしてください。"
 echo "## ※ブラウザで表示エラーになる場合は、しばらく待ってから以下を実施してください。"
 echo "## 1. ブラウザでhttp://${ALM_HOSTNAME}/jenkinsを表示"
 echo "## 2. 指示に従い初期設定を実施"
