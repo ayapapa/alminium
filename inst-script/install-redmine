@@ -117,7 +117,7 @@ source redmine/setup/install-plugins
 echo "** install gems **"
 install_gems
 
-echo "** create redmone token **"
+echo "** create redmine token **"
 # セッションストア秘密鍵を生成
 create_redmine_token
 
