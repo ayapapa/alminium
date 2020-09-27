@@ -33,7 +33,7 @@ fi
 apt-get -qq update
 apt-get install -y --no-install-recommends `grep -v "^#" inst-script/${OS}/packages.lst`
 
-REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
+REALLY_GEM_UPDATE_SYSTEM=1 gem update --system 2.7.10
 
 # SSL
 if [ "${ALM_ENABLE_SSL}" = "y" ]; then
