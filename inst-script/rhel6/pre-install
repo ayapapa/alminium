@@ -26,6 +26,7 @@ yum -y --nogpgcheck install `grep -v "^#" inst-script/${OS}/packages.lst`
 
 # ImageMagick
 yum -y --nogpgcheck install epel-release
+yum -y remove ImageMagick ImageMagick-devel
 rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 yum --enablerepo=remi -y --nogpgcheck install ImageMagick6 ImageMagick6-devel
 
