@@ -24,12 +24,18 @@ else
 fi
 yum -y --nogpgcheck install `grep -v "^#" inst-script/${OS}/packages.lst`
 
+# ImageMagick
+yum -y --nogpgcheck install epel-release
+rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+yum --enablerepo=remi -y --nogpgcheck install ImageMagick6 ImageMagick6-devel
+
 # for Jenkins installation
 JENKINS_SYS=${OS}
 
 CHK=`grep Amazon /etc/system-release`
 if [ "${CHK}" != '' ]; then
-  rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+  #ImageMagickインストール時に、設置済のため、コメントアウト。
+  #rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
   yum  --enablerepo=remi -y --nogpgcheck install mysqlclient16
 fi
 
