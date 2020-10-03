@@ -64,6 +64,7 @@ source inst-script/${OS}/install-ruby
 # git update
 if [ "${GIT_UPDATE}" = "y" ]; then
   yum remove -y git
-  curl -s https://setup.ius.io/ | bash
-  yum install -y git2u
+  #curl -s https://setup.ius.io/ | bash
+  #yum install -y git2u
+  source inst-script/git_build_install
 fi
