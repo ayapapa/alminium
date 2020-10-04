@@ -10,8 +10,8 @@ gettext-devel
 glibc-devel
 httpd
 httpd-devel
-ImageMagick
-ImageMagick-devel
+#ImageMagick
+#ImageMagick-devel
 ipa-pgothic-fonts
 libffi-devel
 libical

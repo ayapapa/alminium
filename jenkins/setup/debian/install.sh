@@ -19,8 +19,10 @@ else # ubuntu1404より新しいUbuntu
 fi
 
 # download and install jenkins 
-wget -q -O - http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key | sudo apt-key add -
-echo "deb http://pkg.jenkins-ci.org/debian-stable binary/" > /etc/apt/sources.list.d/jenkins.list
+#wget -q -O - http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key | sudo apt-key add -
+wget -q -O - https://pkg.jenkins.io/redhat/jenkins.io.key | sudo apt-key add -
+#echo "deb http://pkg.jenkins-ci.org/debian-stable binary/" > /etc/apt/sources.list.d/jenkins.list
+echo "deb https://pkg.jenkins.io/debian binary/" > /etc/apt/sources.list.d/jenkins.list
 apt-get -q2 update
 apt-get -y install jenkins
 
