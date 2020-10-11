@@ -101,7 +101,7 @@ install_jenkins_plugins() {
 }
 
 install_jenkins_plugins reverse-proxy-auth-plugin
-install_jenkins_plugins persona
+#install_jenkins_plugins persona
 install_jenkins_plugins git
 install_jenkins_plugins redmine
 install_jenkins_plugins dashboard-view
