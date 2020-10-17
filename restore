@@ -1,17 +1,28 @@
 #!/bin/bash
-#########################################
-# restore from ALMinium's backup.       #
-# 第1引数：バックアップファイル名       #
-# 第2引数：データベースホスト名         #
-# 第3引数：データベース管理者パスワード #
-#########################################
+#####################################################
+# restore from ALMinium's backup.                   #
+# 第1引数：バックアップファイル名またはファイスパス #
+#  ファイル名の場合、デフォルトバックアップ         #
+#  ディレクトリ(/var/opt/alminium-backup)が使われる #
+# 第2引数：データベースホスト名                     #
+# 第3引数：データベース管理者パスワード             #
+#####################################################
+
+# 各種ディレクトリ
 ALM_SRC_DIR=${ALM_SRC_DIR:-$(cd $(dirname $0);pwd)}
 ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
 ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
-ALM_DB_HOST=${ALM_DB_HOST:-$2}
+# DBホスト、DBrootユーザーパスワード
+if [ "$2" != "" ]; then
+  ALM_DB_HOST=$2
+fi
 ALM_DB_HOST=${ALM_DB_HOST:-localhost}
-ALM_DB_ROOT_PASS=${ALM_DB_ROOT_PASS:-$3}
+if [ "$3" != "" ]; then
+  ALM_DB_ROOT_PASS=$3
+fi
+
+ALM_DEAULT_BACKUP_DIR=/var/opt/alminium-backup
 
 # 実行ユーザーをチェック
 if [ "`whoami`" != 'root' ]; then
@@ -26,14 +37,34 @@ if [ "$1" = "" ]; then
     exit 1
 fi
 
-if [ ! -f "$1" ]; then
+# バックアップファイル名
+ALM_BACKUP_FILE_NAME=`basename $1`
+
+# バックアップディレクトリ
+if [ "${ALM_BACKUP_FILE_NAME}" = "$1" ]; then
+  ALM_BACKUP_DIR=${ALM_DEAULT_BACKUP_DIR}
+else
+  ALM_BACKUP_DIR=`dirname "$1"`
+fi
+
+# バックアップファイルパス
+ALM_BACKUP_FILE_PATH=${ALM_BACKUP_DIR}/${ALM_BACKUP_FILE_NAME}
+
+# バックアップファイルの存在を確認する
+if [ ! -f "${ALM_BACKUP_FILE_PATH}" ]; then
   echo "指定したバックアップファイルが在りません。処理を中止します。"
 fi
 
-ALM_BACKUP_NAME=$1
-ALM_DBBACKUP_NAME=/tmp/db.dump
-ALM_FILE_BACKUP=/tmp/files.tar.gz
-ALM_REPOS_BACKUP=/tmp/repo.tar.gz
+# リストア用一時ディレクトリ
+ALM_RESTORE_TMP_DIR=${ALM_BACKUP_DIR}/tmp
+if [ ! -d "${ALM_RESTORE_TMP_DIR}" ]; then
+  mkdir "${ALM_RESTORE_TMP_DIR}"
+fi
+
+# リストア用一時ファイル
+ALM_DB_BACKUP=${ALM_RESTORE_TMP_DIR}/db.dump
+ALM_FILE_BACKUP=${ALM_RESTORE_TMP_DIR}/files.tar.gz
+ALM_REPOS_BACKUP=${ALM_RESTORE_TMP_DIR}/repo.tar.gz
 
 # move to sources directry
 cd ${ALM_SRC_DIR}
@@ -42,17 +73,17 @@ cd ${ALM_SRC_DIR}
 source inst-script/functions
 
 # バックアップの復元
-echo "${ALM_BACKUP_NAME}を復元します。"
-cd /tmp
-tar xzf ${ALM_BACKUP_NAME}
+echo "${ALM_BACKUP_FILE_PATH}を復元します。"
+cd ${ALM_RESTORE_TMP_DIR}
+tar xzf ${ALM_BACKUP_FILE_PATH}
 
 echo "***リポジトリーデータを復元しています..."
 cd ${ALM_VAR_DIR} && tar xzf ${ALM_REPOS_BACKUP}
 echo "***Redmine添付ファイルを復元しています..."
 cd ${ALM_INSTALL_DIR}/files/ && tar xzf ${ALM_FILE_BACKUP}
-if [ "${ALM_DB_RESTORE}" != "no" ]; then
+if [ "${ALM_DB_BACKUP}" != "no" ]; then
   echo "***データベースを復元しています..."
-  mysql `db_option_root` alminium < ${ALM_DBBACKUP_NAME}
+  mysql `db_option` alminium < ${ALM_DB_BACKUP}
   echo "データ復元が完了しました。"
   #データベースのマイグレーション
   echo "データベースのマイグレーションを実施します。"
