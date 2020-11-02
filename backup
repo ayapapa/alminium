@@ -7,10 +7,13 @@
 # 第2引数：データベースホスト名
 # 第3引数：データベース管理者パスワード
 ############################################################
+
+# 各種ディレクトリ
 ALM_SRC_DIR=${ALM_SRC_DIR:-$(cd $(dirname $0);pwd)}
 ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
 ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
+# DBホスト、DBrootユーザーパスワード
 ALM_DB_HOST=${2:-${ALM_DB_HOST}}
 ALM_DB_HOST=${ALM_DB_HOST:-localhost}
 ALM_DB_ROOT_PASS=${3:-${ALM_DB_ROOT_PASS}}
@@ -60,7 +63,7 @@ echo "バックアップファイル名 : ${ALM_BACKUP_DIR}/${ALM_BACKUP_NAME}"
 
 # バックアップ結果チェック
 check_backup_result() {
-  if [ -f ${ALM_BACKUP_DIR}/$1 -a -s ${ALM_BACKUP_DIR}/$1 ]; then
+  if [ "$3" = "0" -a -f ${ALM_BACKUP_DIR}/$1 -a -s ${ALM_BACKUP_DIR}/$1 ]; then
     echo "$2(${ALM_BACKUP_DIR}/$1)が成功しました。"
   else
     echo "$2(${ALM_BACKUP_DIR}/$1)が失敗しました。"
@@ -69,28 +72,32 @@ check_backup_result() {
 }
 
 echo "MySQLデータベースをバックアップします。"
-mysqldump `db_option` alminium > ${ALM_BACKUP_DIR}/${ALM_DBBACKUP_NAME}
-check_backup_result ${ALM_DBBACKUP_NAME} "データベースバックアップ"
+result=0
+mysqldump `db_option_root` alminium > ${ALM_BACKUP_DIR}/${ALM_DBBACKUP_NAME} || result=$?
+check_backup_result ${ALM_DBBACKUP_NAME} "データベースバックアップ" ${result}
 
 #redmineの添付ファイルをバックアップ
 echo "Redmineの添付ファイルをバックアップします。"
 pushd ${ALM_INSTALL_DIR}/files/
-tar czf ${ALM_BACKUP_DIR}/${ALM_FILE_BACKUP} .
-check_backup_result ${ALM_FILE_BACKUP} "添付ファイルバックアップ"
+result=0
+tar czf ${ALM_BACKUP_DIR}/${ALM_FILE_BACKUP} . || result=$?
+check_backup_result ${ALM_FILE_BACKUP} "添付ファイルバックアップ" ${result}
 popd
 
 #ソースコードリポジトリ
 echo "ソースコードリポジトリをバックアップします。"
+result=0
 pushd ${ALM_VAR_DIR}/
-tar czf ${ALM_BACKUP_DIR}/${ALM_REPOS_BACKUP} .
-check_backup_result ${ALM_REPOS_BACKUP} "ソースコードリポジトリバックアップ"
+tar czf ${ALM_BACKUP_DIR}/${ALM_REPOS_BACKUP} . || result=$?
+check_backup_result ${ALM_REPOS_BACKUP} "ソースコードリポジトリバックアップ" ${result}
 popd
 
 # バックアップ統合
 pushd ${ALM_BACKUP_DIR}
+result=0
 tar czf ./${ALM_BACKUP_NAME} \
-    ./${ALM_DBBACKUP_NAME} ./${ALM_FILE_BACKUP} ./${ALM_REPOS_BACKUP}
-check_backup_result ${ALM_BACKUP_NAME} "バックアップファイル統合"
+    ./${ALM_DBBACKUP_NAME} ./${ALM_FILE_BACKUP} ./${ALM_REPOS_BACKUP} || result=$?
+check_backup_result ${ALM_BACKUP_NAME} "バックアップファイル統合" ${result}
 
 # バックアップ終了
 echo "[`date`]  ALMiniumのデータのバックアップが終了しました。"
