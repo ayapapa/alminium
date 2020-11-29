@@ -30,6 +30,8 @@ fi
 # バックアップファイルをチェック
 if [ "$1" = "" ]; then
     echo "第1引数にバックアップファイルを指定してください。"
+    echo "以下は、デフォルトバックアップディレクト配下の候補です。"
+    ls ${ALM_DEAULT_BACKUP_DIR}/*-alm-backup.tar.gz
     exit 1
 fi
 
