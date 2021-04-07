@@ -14,13 +14,9 @@ ALM_VAR_DIR=${ALM_VAR_DIR:-/var/opt/alminium}
 ALM_INSTALL_DIR=${ALM_INSTALL_DIR:-/opt/alminium}
 
 # DBホスト、DBrootユーザーパスワード
-if [ "$2" != "" ]; then
-  ALM_DB_HOST=$2
-fi
+ALM_DB_HOST=${2:-${ALM_DB_HOST}}
 ALM_DB_HOST=${ALM_DB_HOST:-localhost}
-if [ "$3" != "" ]; then
-  ALM_DB_ROOT_PASS=$3
-fi
+ALM_DB_ROOT_PASS=${3:-${ALM_DB_ROOT_PASS}}
 
 ALM_DEAULT_BACKUP_DIR=/var/opt/alminium-backup
 
@@ -34,6 +30,8 @@ fi
 # バックアップファイルをチェック
 if [ "$1" = "" ]; then
     echo "第1引数にバックアップファイルを指定してください。"
+    echo "以下は、デフォルトバックアップディレクト配下の候補です。"
+    ls ${ALM_DEAULT_BACKUP_DIR}/*-alm-backup.tar.gz
     exit 1
 fi
 
@@ -53,6 +51,7 @@ ALM_BACKUP_FILE_PATH=${ALM_BACKUP_DIR}/${ALM_BACKUP_FILE_NAME}
 # バックアップファイルの存在を確認する
 if [ ! -f "${ALM_BACKUP_FILE_PATH}" ]; then
   echo "指定したバックアップファイルが在りません。処理を中止します。"
+  exit 1
 fi
 
 # リストア用一時ディレクトリ
@@ -75,16 +74,41 @@ source inst-script/functions
 # バックアップの復元
 echo "${ALM_BACKUP_FILE_PATH}を復元します。"
 cd ${ALM_RESTORE_TMP_DIR}
+if [ $? -ne 0 ]; then
+  echo バックアップの一時復元ディレクトリ${ALM_RESTORE_TMP_DIR}に移動できませんでした。
+  echo アクセス権やディスク容量などを確認してくだい。
+  exit 1
+fi
 tar xzf ${ALM_BACKUP_FILE_PATH}
+if [ $? -ne 0 ]; then
+  echo バックアップの復元に失敗しました。
+  echo ${ALM_RESTORE_TMP_DIR}のアクセス権やディスク容量などを確認してくだい。
+  exit 1
+fi
 
 echo "***リポジトリーデータを復元しています..."
 cd ${ALM_VAR_DIR} && tar xzf ${ALM_REPOS_BACKUP}
+if [ $? -ne 0 ]; then
+  echo "リポジトリーデータの復元に失敗しました。"
+  exit 1
+fi
+
 echo "***Redmine添付ファイルを復元しています..."
 cd ${ALM_INSTALL_DIR}/files/ && tar xzf ${ALM_FILE_BACKUP}
+if [ $? -ne 0 ]; then
+  echo "Redmine添付ファイルの復元に失敗しました。"
+  exit 1
+fi
+
+# データベースの復元
 if [ "${ALM_DB_BACKUP}" != "no" ]; then
   echo "***データベースを復元しています..."
-  mysql `db_option` alminium < ${ALM_DB_BACKUP}
-  echo "データ復元が完了しました。"
+  mysql `db_option_root` alminium < ${ALM_DB_BACKUP}
+  if [ $? -ne 0 ]; then
+    echo "データベースの復元に失敗しました。"
+    exit 1
+  fi
+  echo "データベース復元が完了しました。"
   #データベースのマイグレーション
   echo "データベースのマイグレーションを実施します。"
   cd ${ALM_INSTALL_DIR}
@@ -92,6 +116,10 @@ if [ "${ALM_DB_BACKUP}" != "no" ]; then
   ${BUNDLER} exec rake redmine:plugins:migrate RAILS_ENV=production
   ${BUNDLER} exec rake tmp:cache:clear RAILS_ENV=production
   ${BUNDLER} exec rake tmp:sessions:clear RAILS_ENV=production
+  if [ $? -ne 0 ]; then
+    echo "データベースのマイグレーションに失敗しました。"
+    exit 1
+  fi
   echo "データベースのマイグレーションが完了しました。"
 fi
 

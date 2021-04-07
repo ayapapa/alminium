@@ -75,7 +75,14 @@ if [ x"$http_proxy" != x"" ]; then
 fi
 
 echo セキュリティ解除
-sed -i.org "s/<useSecurity>true/<useSecurity>false/" /var/lib/jenkins/config.xml
+#sed -i.org "s/<useSecurity>true/<useSecurity>false/" /var/lib/jenkins/config.xml
+
+sed -i.org \
+    -e "s/<authorizationStrategy class=\"hudson.security.FullControlOnceLoggedInAuthorizationStrategy\">/<authorizationStrategy class=\"hudson.security.AuthorizationStrategy\$Unsecured\"\/>\n  <\!-- <authorizationStrategy class=\"hudson.security.FullControlOnceLoggedInAuthorizationStrategy\"> -->/" \
+    -e "s/<denyAnonymousReadAccess/<\!-- <denyAnonymousReadAccess/" \
+    -e "s/\/denyAnonymousReadAccess>/\/denyAnonymousReadAccess> -->/" \
+    -e "s/<\/authorizationStrategy>/<\!-- <\/authorizationStrategy> -->/" \
+    /var/lib/jenkins/config.xml 
 service jenkins restart
 
 # プラグインインストール
@@ -132,11 +139,12 @@ echo "## Jenkinsの設定が終わりました。"
 echo "## RedmineユーザーでJenkinsへログインできるようにする場合は、以下を実施してください。"
 echo "## ※ブラウザで表示エラーになる場合は、しばらく待ってから以下を実施してください。"
 echo "## 1. ブラウザでhttp://${ALM_HOSTNAME}/jenkinsを表示"
-echo "## 2. 「Jenkinsの管理」→「セキュリティーを設定」を選択"
+echo "## 2. 初期設定後表示されたJenkinsの画面にて、「Jenkinsの管理」→「グローバルセキュリティの設定」を選択"
 echo "## 3. ユーザー情報で「Redmineユーザー認証」を選択"
 echo "## 4. 「データベース名」、「DBユーザー」、「DBパスワード」にalminiumと記載（その他はデフォルト値のまま）"
 echo "## 5. Redmineバージョンで「1.2.0以上」を選択"
 echo "## 6. 「保存」ボタンを押下"
+echo "※上記設定等、正常に行われたことを確認した後、適切な権限設定を行った上で、運用してください。"
 echo "## インストール処理を継続するために、何らかのキーを押下してください。"
 read PROCEED
 
