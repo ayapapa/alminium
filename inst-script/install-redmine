@@ -15,6 +15,19 @@ download_redmine() {
   cd ..
   cp -fr cache/redmine-${RM_VER}/* ${ALM_INSTALL_DIR}/
   rm -fr cache/redmine-${RM_VER}
+  # redmine_backlogsプラグイン利用時にプロジェクトチケットリスト
+  # 表示エラーになる問題に対処
+  patch_for_issues_26637
+}
+
+# patch to  http://www.redmine.org/issues/26637
+# redmineのバグか否か不明だが、以下の対処法を発見したので適用する
+# ちなみに、本問題は、redmine_backlogsプラグイン利用時に問題が発生する
+patch_for_issues_26637() {
+  echo patch to fix http://www.redmine.org/issues/26637
+  pushd ${ALM_INSTALL_DIR}
+  sed -i.org 's/filter.remote/filter[:remote]/' app/models/query.rb
+  popd
 }
 
 # setup configurations
@@ -127,7 +140,7 @@ setup_db
 echo "instll redmine pluguins for jenkins **"
 # jenkins関連プラグイン
 # この位置でインストールしないとエラーになる
-source redmine/setup/install-plugins-jenkins
+#source redmine/setup/install-plugins-jenkins
 
 echo "** set authorities **"
 # 権限設定
