@@ -115,7 +115,7 @@ if [ "${ALM_DB_BACKUP}" != "no" ]; then
   ${BUNDLER} exec rake db:migrate RAILS_ENV=production
   ${BUNDLER} exec rake redmine:plugins:migrate RAILS_ENV=production
   ${BUNDLER} exec rake tmp:cache:clear RAILS_ENV=production
-  ${BUNDLER} exec rake tmp:sessions:clear RAILS_ENV=production
+  #${BUNDLER} exec rake tmp:sessions:clear RAILS_ENV=production
   if [ $? -ne 0 ]; then
     echo "データベースのマイグレーションに失敗しました。"
     exit 1

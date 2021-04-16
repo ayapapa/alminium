@@ -5,30 +5,19 @@
 #
 # プラグインディレクトリ名はvendor/pluginsに置くプラグインの名前
 # アーカイブディレクトリ名はtgz/zipファイルを展開したときのディレクト名
-redmine_wiki_extensions,0.8.1,https://github.com/haru/redmine_wiki_extensions.git
-redmine_xls_export,ALMinium,https://github.com/ayapapa/redmine_xls_export.git
+redmine_wiki_extensions,0.9.2,https://github.com/haru/redmine_wiki_extensions.git
+redmine_xls_export,features,https://github.com/two-pack/redmine_xls_export.git
 redmine_plugin_views_revisions,redmine_plugin_views_revisions,https://www.redmine.org/attachments/download/7705/redmine_plugin_views_revisions_v001.zip
-#redmine_importer,master,https://github.com/zh/redmine_importer.git
-#redmine_importer,master,https://github.com/agileware-jp/redmine_importer.git
-redmine_importer,3.4,https://github.com/agileware-jp/redmine_importer.git
-redmine_code_review,0.9.0,https://github.com/haru/redmine_code_review.git
-#redmine_code_review,master,https://github.com/ayapapa/redmine_code_review.git
-# jenkins関係をここでインストールすると失敗する（別途インストールするようにした）
-#redmine_bootstrap,0.2.4,https://github.com/jbox-web/redmine_bootstrap_kit.git
-#redmine_jenkins,1.0.1,https://github.com/jbox-web/redmine_jenkins.git
-#redmine_jenkins,v1.x,https://github.com/ayapapa/redmine_jenkins.git
-redmine_backlogs,redmine3,https://github.com/ayapapa/redmine_backlogs.git
-#redmine_backlogs,develop,https://github.com/TheMagician1/redmine_backlogs.git
-redmine_spent_time_column,backlogs-support,https://github.com/mikoto20000/redmine_spent_time_column.git
-redmine_scm,master,https://github.com/ayapapa/redmine_scm.git
-redmine_drafts,alm,https://github.com/alminium/redmine_drafts.git
-clipboard_image_paste,master,https://github.com/peclik/clipboard_image_paste.git
-#redmine_banner,master,https://github.com/akiko-pusu/redmine_banner.git
-redmine_banner,0.1.2,https://github.com/akiko-pusu/redmine_banner.git
+redmine_importer,redmine-4.0,https://github.com/kou/redmine_importer.git
+redmine_code_review,1.0.0,https://github.com/haru/redmine_code_review.git
+redmine_backlogs,redmine4,https://github.com/ayapapa/redmine_backlogs.git
+redmine_spent_time_column,redmine4,https://github.com/ayapapa/redmine_spent_time_column.git
+redmine_scm,redmine4,https://github.com/ayapapa/redmine_scm.git
+redmine_base_deface,master,https://github.com/jbbarth/redmine_base_deface.git
+redmine_drafts,master,https://github.com/jbbarth/redmine_drafts.git
+clipboard_image_paste,master,https://github.com/Utopism/clipboard_image_paste.git
+redmine_banner,dev,https://github.com/akiko-pusu/redmine_banner.git
 open_flash_chart,master,https://github.com/drakontia/redmine_open_flash_chart.git
-#redmine_charts,master,https://github.com/drakontia/redmine_charts.git
 redmine_local_avatars,master,https://github.com/thorin/redmine_local_avatars.git
-redmine_git_branch_hook,master,https://github.com/mikoto20000/redmine_git_branch_hook.git
-redmine_dmsf,v1.5.9,https://github.com/danmunn/redmine_dmsf.git
-#redmine_oauth_provider,master,https://github.com/suer/redmine_oauth_provider.git
-redmine_oauth_provider,master,https://github.com/ipcross/redmine_oauth_provider.git
+redmine_dmsf,v2.4.1,https://github.com/danmunn/redmine_dmsf.git
+redmine_oauth_provider,redmine-4,https://github.com/ayapapa/redmine_oauth_provider.git
