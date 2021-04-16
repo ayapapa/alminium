@@ -38,7 +38,7 @@ apt-get install -y --no-install-recommends `grep -v "^#" inst-script/${OS}/packa
 RUBYNAME=ruby2.3
 apt-get install -y ${RUBYNAME} ${RUBYNAME}-dev
 ruby-switch --set ${RUBYNAME}
-REALLY_GEM_UPDATE_SYSTEM=1 gem update --system
+REALLY_GEM_UPDATE_SYSTEM=1 gem update --system 2.7.10
 
 # SSL
 if [ "${ALM_ENABLE_SSL}" = "y" ]; then

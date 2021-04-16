@@ -89,6 +89,16 @@ if [ x"$http_proxy" != x"" ]; then
   service jenkins restart
 fi
 
+echo セキュリティ解除
+#sed -i.org "s/<useSecurity>true/<useSecurity>false/" /var/lib/jenkins/config.xml
+sed -i.org \
+    -e "s/<authorizationStrategy class=\"hudson.security.FullControlOnceLoggedInAuthorizationStrategy\">/<authorizationStrategy class=\"hudson.security.AuthorizationStrategy\$Unsecured\"\/>\n  <\!-- <authorizationStrategy class=\"hudson.security.FullControlOnceLoggedInAuthorizationStrategy\"> -->/" \
+    -e "s/<denyAnonymousReadAccess/<\!-- <denyAnonymousReadAccess/" \
+    -e "s/\/denyAnonymousReadAccess>/\/denyAnonymousReadAccess> -->/" \
+    -e "s/<\/authorizationStrategy>/<\!-- <\/authorizationStrategy> -->/" \
+    /var/lib/jenkins/config.xml 
+service jenkins restart
+
 # プラグインインストール
 sleep 10
 mkdir -p tmp
@@ -118,7 +128,7 @@ install_jenkins_plugins() {
 }
 
 install_jenkins_plugins reverse-proxy-auth-plugin
-install_jenkins_plugins persona
+#install_jenkins_plugins persona
 install_jenkins_plugins git
 install_jenkins_plugins redmine
 install_jenkins_plugins dashboard-view
@@ -150,13 +160,12 @@ echo "## 初期化処理を以下の手順で実施してください。"
 echo "## 3～7はRedmineユーザーでJenkinsへログインできるようにする場合に実施してください。"
 echo "## ※ブラウザで表示エラーになる場合は、しばらく待ってから以下を実施してください。"
 echo "## 1. ブラウザでhttp://${ALM_HOSTNAME}/jenkinsを表示"
-echo "## 2. 指示に従い初期設定を実施"
-echo "## 3. 「Jenkinsの管理」→「グローバルセキュリティーの設定」を選択"
-echo "## 4. 「セキュリティを有効化」をチェック"
-echo "## 5. アクセス制御で「Redmineユーザー認証」を選択"
-echo "## 6. 「データベース名」、「DBユーザー」、「DBパスワード」にalminiumと記載"
-echo "## 7. Redmineバージョンで「1.2.0以上」を選択"
-echo "## 8. 「保存」ボタンを押下"
+echo "## 2. 初期設定後表示されたJenkinsの画面にて、「Jenkinsの管理」→「グローバルセキュリティの設定」を選択"
+echo "## 3. ユーザー情報で「Redmineユーザー認証」を選択"
+echo "## 4. 「データベース名」、「DBユーザー」、「DBパスワード」にalminiumと記載（その他はデフォルト値のまま）"
+echo "## 5. Redmineバージョンで「1.2.0以上」を選択"
+echo "## 6. 「保存」ボタンを押下"
+echo "※上記設定等、正常に行われたことを確認した後、適切な権限設定を行った上で、運用してください。"
 echo "## インストール処理を継続するために、何らかのキーを押下してください。"
 read PROCEED
 

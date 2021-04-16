@@ -20,6 +20,7 @@ if [ -f ${ALM_ETC_DIR}/alminium-backup-cron ]; then
       -e "s|#ALM_BACKUP_HOUR#|${ALM_BACKUP_HOUR}|" \
       -e "s|#ALM_BACKUP_DAY#|${ALM_BACKUP_DAY}|" \
       -e "s|#ALM_BACKUP_EXPIRY#|${ALM_BACKUP_EXPIRY}|" \
+      -e "s|#ALM_DB_HOST#|${ALM_DB_HOST}|" \
       ${ALM_ETC_DIR}/alminium-backup-cron > /etc/cron.d/alminium-backup-cron
   chown root:root /etc/cron.d/alminium-backup-cron
 else

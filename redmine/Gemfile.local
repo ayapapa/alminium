@@ -1,2 +1,4 @@
 #gem 'rake-compiler'
 gem 'passenger'
+gem 'sprockets', '~> 3.7.2'
+

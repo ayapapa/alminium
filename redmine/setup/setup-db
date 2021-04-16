@@ -36,6 +36,7 @@ fi
 # キャッシュクリア
 ${BUNDLER} exec rake tmp:cache:clear RAILS_ENV=production
 #${BUNDLER} exec rake tmp:sessions:clear RAILS_ENV=production
+${BUNDLER} exec rake tmp:clear RAILS_ENV=production
 
 # DB Customize
 if [ "$(db_setupped)" = "" ]; then

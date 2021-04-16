@@ -20,7 +20,11 @@ do
     case ${EXT} in
     zip)
         if [ ! -f cache/${FILE_NAME} ]; then
-          wget -P cache ${URL_NAME[$i]}
+          if [[ "${OS}" == "rhel6" ]]; then
+            wget -P cache ${URL_NAME[$i]} --no-check-certificate
+          else
+            wget -P cache ${URL_NAME[$i]}
+          fi
         fi
         yes | unzip -q cache/${FILE_NAME}
          rm -fr ${ALM_INSTALL_DIR}/plugins/${DEST_NAME[$i]}

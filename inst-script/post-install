@@ -46,6 +46,7 @@ else
   fi
   popd
   ln -sf "${ALM_ETC_DIR}/passenger.conf" "${APACHE_CONF_DIR}/"
+  rm "${APACHE_CONF_DIR}//passenger.load" 2>/dev/null
 fi
 ## alminium
 ln -sf "${ALM_ETC_DIR}/alminium.conf" "${APACHE_SITE_CONF_DIR}/" 
