@@ -13,7 +13,11 @@ if [ "${ALM_HOSTNAME}" = "" ]; then
   echo "*******************************************************"
   echo "ホスト名(IPアドレスもしくはDNS名)を入力してください。ホスト名はApacheのバーチャルホストで利用されます。"
   echo "例えば、192.168.1.4をホスト名で入力すると、http://192.168.1.4/でアクセスすることになります。"
-  IP_ADDR="`ip -f inet -o addr show ${ETH0} | cut -d\  -f 7 | cut -d/ -f 1`"
+  if [ -f ${ALM_ETC_DIR}/redmine.conf ]; then
+    IP_ADDR="`grep ^ServerName ${ALM_ETC_DIR}/redmine.conf | sed 's/^ServerName //'`"
+  else
+    IP_ADDR="`ip -f inet -o addr show ${ETH0} | cut -d\  -f 7 | cut -d/ -f 1`"
+  fi
   echo -n "ホスト名[${IP_ADDR}]:"
   read ALM_HOSTNAME
   ALM_HOSTNAME=${ALM_HOSTNAME:-${IP_ADDR}}
