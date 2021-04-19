@@ -78,8 +78,9 @@ done
 # ALMiniumインストールディレクトリへ移動
 pushd ${ALM_INSTALL_DIR}
 
-# fix http://www.redmine.org/issues/26637
-sed -i.org 's/filter.remote/filter[:remote]/' app/models/query.rb
+# 本パッチは、redmineダウンロードスクリプトにて実施するようにした(2021/4/19)
+## fix http://www.redmine.org/issues/26637
+#sed -i.org 's/filter.remote/filter[:remote]/' app/models/query.rb
 
 # fix gem(rubyzip, nokogiri) version mismatch
 # NOTE: use nokogiri 1.6.x because of jenkins_api_alient v1.3.0 
