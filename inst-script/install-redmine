@@ -140,7 +140,7 @@ setup_db
 echo "instll redmine pluguins for jenkins **"
 # jenkins関連プラグイン
 # この位置でインストールしないとエラーになる
-#source redmine/setup/install-plugins-jenkins
+source redmine/setup/install-plugins-jenkins
 
 echo "** set authorities **"
 # 権限設定
