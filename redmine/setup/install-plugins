@@ -78,19 +78,22 @@ done
 # ALMiniumインストールディレクトリへ移動
 pushd ${ALM_INSTALL_DIR}
 
-#
-# for gem(rubyzip, nokogiri) version mismatch
+# 本パッチは、redmineダウンロードスクリプトにて実施するようにした(2021/4/19)
+## fix http://www.redmine.org/issues/26637
+#sed -i.org 's/filter.remote/filter[:remote]/' app/models/query.rb
+
+# fix gem(rubyzip, nokogiri) version mismatch
 # NOTE: use nokogiri 1.6.x because of jenkins_api_alient v1.3.0 
 #       which is used by redmine_jenkins, and use rubyzip latest
 # DMSF
-sed -i.org -e "s/gem 'rubyzip',/gem 'rubyzip'#,/" \
+sed -i.org -e "s/gem 'rubyzip',/#gem 'rubyzip',/" \
            -e "s/gem 'nokogiri'/#gem 'nokogiri'/" \
     plugins/redmine_dmsf/Gemfile
 sed -i.org "s/label_dmsf_workflow_plural/label_dmsf_workflow_plural,\n      :html => {:class => 'icon dmsf_approvalworkflows'}/" \
     plugins/redmine_dmsf/init.rb
-# oauth_provider
-sed -i.org "s/oauth_client_applications/oauth_client_applications, :html => {:class => 'icon oauth_clients'}/" \
-    plugins/redmine_oauth_provider/init.rb
+## oauth_provider
+#sed -i.org "s/oauth_client_applications/oauth_client_applications, :html => {:class => 'icon oauth_clients'}/" \
+#    plugins/redmine_oauth_provider/init.rb
 # redmine_xls_export
 sed -i.org -e 's/gem "nokogiri/#gem "nokogiri/' \
     plugins/redmine_xls_export/Gemfile

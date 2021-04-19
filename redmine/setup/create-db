@@ -2,10 +2,9 @@
 #
 #
 
-echo "*** create ALMinium DB ***"
-
 # create db
 if [ "${ALM_UPGRADE}" != "y" ]; then
+  echo "*** create ALMinium DB ***"
   if [ "$(db_test alminium)" = "" ]; then
     if [ "$(db_test)" != "" ]; then
       # create alminium DB
